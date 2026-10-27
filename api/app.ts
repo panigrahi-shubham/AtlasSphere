@@ -75,6 +75,7 @@ export function createApp(options: ApiOptions = {}) {
     const cached = cache.get(key);
     if (cached && cached.expires > now()) { res.setHeader('X-Cache', 'HIT'); res.json(cached.data); return; }
     res.setHeader('X-Cache', 'MISS');
+    let providerStatus: number | undefined;
     try {
       let data: unknown;
       if (fixtureMode) data = JSON.parse(await readFile(file(`tests/fixtures/${fixture}`), 'utf8'));
@@ -84,6 +85,7 @@ export function createApp(options: ApiOptions = {}) {
         const timer = setTimeout(() => controller.abort(), timeoutMs);
         try {
           const response = await fetcher(url, { signal: controller.signal });
+          providerStatus = response.status;
           if (!response.ok) throw new Error(`Upstream returned ${response.status}`);
           data = await response.json();
         } finally { clearTimeout(timer); }
@@ -102,6 +104,7 @@ export function createApp(options: ApiOptions = {}) {
       cache.set(key, { data, expires: now() + ttl }); res.json(data);
     } catch (error) {
       const timeout = error instanceof Error && error.name === 'AbortError';
+      if (!fixtureMode) console.error('Weather upstream failure', { hostname: url.hostname, status: providerStatus ?? null, message: timeout ? 'Request timed out' : providerStatus !== undefined ? `HTTP ${providerStatus}` : 'Provider connection or response failed' });
       fail(res, timeout ? 504 : 502, timeout ? 'UPSTREAM_TIMEOUT' : 'UPSTREAM_ERROR', timeout ? 'Weather provider timed out.' : 'Weather provider is unavailable.');
     }
   }

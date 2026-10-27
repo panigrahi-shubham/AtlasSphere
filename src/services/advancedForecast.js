@@ -1,4 +1,4 @@
-import { fetchJSON } from './http.js';
+import { fetchJSONWithFallback } from './http.js';
 
 export const DAILY_VARIABLES = ['temperature_2m_max', 'temperature_2m_min', 'precipitation_probability_max', 'precipitation_sum', 'wind_speed_10m_max', 'uv_index_max', 'sunrise', 'sunset', 'weather_code'];
 export function advancedForecastURL(city) {
@@ -23,5 +23,5 @@ export function normalizeDaily(data) {
   return { timezone: data.timezone, days };
 }
 export async function getAdvancedForecast(city, options) {
-  return normalizeDaily(await fetchJSON(`/api/v1/weather?${new URLSearchParams({ lat: city.latitude, lon: city.longitude, units: 'celsius', view: 'daily' })}`, { ...options, fallbackUrl: advancedForecastURL(city), fallbackOnSlow: import.meta.env?.VITE_PAGES_FALLBACK === '1', service: 'Forecast', action: 'Extended forecast' }));
+  return normalizeDaily(await fetchJSONWithFallback(`/api/v1/weather?${new URLSearchParams({ lat: city.latitude, lon: city.longitude, units: 'celsius', view: 'daily' })}`, advancedForecastURL(city), { ...options, service: 'Forecast', action: 'Extended forecast' }));
 }

@@ -4,7 +4,7 @@ import { geoNaturalEarth1, geoPath } from 'd3-geo';
 import snapshot from '../data/countries.json';
 import { landmarks } from '../data/landmarks.js';
 import { normalizeCountries, filterCountries, hemisphere } from '../utils/countries.js';
-import { fetchJSON } from '../services/http.js';
+import { fetchJSONWithFallback } from '../services/http.js';
 import { validateLocations, geocodingURL } from '../services/geocodingService.js';
 import photos from '../data/photos.json';
 
@@ -83,7 +83,7 @@ export function createAtlas({ onOpen }) {
     status.textContent = `Finding ${c.capital}…`; document.querySelector('#country-weather').disabled = true;
     try {
       const params = new URLSearchParams({ q: c.capital.split(',')[0], countryCode: c.alpha2 });
-      const raw = await fetchJSON(`/api/v1/geocode?${params}`, { signal: controller.signal, fallbackUrl: geocodingURL(c.capital.split(',')[0], c.alpha2), fallbackOnSlow: import.meta.env?.VITE_PAGES_FALLBACK === '1' });
+      const raw = await fetchJSONWithFallback(`/api/v1/geocode?${params}`, geocodingURL(c.capital.split(',')[0], c.alpha2), { signal: controller.signal });
       if (token !== request) return;
       const matching = { ...raw, results: raw.results?.filter(r => r.country_code?.toUpperCase() === c.alpha2) };
       const locations = validateLocations(matching);

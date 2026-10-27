@@ -177,7 +177,8 @@
           "503": {
             "$ref": "#/components/responses/ServiceUnavailable"
           }
-        }
+        },
+        "description": " The web client may try the public non-commercial provider once after a 502, 503 or 504; 400, 404, 429, aborts and client timeouts are not retried."
       }
     },
     "/api/v1/geocode": {
@@ -278,7 +279,8 @@
           "503": {
             "$ref": "#/components/responses/ServiceUnavailable"
           }
-        }
+        },
+        "description": " The web client may try the public non-commercial provider once after a 502, 503 or 504; 400, 404, 429, aborts and client timeouts are not retried."
       }
     },
     "/api/v1/news": {

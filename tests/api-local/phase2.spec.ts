@@ -12,6 +12,26 @@ async function serve(options: ApiOptions = {}) {
 }
 const weather = '/api/v1/weather?lat=19.99&lon=73.78';
 
+test('upstream diagnostics contain the provider host and status without secrets', async ({ request }) => {
+  const previous = console.error, messages: unknown[][] = [];
+  console.error = (...args: unknown[]) => { messages.push(args); };
+  const server = await serve({ env: 'production', fixtures: false, fetcher: async () => new Response('', { status: 429 }) });
+  try {
+    expect((await request.get(server.base + weather)).status()).toBe(502);
+    expect(messages).toHaveLength(1);
+    expect(messages[0][1]).toMatchObject({ hostname: 'api.open-meteo.com', status: 429, message: 'HTTP 429' });
+    expect(JSON.stringify(messages)).not.toContain('latitude');
+  } finally { await server.close(); console.error = previous; }
+  const secretMessages: unknown[][] = [];
+  console.error = (...args: unknown[]) => { secretMessages.push(args); };
+  const failed = await serve({ env: 'production', fixtures: false, fetcher: async () => { throw new Error('private-token-do-not-log'); } });
+  try {
+    expect((await request.get(failed.base + weather)).status()).toBe(502);
+    expect(JSON.stringify(secretMessages)).toContain('api.open-meteo.com');
+    expect(JSON.stringify(secretMessages)).not.toContain('private-token-do-not-log');
+  } finally { await failed.close(); console.error = previous; }
+});
+
 test('example account credentials report unconfigured instead of querying a database', async ({ request }) => {
   const savedUrl = process.env.DATABASE_URL, savedSecret = process.env.AUTH_SECRET;
   process.env.DATABASE_URL = 'postgresql://example.invalid/skyatlas';

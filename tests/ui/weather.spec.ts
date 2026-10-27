@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '../support/uiTest';
+import { test, expect, mockOpenMeteoDown, type Page } from '../support/uiTest';
 import { currentWeatherFixture } from '../fixtures/currentWeather.js';
 
 const endpoint = '**/api/v1/weather?**';
@@ -62,6 +62,7 @@ test('missing secondary values are unavailable while valid weather remains visib
 });
 
 test('weather API failure offers a retry without repeating city search', async ({ page }) => {
+  await mockOpenMeteoDown(page);
   await page.route(endpoint, route => route.fulfill({ status: 503, json: {} }));
   await select(page);
   await expect(page.getByTestId('weather-error')).toContainText('Weather service unavailable (503)');

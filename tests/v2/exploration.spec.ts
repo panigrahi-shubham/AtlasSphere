@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '../support/uiTest';
+import { test, expect, mockOpenMeteoDown, type Page } from '../support/uiTest';
 import { currentWeatherFixture } from '../fixtures/currentWeather.js';
 
 const city = { id: 1, name: 'Nashik', country: 'India', country_code: 'IN', admin1: 'Maharashtra', latitude: 19.99, longitude: 73.78, timezone: 'Asia/Kolkata' };
@@ -49,6 +49,7 @@ test('capital lookup uses a country filter before opening weather', async ({ pag
   await expect(page.getByTestId('city-name')).toHaveText('New Delhi');
 });
 test('capital failure preserves the usable atlas and allows retry', async ({ page }) => {
+  await mockOpenMeteoDown(page);
   await page.route('**/api/v1/geocode?**', route => route.fulfill({ status: 503, json: {} }));
   await atlas(page); await page.getByTestId('country-filter').fill('India'); await page.getByTestId('country-directory').getByRole('button', { name: 'India', exact: true }).click(); await page.getByTestId('country-weather').click();
   await expect(page.getByTestId('country-status')).toContainText('503'); await expect(page.getByTestId('country-weather')).toBeEnabled(); await expect(page.getByTestId('world-map')).toBeVisible();
@@ -72,6 +73,7 @@ test('missing daily metrics create chart gaps and available table values remain 
   await expect(page.getByTestId('daily-row').nth(2)).toContainText('Not available'); await expect(page.getByTestId('current-temperature')).toHaveText('24°C');
 });
 test('extended forecast failure does not hide current weather and can retry', async ({ page }) => {
+  await mockOpenMeteoDown(page);
   let failed = true; await page.route('**/api/v1/weather?**', route => { const daily = new URL(route.request().url()).searchParams.get('view') === 'daily'; return route.fulfill({ status: daily && failed ? 503 : 200, json: daily ? dailyFixture() : currentWeatherFixture }); });
   await selectCity(page); await page.getByTestId('advanced-load').click(); await expect(page.getByTestId('advanced-status')).toContainText('503'); await expect(page.getByTestId('current-temperature')).toBeVisible(); failed = false;
   await page.getByTestId('advanced-load').click(); await expect(page.getByTestId('daily-row')).toHaveCount(7);

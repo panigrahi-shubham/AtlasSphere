@@ -1,4 +1,4 @@
-import { fetchJSON } from './http.js';
+import { fetchJSONWithFallback } from './http.js';
 import { isTimezone } from '../utils/time.js';
 
 export const WEATHER_ENDPOINT = 'https://api.open-meteo.com/v1/forecast';
@@ -56,8 +56,8 @@ export function validateCurrentWeather(data) {
 }
 
 export async function getCurrentWeather(city, options = {}) {
-  const data = await fetchJSON(`/api/v1/weather?${new URLSearchParams({ lat: city.latitude, lon: city.longitude, units: 'celsius' })}`, {
-    ...options, fallbackUrl: weatherURL(city), fallbackOnSlow: import.meta.env?.VITE_PAGES_FALLBACK === '1', service: 'Weather', action: 'Weather request'
+  const data = await fetchJSONWithFallback(`/api/v1/weather?${new URLSearchParams({ lat: city.latitude, lon: city.longitude, units: 'celsius' })}`, weatherURL(city), {
+    ...options, service: 'Weather', action: 'Weather request'
   });
   const current = validateCurrentWeather(data);
   return { ...current, forecast: validateHourlyForecast(data, current.time) };
