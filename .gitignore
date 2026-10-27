@@ -14,3 +14,4 @@ lighthouse-report/
 
 .local-postgres/
 
+.vercel/

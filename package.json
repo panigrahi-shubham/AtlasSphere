@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
+    "vercel-build": "node scripts/check-vercel-env.mjs && npm run prisma:generate && npm run build",
     "preview": "vite preview --host 127.0.0.1",
     "start": "node --experimental-strip-types api/server.ts",
     "typecheck:api": "tsc --project tsconfig.api.json --noEmit",

@@ -1,0 +1,15 @@
+.env
+.env.*
+!.env.example
+.git
+node_modules
+dist
+test-results
+playwright-report
+.local-postgres
+releases
+prompt-review
+.playwright-browsers
+lighthouse-report
+legacy
+tests
