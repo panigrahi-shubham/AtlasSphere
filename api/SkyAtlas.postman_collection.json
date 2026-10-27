@@ -288,6 +288,118 @@
           ]
         }
       }
+    },
+    {
+      "name": "Update display name",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/account/profile",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "account",
+            "profile"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"displayName\": \"SkyAtlas explorer\"}"
+        }
+      }
+    },
+    {
+      "name": "Export my data",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/account/export",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "account",
+            "export"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Delete account",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/account",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "account"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"password\": \"{{password}}\"}"
+        }
+      }
+    },
+    {
+      "name": "Public landmark reviews",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/journeys/reviews/taj-mahal",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "journeys",
+            "reviews",
+            "taj-mahal"
+          ]
+        }
+      }
     }
   ]
 }

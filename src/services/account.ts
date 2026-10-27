@@ -30,5 +30,8 @@ export const account = {
     try { await this.request('/auth/logout', { method: 'POST' }); } finally {
       accessToken = ''; currentUser = null; dispatchEvent(new Event('skyatlas-account-changed'));
     }
+  },
+  forget() {
+    accessToken = ''; currentUser = null; dispatchEvent(new Event('skyatlas-account-changed'));
   }
 };

@@ -7,6 +7,35 @@ async function serve() {
   const server = await new Promise<Server>(resolve => { const server = app.listen(0, '127.0.0.1', () => resolve(server)); });
   return { origin: `http://127.0.0.1:${(server.address() as any).port}`, close: () => new Promise<void>(resolve => server.close(() => resolve())) };
 }
+test('profile, export and account deletion protect private data', async ({ request }) => {
+  test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
+  const app = await serve();
+  let token = '';
+  const password = 'Strong!23', email = `privacy-${crypto.randomUUID()}@example.test`;
+  try {
+    const registered = await request.post(app.origin + '/api/v1/auth/register', { data: { email, password } });
+    expect(registered.status()).toBe(201); token = (await registered.json()).accessToken;
+    const headers = { authorization: `Bearer ${token}` };
+    expect((await request.put(app.origin + '/api/v1/account/profile', { headers, data: { displayName: '<script>' } })).status()).toBe(400);
+    expect((await request.put(app.origin + '/api/v1/account/profile', { headers, data: { displayName: '  Sky traveller  ' } })).status()).toBe(200);
+    expect((await request.put(app.origin + '/api/v1/journeys/reviews/taj-mahal', { headers, data: { rating: 5, body: 'Wonderful' } })).status()).toBe(200);
+    const reviews = (await (await request.get(app.origin + '/api/v1/journeys/reviews/taj-mahal')).json()).reviews;
+    const own = reviews.find((review: any) => review.body === 'Wonderful' && review.author === 'Sky traveller');
+    expect(own).toBeTruthy(); expect(own.userId).toBeUndefined(); expect(own.id).toBeUndefined();
+    const exported = await request.get(app.origin + '/api/v1/account/export', { headers });
+    expect(exported.headers()['content-disposition']).toContain('attachment; filename="skyatlas-export-');
+    const data = await exported.json();
+    expect(data.account.email).toBe(email); expect(data.account.passwordHash).toBeUndefined();
+    expect(data.reviews.some((review: any) => review.body === 'Wonderful' && !('imageData' in review))).toBe(true);
+    expect((await request.delete(app.origin + '/api/v1/account', { headers, data: { password: 'wrong' } })).status()).toBe(401);
+    const deleted = await request.delete(app.origin + '/api/v1/account', { headers, data: { password } });
+    expect(deleted.status()).toBe(204); expect(deleted.headers()['set-cookie']).toContain('skyatlas_refresh='); token = '';
+    expect((await request.post(app.origin + '/api/v1/auth/login', { data: { email, password } })).status()).toBe(401);
+  } finally {
+    if (token) await request.delete(app.origin + '/api/v1/account', { headers: { authorization: `Bearer ${token}` }, data: { password } });
+    await app.close();
+  }
+});
 test('accounts, reset, favorites and trips isolate users', async ({ request }) => {
   test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
   const app = await serve();

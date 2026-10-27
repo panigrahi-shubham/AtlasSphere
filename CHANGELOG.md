@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add account data export, password-confirmed deletion and review display names; remove public review user IDs and compress uploaded photos.
+
 - Add a preliminary Cloudflare Pages API proxy and configurable allowed origins.
 
 - Add a secret-protected scheduled alert endpoint with overlap protection and rate limiting.

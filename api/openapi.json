@@ -519,6 +519,53 @@
             "bearerAuth": []
           }
         ]
+      },
+      "delete": {
+        "summary": "Delete account and saved data",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "400": {
+            "description": "Password required"
+          },
+          "401": {
+            "description": "Invalid password or session"
+          },
+          "403": {
+            "description": "Origin denied"
+          },
+          "429": {
+            "description": "Too many attempts"
+          },
+          "503": {
+            "description": "Service unavailable"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "password"
+                ],
+                "properties": {
+                  "password": {
+                    "type": "string",
+                    "maxLength": 128
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/v1/account/theme": {
@@ -961,7 +1008,8 @@
           "503": {
             "description": "Service unavailable"
           }
-        }
+        },
+        "description": "Public reviews contain a display name and do not include user IDs."
       },
       "put": {
         "summary": "Create or edit my review",
@@ -988,7 +1036,8 @@
               }
             }
           }
-        }
+        },
+        "description": "Accepts JPG or PNG image data up to 1 MB."
       },
       "delete": {
         "summary": "Delete my review",
@@ -1068,6 +1117,76 @@
           },
           "503": {
             "description": "Account service or alert check unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/account/export": {
+      "get": {
+        "summary": "Download account data without photo bytes",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON attachment"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "503": {
+            "description": "Service unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/account/profile": {
+      "put": {
+        "summary": "Set review display name",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile updated"
+          },
+          "400": {
+            "description": "Invalid name"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Origin denied"
+          },
+          "429": {
+            "description": "Too many requests"
+          },
+          "503": {
+            "description": "Service unavailable"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "displayName"
+                ],
+                "properties": {
+                  "displayName": {
+                    "type": "string",
+                    "maxLength": 40
+                  }
+                }
+              }
+            }
           }
         }
       }

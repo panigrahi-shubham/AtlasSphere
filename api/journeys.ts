@@ -94,8 +94,8 @@ export function createJourneys(env: string, fetcher: typeof fetch = fetch, fixtu
   });
   router.get('/reviews/:landmarkId', async (req, res) => {
     const landmarkId = String(req.params.landmarkId || '').slice(0, 100);
-    const reviews = await db.review.findMany({ where: { landmarkId }, orderBy: { createdAt: 'desc' }, select: { id: true, userId: true, rating: true, body: true, createdAt: true, imageType: true } });
-    res.json({ reviews: reviews.map(review => ({ ...review, imageUrl: review.imageType ? `/api/v1/journeys/reviews/image/${review.id}` : null })) });
+    const reviews = await db.review.findMany({ where: { landmarkId }, orderBy: { createdAt: 'desc' }, select: { id: true, rating: true, body: true, createdAt: true, imageType: true, user: { select: { displayName: true } } } });
+    res.json({ reviews: reviews.map(({ id, imageType, user, ...review }) => ({ ...review, author: user.displayName || 'SkyAtlas explorer', imageUrl: imageType ? `/api/v1/journeys/reviews/image/${id}` : null })) });
   });
   router.put('/reviews/:landmarkId', async (req, res) => {
     const id = guard(req, res); if (!id) return;
@@ -103,11 +103,11 @@ export function createJourneys(env: string, fetcher: typeof fetch = fetch, fixtu
     if (!/^[a-z0-9-]{1,100}$/.test(landmarkId) || !Number.isInteger(rating) || rating < 1 || rating > 5 || typeof body !== 'string' || body.length > 500) return error(res, 400, 'Invalid review.');
     let imageData: Uint8Array<ArrayBuffer> | null = null, imageType: string | null = null;
     if (req.body?.image) {
-      if (typeof req.body.image !== 'string' || req.body.image.length > 2800000) return error(res, 400, 'Image is too large.');
+      if (typeof req.body.image !== 'string' || req.body.image.length > 1400000) return error(res, 400, 'Image is too large.');
       const match = /^data:image\/(png|jpeg);base64,([a-zA-Z0-9+/=]+)$/.exec(req.body.image);
       if (!match) return error(res, 400, 'Only JPG and PNG are supported.');
       imageData = Uint8Array.from(Buffer.from(match[2], 'base64')); imageType = match[1] === 'png' ? 'image/png' : 'image/jpeg';
-      if (imageData.length > 2 * 1024 * 1024 || !(imageType === 'image/png' ? Buffer.from(imageData).subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10])) : Buffer.from(imageData).subarray(0, 3).equals(Buffer.from([255,216,255])))) return error(res, 400, 'Invalid image content or size.');
+      if (imageData.length > 1024 * 1024 || !(imageType === 'image/png' ? Buffer.from(imageData).subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10])) : Buffer.from(imageData).subarray(0, 3).equals(Buffer.from([255,216,255])))) return error(res, 400, 'Invalid image content or size.');
     }
     const review = await db.review.upsert({ where: { userId_landmarkId: { userId: id, landmarkId } }, create: { userId: id, landmarkId, rating, body, imageData, imageType }, update: { rating, body, imageData, imageType } });
     res.json({ review: { id: review.id, rating: review.rating, body: review.body } });

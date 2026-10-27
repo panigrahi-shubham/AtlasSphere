@@ -12,6 +12,7 @@ export function initAccount() {
     accountInfo.hidden = !account.signedIn;
     form.hidden = account.signedIn;
     root.querySelector('#account-email-display').textContent = account.user?.email || '';
+    root.querySelector('#profile-name').value = account.user?.displayName || '';
   }
   root.querySelector('#account-mode').addEventListener('click', () => {
     mode = mode === 'login' ? 'register' : 'login';
@@ -32,6 +33,30 @@ export function initAccount() {
     try { await account.logout(); message.textContent = 'Signed out. Your browser favorites remain available.'; }
     catch (error) { message.textContent = error.message; }
     update();
+  });
+  root.querySelector('#profile-form').addEventListener('submit', async event => {
+    event.preventDefault();
+    try { const result = await account.request('/account/profile', { method: 'PUT', body: JSON.stringify({ displayName: root.querySelector('#profile-name').value }) }); if (account.user) account.user.displayName = result.displayName; message.textContent = 'Display name saved.'; }
+    catch (error) { message.textContent = error.message; }
+  });
+  root.querySelector('#account-export').addEventListener('click', async () => {
+    try {
+      const data = await account.request('/account/export');
+      const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+      const link = document.createElement('a'); link.href = url; link.download = `skyatlas-export-${new Date().toISOString().slice(0, 10)}.json`; link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000); message.textContent = 'Your data download is ready.';
+    } catch (error) { message.textContent = error.message; }
+  });
+  const dialog = root.querySelector('#delete-account-dialog');
+  root.querySelector('#account-delete').addEventListener('click', () => dialog.showModal());
+  root.querySelector('#delete-account-cancel').addEventListener('click', () => dialog.close());
+  root.querySelector('#delete-account-form').addEventListener('submit', async event => {
+    event.preventDefault();
+    const status = root.querySelector('#delete-account-status');
+    try {
+      await account.request('/account', { method: 'DELETE', body: JSON.stringify({ password: root.querySelector('#delete-account-password').value }) });
+      event.target.reset(); dialog.close(); account.forget(); message.textContent = 'Your account was deleted.'; update();
+    } catch (error) { status.textContent = error.message; }
   });
   root.querySelector('#reset-request').addEventListener('click', async () => {
     try { const result = await account.request('/auth/reset/request', { method: 'POST', body: JSON.stringify({ email: root.querySelector('#account-email').value }) }); message.textContent = result.message; }
