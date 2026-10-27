@@ -39,6 +39,19 @@ export function createApp(options: ApiOptions = {}) {
   app.disable('x-powered-by');
   const hops = Number(process.env.TRUST_PROXY_HOPS ?? 1);
   app.set('trust proxy', Number.isInteger(hops) && hops >= 0 && hops <= 10 ? hops : 1);
+  app.use((req, _res, next) => {
+    if (hops > 1) {
+      const expected = process.env.PROXY_SHARED_SECRET || '';
+      const supplied = Buffer.from(req.get('x-skyatlas-proxy-secret') || ''), required = Buffer.from(expected);
+      const verified = required.length > 0 && supplied.length === required.length && timingSafeEqual(supplied, required);
+      if (!verified && req.headers['x-forwarded-for']) {
+        const forwarded = String(req.headers['x-forwarded-for']).split(',');
+        req.headers['x-forwarded-for'] = forwarded[forwarded.length - 1].trim();
+      }
+    }
+    delete req.headers['x-skyatlas-proxy-secret'];
+    next();
+  });
   app.use('/api/v1', (req, res, next) => {
     const key = req.ip ?? 'unknown';
     const existing = requests.get(key);

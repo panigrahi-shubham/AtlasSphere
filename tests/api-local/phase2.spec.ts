@@ -35,14 +35,18 @@ test('configured Pages origin is accepted and other origins are rejected', async
 
 test('trusted proxy hop count separates client rate limits', async ({ request }) => {
   const previous = process.env.TRUST_PROXY_HOPS;
+  const previousSecret = process.env.PROXY_SHARED_SECRET;
   process.env.TRUST_PROXY_HOPS = '2';
+  process.env.PROXY_SHARED_SECRET = 'proxy-test-secret';
   const server = await serve({ rateLimit: 1 });
   try {
     const path = server.base + '/api/v1/health';
-    expect((await request.get(path, { headers: { 'x-forwarded-for': '203.0.113.10, 192.0.2.10' } })).status()).toBe(200);
-    expect((await request.get(path, { headers: { 'x-forwarded-for': '203.0.113.11, 192.0.2.10' } })).status()).toBe(200);
-    expect((await request.get(path, { headers: { 'x-forwarded-for': '203.0.113.10, 192.0.2.10' } })).status()).toBe(429);
-  } finally { await server.close(); if (previous === undefined) delete process.env.TRUST_PROXY_HOPS; else process.env.TRUST_PROXY_HOPS = previous; }
+    expect((await request.get(path, { headers: { 'x-forwarded-for': '203.0.113.10, 192.0.2.10', 'x-skyatlas-proxy-secret': 'proxy-test-secret' } })).status()).toBe(200);
+    expect((await request.get(path, { headers: { 'x-forwarded-for': '203.0.113.11, 192.0.2.10', 'x-skyatlas-proxy-secret': 'proxy-test-secret' } })).status()).toBe(200);
+    expect((await request.get(path, { headers: { 'x-forwarded-for': '203.0.113.10, 192.0.2.10', 'x-skyatlas-proxy-secret': 'proxy-test-secret' } })).status()).toBe(429);
+    expect((await request.get(path, { headers: { 'x-forwarded-for': '203.0.113.12, 192.0.2.20' } })).status()).toBe(200);
+    expect((await request.get(path, { headers: { 'x-forwarded-for': '203.0.113.13, 192.0.2.20' } })).status()).toBe(429);
+  } finally { await server.close(); if (previous === undefined) delete process.env.TRUST_PROXY_HOPS; else process.env.TRUST_PROXY_HOPS = previous; if (previousSecret === undefined) delete process.env.PROXY_SHARED_SECRET; else process.env.PROXY_SHARED_SECRET = previousSecret; }
 });
 
 test('alert cron is hidden, authenticates, prevents overlap and limits calls', async ({ request }) => {

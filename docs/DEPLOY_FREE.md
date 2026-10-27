@@ -18,7 +18,7 @@ For an optional keep-warm monitor, request `GET https://YOUR-RENDER-SERVICE/api/
 
 The repository includes a Pages proxy for `/api`, `/docs`, and `/openapi.json`. Set `API_ORIGIN` to the HTTPS origin of the Render service and add the Pages origin to `ALLOWED_ORIGINS` on Render. Use Node 24, `npm run build`, and output directory `dist`. Account wake-up handling and direct weather fallback remain incomplete, so do not switch the public site yet.
 
-`TRUST_PROXY_HOPS` defaults to 1. Do not blindly set it to 2 while Render is directly reachable: an untrusted client could spoof forwarding headers. Confirm the proxy chain and restrict or authenticate the connection before trusting an additional hop.
+`TRUST_PROXY_HOPS` defaults to 1. For the Cloudflare-to-Render chain, configure the same long random `PROXY_SHARED_SECRET` as a secret on Pages and Render before setting `TRUST_PROXY_HOPS=2` on Render. The Pages function attaches it to proxied requests; the server ignores untrusted extra forwarding entries when it is missing or incorrect. Confirm the actual chain and client addresses after deployment. Keep this secret out of source code and screenshots.
 
 ## Production smoke monitoring
 

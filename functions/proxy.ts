@@ -1,4 +1,4 @@
-type Context = { request: Request; env: { API_ORIGIN?: string } };
+type Context = { request: Request; env: { API_ORIGIN?: string; PROXY_SHARED_SECRET?: string } };
 
 /** Forward same-origin Pages requests to the configured Render service. */
 export async function proxy({ request, env }: Context, fetcher: typeof fetch = fetch) {
@@ -11,6 +11,8 @@ export async function proxy({ request, env }: Context, fetcher: typeof fetch = f
     target.search = incoming.search;
     const headers = new Headers(request.headers);
     headers.delete('host');
+    headers.delete('x-skyatlas-proxy-secret');
+    if (env.PROXY_SHARED_SECRET) headers.set('x-skyatlas-proxy-secret', env.PROXY_SHARED_SECRET);
     headers.set('x-forwarded-host', incoming.host);
     const clientIp = request.headers.get('cf-connecting-ip');
     if (clientIp) headers.set('x-forwarded-for', clientIp); else headers.delete('x-forwarded-for');
