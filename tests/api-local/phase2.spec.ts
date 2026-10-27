@@ -4,6 +4,7 @@ import { readFile, writeFile, mkdtemp } from 'node:fs/promises';
 import path from 'node:path';
 import type { Server } from 'node:http';
 import { fetchNews, parseNews } from '../../scripts/fetch-news.ts';
+import { db } from '../../api/database.ts';
 
 async function serve(options: ApiOptions = {}) {
   const app = createApp({ env: 'test', fixtures: true, ...options });
@@ -11,6 +12,32 @@ async function serve(options: ApiOptions = {}) {
   return { app, base: `http://127.0.0.1:${(server.address() as { port: number }).port}`, close: () => new Promise<void>(resolve => server.close(() => resolve())) };
 }
 const weather = '/api/v1/weather?lat=19.99&lon=73.78';
+
+test('public review fixtures expose an author without reviewer IDs or emails', async ({ request }) => {
+  const savedUrl = process.env.DATABASE_URL, savedSecret = process.env.AUTH_SECRET;
+  const original = db.review.findMany;
+  let selection: any;
+  db.review.findMany = (async (query: unknown) => {
+    selection = query;
+    return [{ id: 'fixture-review', rating: 5, body: 'A fixture review', createdAt: new Date('2026-10-01T00:00:00Z'), imageType: null, user: { displayName: 'Fixture explorer' } }];
+  }) as unknown as typeof db.review.findMany;
+  process.env.DATABASE_URL = 'postgresql://fixture.invalid/skyatlas';
+  process.env.AUTH_SECRET = 'fixture-only-secret-with-at-least-32-characters';
+  const server = await serve();
+  try {
+    const response = await request.get(server.base + '/api/v1/journeys/reviews/taj-mahal');
+    expect(response.status()).toBe(200);
+    const review = (await response.json()).reviews[0];
+    expect(review.author).toBe('Fixture explorer');
+    expect(review).not.toHaveProperty('userId'); expect(review).not.toHaveProperty('email'); expect(review).not.toHaveProperty('user');
+    expect(selection.select).not.toHaveProperty('userId'); expect(selection.select).not.toHaveProperty('email');
+    expect(selection.select.user).toEqual({ select: { displayName: true } });
+  } finally {
+    db.review.findMany = original; await server.close();
+    if (savedUrl === undefined) delete process.env.DATABASE_URL; else process.env.DATABASE_URL = savedUrl;
+    if (savedSecret === undefined) delete process.env.AUTH_SECRET; else process.env.AUTH_SECRET = savedSecret;
+  }
+});
 
 test('upstream diagnostics contain the provider host and status without secrets', async ({ request }) => {
   const previous = console.error, messages: unknown[][] = [];
