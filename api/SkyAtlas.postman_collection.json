@@ -263,6 +263,31 @@
           ]
         }
       }
+    },
+    {
+      "name": "Internal alert cron",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-cron-secret",
+            "value": "{{cronSecret}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/internal/cron/alerts",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "internal",
+            "cron",
+            "alerts"
+          ]
+        }
+      }
     }
   ]
 }

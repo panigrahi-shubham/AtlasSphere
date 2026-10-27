@@ -1036,6 +1036,41 @@
           }
         }
       }
+    },
+    "/api/v1/internal/cron/alerts": {
+      "post": {
+        "summary": "Run one scheduled alert check",
+        "parameters": [
+          {
+            "name": "x-cron-secret",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Alert check result"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Cron is not configured"
+          },
+          "409": {
+            "description": "Check already running"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "503": {
+            "description": "Account service or alert check unavailable"
+          }
+        }
+      }
     }
   },
   "components": {

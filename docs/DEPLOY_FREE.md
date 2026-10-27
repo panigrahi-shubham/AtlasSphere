@@ -8,4 +8,10 @@ Changing the connection does not copy existing data. Back up and migrate the exi
 
 The repository's Render build command runs migrations during the build for free instances. `GET /api/v1/health` stays independent of the database; `GET /api/v1/health/db` reports whether a database query succeeded.
 
-The Cloudflare, scheduled alerts and production smoke instructions are not yet implemented.
+## Scheduled alerts
+
+Set a long random `CRON_SECRET` in the Render service environment. Configure an external scheduler that supports custom request headers to send a `POST` to `https://YOUR-RENDER-SERVICE/api/v1/internal/cron/alerts` every 60 minutes with `x-cron-secret` set to that value. Keep the value private. A missing secret disables the route. The server also checks alerts periodically while it is running. These checks do not send push notifications.
+
+For an optional keep-warm monitor, request `GET https://YOUR-RENDER-SERVICE/api/v1/health` every 10 minutes. Check the scheduler provider's current free-plan limits before relying on it. Render's free instance-hour allowance is shared by the workspace: an always-running service can use almost the entire monthly allowance, so don't keep multiple services warm in the same workspace.
+
+The Cloudflare and production smoke instructions are not yet implemented.

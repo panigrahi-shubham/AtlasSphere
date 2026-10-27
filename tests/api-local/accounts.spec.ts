@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { createApp } from '../../api/app.ts';
 import type { Server } from 'node:http';
-const enabled = Boolean(process.env.DATABASE_URL && process.env.AUTH_SECRET && process.env.AUTH_SECRET.length >= 32);
+const enabled = Boolean(process.env.DATABASE_URL && process.env.AUTH_SECRET && process.env.AUTH_SECRET.length >= 32 && process.env.AUTH_SECRET !== 'replace-with-a-random-secret-of-at-least-32-characters');
 async function serve() {
   const app = createApp({ env: 'test', fixtures: true });
   const server = await new Promise<Server>(resolve => { const server = app.listen(0, '127.0.0.1', () => resolve(server)); });

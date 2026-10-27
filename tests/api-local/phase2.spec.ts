@@ -12,6 +12,30 @@ async function serve(options: ApiOptions = {}) {
 }
 const weather = '/api/v1/weather?lat=19.99&lon=73.78';
 
+test('alert cron is hidden, authenticates, prevents overlap and limits calls', async ({ request }) => {
+  const savedSecret = process.env.CRON_SECRET;
+  let started!: () => void, finish!: () => void;
+  const startSignal = new Promise<void>(resolve => { started = resolve; });
+  const finishSignal = new Promise<void>(resolve => { finish = resolve; });
+  delete process.env.CRON_SECRET;
+  const server = await serve({ cronCheck: async () => { started(); await finishSignal; return { checked: 2, created: 1 }; } });
+  try {
+    const url = server.base + '/api/v1/internal/cron/alerts';
+    expect((await request.post(url)).status()).toBe(404);
+    process.env.CRON_SECRET = 'private-test-secret';
+    expect((await request.post(url, { headers: { 'x-cron-secret': 'wrong' } })).status()).toBe(401);
+    const first = request.post(url, { headers: { 'x-cron-secret': 'private-test-secret' } });
+    await startSignal;
+    expect((await request.post(url, { headers: { 'x-cron-secret': 'private-test-secret' } })).status()).toBe(409);
+    finish();
+    expect(await (await first).json()).toEqual({ checked: 2, created: 1 });
+    expect((await request.post(url, { headers: { 'x-cron-secret': 'private-test-secret' } })).status()).toBe(429);
+  } finally {
+    finish(); await server.close();
+    if (savedSecret === undefined) delete process.env.CRON_SECRET; else process.env.CRON_SECRET = savedSecret;
+  }
+});
+
 test('database health reports unavailable without exposing configuration', async ({ request }) => {
   const savedUrl = process.env.DATABASE_URL;
   delete process.env.DATABASE_URL;

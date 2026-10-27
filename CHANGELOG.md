@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add a secret-protected scheduled alert endpoint with overlap protection and rate limiting.
+
 - Add a database health endpoint and support direct migration URLs for hosted PostgreSQL.
 
 - Use the free non-commercial Open-Meteo archive for historical weather when no customer key is configured; cache successful responses.

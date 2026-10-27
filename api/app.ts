@@ -8,6 +8,8 @@ import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { db, waitForDatabaseWarmup } from './database.ts';
+import { checkAlerts, alertsRunning } from './alertWorker.ts';
+import { timingSafeEqual } from 'node:crypto';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const file = (name: string) => path.join(root, name);
@@ -16,7 +18,7 @@ const hourly = 'temperature_2m,weather_code,precipitation_probability,wind_speed
 const daily = 'temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,wind_speed_10m_max,uv_index_max,sunrise,sunset,weather_code';
 type ErrorCode = 'INVALID_INPUT' | 'NOT_FOUND' | 'RATE_LIMITED' | 'UPSTREAM_ERROR' | 'UPSTREAM_TIMEOUT' | 'INVALID_NEWS';
 type Cached = { data: unknown; expires: number };
-export type ApiOptions = { env?: string; fixtures?: boolean; fetcher?: typeof fetch; now?: () => number; newsPath?: string; rateLimit?: number; timeoutMs?: number; historicalApiKey?: string };
+export type ApiOptions = { env?: string; fixtures?: boolean; fetcher?: typeof fetch; now?: () => number; newsPath?: string; rateLimit?: number; timeoutMs?: number; historicalApiKey?: string; cronCheck?: () => Promise<{ checked: number; created: number }> };
 
 export function createApp(options: ApiOptions = {}) {
   const app = express();
@@ -29,6 +31,8 @@ export function createApp(options: ApiOptions = {}) {
   const limit = options.rateLimit ?? 60;
   const timeoutMs = options.timeoutMs ?? 5000;
   const newsPath = options.newsPath ?? file('api/news.json');
+  let cronRunning = false;
+  let lastCronRun = -Infinity;
   function fail(res: Response, status: number, code: ErrorCode, message: string, field?: string) {
     return res.status(status).json({ error: { code, message, ...(field ? { field } : {}) } });
   }
@@ -96,6 +100,19 @@ export function createApp(options: ApiOptions = {}) {
       res.json({ status: 'ok', db: 'ok' });
     } catch { res.json({ status: 'ok', db: 'unavailable' }); }
     finally { if (timer) clearTimeout(timer); }
+  });
+  app.post('/api/v1/internal/cron/alerts', async (req, res) => {
+    const expected = process.env.CRON_SECRET;
+    if (!expected) return res.status(404).json({ error: { message: 'API route not found.' } });
+    const supplied = Buffer.from(req.get('x-cron-secret') || ''), required = Buffer.from(expected);
+    if (supplied.length !== required.length || !timingSafeEqual(supplied, required)) return res.status(401).json({ error: { message: 'Unauthorized.' } });
+    if (cronRunning || alertsRunning()) return res.status(409).json({ error: { message: 'Alert check already running.' } });
+    if (now() - lastCronRun < 60000) return res.status(429).json({ error: { message: 'Try again later.' } });
+    if (!process.env.DATABASE_URL && !options.cronCheck) return res.status(503).json({ error: { message: 'Account service is not configured.' } });
+    lastCronRun = now(); cronRunning = true;
+    try { return res.json(await (options.cronCheck ?? checkAlerts)()); }
+    catch { return res.status(503).json({ error: { message: 'Alert check unavailable.' } }); }
+    finally { cronRunning = false; }
   });
   app.get('/api/v1/weather', async (req, res) => {
     const lat = coordinate(req, res, 'lat', 90); if (lat === null) return;
