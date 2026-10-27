@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Retry database warm-up after each configured backoff delay, including the final delay.
+
 - Cache failed city lookups during an alert pass and apply migrations in order on fresh databases.
 
 - Treat the example authentication secret as unconfigured instead of attempting database queries.
