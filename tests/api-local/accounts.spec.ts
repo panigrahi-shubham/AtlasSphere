@@ -1,7 +1,24 @@
 import { test, expect } from '@playwright/test';
 import { createApp } from '../../api/app.ts';
 import type { Server } from 'node:http';
+import { db } from '../../api/database.ts';
+import { checkAlerts } from '../../api/alertWorker.ts';
 const enabled = Boolean(process.env.DATABASE_URL && process.env.AUTH_SECRET && process.env.AUTH_SECRET.length >= 32 && process.env.AUTH_SECRET !== 'replace-with-a-random-secret-of-at-least-32-characters');
+test('alert worker persists and deduplicates matching notifications in PostgreSQL', async () => {
+  test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
+  const user = await db.user.create({ data: { email: `worker-${crypto.randomUUID()}@example.test`, passwordHash: 'not-a-login' } });
+  try {
+    await db.weatherAlert.create({ data: { userId: user.id, city: 'Delhi', condition: 'temperature-above', threshold: 20 } });
+    const database = { weatherAlert: { findMany: () => db.weatherAlert.findMany({ where: { userId: user.id } }) }, $transaction: (callback: any) => db.$transaction(callback) } as unknown as typeof db;
+    const fetcher: typeof fetch = async input => String(input).includes('geocoding-api')
+      ? Response.json({ results: [{ latitude: 28.6, longitude: 77.2 }] })
+      : Response.json({ current: { temperature_2m: 25 }, hourly: { precipitation_probability: [0] } });
+    const now = () => Date.UTC(2026, 9, 27);
+    expect(await checkAlerts(fetcher, now, () => true, database)).toEqual({ checked: 1, created: 1 });
+    expect(await checkAlerts(fetcher, now, () => true, database)).toEqual({ checked: 1, created: 0 });
+    expect(await db.notification.count({ where: { userId: user.id } })).toBe(1);
+  } finally { await db.user.delete({ where: { id: user.id } }); }
+});
 async function serve() {
   const app = createApp({ env: 'test', fixtures: true });
   const server = await new Promise<Server>(resolve => { const server = app.listen(0, '127.0.0.1', () => resolve(server)); });

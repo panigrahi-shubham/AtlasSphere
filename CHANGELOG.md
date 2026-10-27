@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Cache failed city lookups during an alert pass and apply migrations in order on fresh databases.
+
 - Treat the example authentication secret as unconfigured instead of attempting database queries.
 
 - Announce wake-up responses and retry safe account reads; avoid replaying writes after ambiguous failures.

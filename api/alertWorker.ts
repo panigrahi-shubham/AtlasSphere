@@ -42,7 +42,10 @@ export async function checkAlerts(fetcher: typeof fetch = fetch, now = () => Dat
             created++;
           }
         });
-      } catch { /* Skip this rule and retry on the next scheduled pass. */ }
+      } catch {
+        // Avoid repeatedly requesting a failed city during the same pass.
+        if (!cache.has(rule.city)) cache.set(rule.city, null);
+      }
     }
     return { checked, created };
   } finally { running = false; }

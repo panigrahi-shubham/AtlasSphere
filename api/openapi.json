@@ -1118,7 +1118,8 @@
           "503": {
             "description": "Account service or alert check unavailable"
           }
-        }
+        },
+        "description": "Checks each city once per pass and skips failed provider lookups."
       }
     },
     "/api/v1/account/export": {

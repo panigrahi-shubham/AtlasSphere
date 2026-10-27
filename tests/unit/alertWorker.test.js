@@ -9,6 +9,7 @@ test('alert checks deduplicate, cache cities, skip failures, and respect provide
     { id: 'a', userId: 'u', city: 'Delhi', condition: 'temperature-above', threshold: 20, lastSentAt: null },
     { id: 'b', userId: 'u', city: 'Delhi', condition: 'temperature-above', threshold: 30, lastSentAt: null },
     { id: 'c', userId: 'u', city: 'Unavailable', condition: 'temperature-above', threshold: 20, lastSentAt: null },
+    { id: 'e', userId: 'u', city: 'Unavailable', condition: 'temperature-above', threshold: 30, lastSentAt: null },
     { id: 'd', userId: 'u', city: 'Pune', condition: 'temperature-above', threshold: 20, lastSentAt: null }
   ];
   const notifications = [];
@@ -37,6 +38,7 @@ test('alert checks deduplicate, cache cities, skip failures, and respect provide
     assert.deepEqual(await checkAlerts(fetcher, now, () => true, database), { checked: 3, created: 2 });
     assert.equal(notifications.length, 2);
     assert.equal(calls.filter(url => url.hostname.startsWith('geocoding') && url.searchParams.get('name') === 'Delhi').length, 1);
+    assert.equal(calls.filter(url => url.hostname.startsWith('geocoding') && url.searchParams.get('name') === 'Unavailable').length, 1);
     assert.equal(calls.filter(url => url.hostname === 'api.open-meteo.com').length, 2);
     assert.equal((await checkAlerts(fetcher, now, () => true, database)).created, 0);
     const before = calls.length;

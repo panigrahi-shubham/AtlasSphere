@@ -286,7 +286,8 @@
             "cron",
             "alerts"
           ]
-        }
+        },
+        "description": "One check per city per pass; failed lookups are skipped."
       }
     },
     {
