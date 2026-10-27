@@ -2,7 +2,7 @@
 
 AtlasSphere combines live weather, a country atlas, landmark stories, an interactive globe and GeoGuess. The homepage adapts the supplied design with bundled photos and working feature links. The concept's Explorer Lab missions are not implemented.
 
-[Live website](https://atlassphere.vercel.app) · [GitHub repository](https://github.com/panigrahi-shubham/SkyAtlas)
+[Live website](https://atlassphere.vercel.app) · [GitHub repository](https://github.com/panigrahi-shubham/AtlasSphere)
 
 ## What's new
 

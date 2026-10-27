@@ -4,6 +4,8 @@
 
 **Production is live:** [https://atlassphere.vercel.app](https://atlassphere.vercel.app). Vercel hosts the website/API; Neon hosts PostgreSQL. The deployed application source is commit `242210b`. Subsequent launch documentation and the smoke-test default URL do not change the running application.
 
+The owner subsequently requested the GitHub repository title match the product. On 27 October 2026, the repository was renamed to [panigrahi-shubham/AtlasSphere](https://github.com/panigrahi-shubham/AtlasSphere), and this checkout's `origin` URL was updated. [PR #1](https://github.com/panigrahi-shubham/AtlasSphere/pull/1) remains open. The local folder and application compatibility identifiers retain their existing names; historical reports describe their original snapshot.
+
 ## Production publication completed
 
 After the owner saved the Neon URLs and said “Neon done”:
