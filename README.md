@@ -1,6 +1,6 @@
-# SkyAtlas — Weather and wonders of the world
+# AtlasSphere — Weather and wonders of the world
 
-SkyAtlas combines live weather, a country atlas, landmark stories, an interactive globe and GeoGuess. The homepage adapts the supplied design with bundled photos and working feature links. The concept's Explorer Lab missions are not implemented.
+AtlasSphere combines live weather, a country atlas, landmark stories, an interactive globe and GeoGuess. The homepage adapts the supplied design with bundled photos and working feature links. The concept's Explorer Lab missions are not implemented.
 
 ## Run locally
 
@@ -90,7 +90,7 @@ This paragraph records the earlier Phase 1 release. Phase 2 added the backend de
 
 ---
 
-# EarthScope v2.0 — release candidate
+# AtlasSphere v2.0 — release candidate
 
 A geography and weather explorer built with HTML, CSS, JavaScript modules and Vite.
 This version includes the planned v1.1, v1.2, v1.3 and v2.0 features. Existing city
@@ -98,7 +98,7 @@ search, current weather, hourly forecasts, units, favorites and practice Bug Mod
 
 ## Start on Windows
 
-Use Node.js 22.12 or later. From `C:\Projects2\earthscope`:
+Use Node.js 24. From `C:\Projects2\SkyAtlas`:
 
 ```powershell
 npm install

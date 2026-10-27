@@ -96,7 +96,7 @@ export function createJourneys(env: string, fetcher: typeof fetch = fetch, fixtu
   router.get('/reviews/:landmarkId', async (req, res) => {
     const landmarkId = String(req.params.landmarkId || '').slice(0, 100);
     const reviews = await db.review.findMany({ where: { landmarkId }, orderBy: { createdAt: 'desc' }, select: { id: true, rating: true, body: true, createdAt: true, imageType: true, user: { select: { displayName: true } } } });
-    res.json({ reviews: reviews.map(({ id, imageType, user, ...review }) => ({ ...review, author: user.displayName || 'SkyAtlas explorer', imageUrl: imageType ? `/api/v1/journeys/reviews/image/${id}` : null })) });
+    res.json({ reviews: reviews.map(({ id, imageType, user, ...review }) => ({ ...review, author: user.displayName || 'AtlasSphere explorer', imageUrl: imageType ? `/api/v1/journeys/reviews/image/${id}` : null })) });
   });
   router.put('/reviews/:landmarkId', async (req, res) => {
     const id = guard(req, res); if (!id) return;

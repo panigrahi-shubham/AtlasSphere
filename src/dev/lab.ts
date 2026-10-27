@@ -20,7 +20,7 @@ $('open-shadow').shadowRoot!.querySelector('button')!.addEventListener('click', 
 const closed = $('closed-shadow');
 closed.addEventListener('click', () => { $('shadow-result').textContent = 'Closed shadow clicked'; });
 $('lab-upload').addEventListener('change', () => { $('upload-result').textContent = `Selected ${($('lab-upload') as HTMLInputElement).files?.[0]?.name || 'no file'}`; });
-$('lab-download').addEventListener('click', () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['SkyAtlas Test Lab\n'], { type: 'text/plain' })); a.download = 'skyatlas-lab.txt'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); });
+$('lab-download').addEventListener('click', () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['AtlasSphere Test Lab\n'], { type: 'text/plain' })); a.download = 'skyatlas-lab.txt'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); });
 $('drag-item').addEventListener('dragstart', e => (e as DragEvent).dataTransfer!.setData('text/plain', 'card'));
 $('drop-zone').addEventListener('dragover', e => e.preventDefault());
 $('drop-zone').addEventListener('drop', e => { e.preventDefault(); $('drop-zone').textContent = (e as DragEvent).dataTransfer!.getData('text/plain') === 'card' ? 'Card dropped' : 'Unknown item'; });

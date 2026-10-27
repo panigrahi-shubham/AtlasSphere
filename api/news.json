@@ -2,6 +2,6 @@
   "lastUpdated": "2026-10-26T00:00:00Z",
   "items": [
     { "headline": "Sample: understanding monsoon forecasts", "snippet": "Demonstration news entry for testing headlines, source links and timestamps. Follow the source to explore weather information; this is not a current news report.", "source": "India Meteorological Department", "url": "https://mausam.imd.gov.in/", "publishedAt": "2026-10-25T08:00:00Z" },
-    { "headline": "Sample: how weather forecasts describe uncertainty", "snippet": "Demonstration content for the EarthScope QA portfolio. This is placeholder content until the scheduled RSS update succeeds.", "source": "World Meteorological Organization", "url": "https://wmo.int/", "publishedAt": "2026-10-25T10:00:00Z" }
+    { "headline": "Sample: how weather forecasts describe uncertainty", "snippet": "Demonstration content for the AtlasSphere QA portfolio. This is placeholder content until the scheduled RSS update succeeds.", "source": "World Meteorological Organization", "url": "https://wmo.int/", "publishedAt": "2026-10-25T10:00:00Z" }
   ]
 }

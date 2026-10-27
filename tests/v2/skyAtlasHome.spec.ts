@@ -3,8 +3,8 @@ import { currentWeatherFixture } from '../fixtures/currentWeather.js';
 
 test.beforeEach(async ({ page }) => { await page.goto('/'); });
 
-test('SkyAtlas homepage connects every primary card to a real feature', async ({ page }) => {
-  await expect(page).toHaveTitle(/SkyAtlas/);
+test('AtlasSphere homepage connects every primary card to a real feature', async ({ page }) => {
+  await expect(page).toHaveTitle(/AtlasSphere/);
   await expect(page.getByRole('heading', { name: /Weather and wonders/ })).toBeVisible();
   await expect(page.getByTestId('city-search-input')).toBeVisible();
   await expect(page.getByTestId('home-geoguess-play')).toHaveAttribute('href', '/geoguess');
@@ -29,7 +29,7 @@ test('weather preview changes from invitation to real selected city', async ({ p
   await expect(page.locator('#home-weather-empty')).toBeVisible();
 });
 
-test('mobile SkyAtlas home keeps controls and imagery within viewport', async ({ page }) => {
+test('mobile AtlasSphere home keeps controls and imagery within viewport', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 800 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await expect(page.getByTestId('menu-toggle')).toBeVisible();

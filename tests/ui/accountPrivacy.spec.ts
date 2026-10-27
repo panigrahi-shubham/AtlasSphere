@@ -29,7 +29,7 @@ test('a waking server is announced and a safe read retries successfully', async 
   const read = page.evaluate(async () => (await import('/src/services/account.ts')).account.request('/account/export'));
   try {
     await expect(page.getByTestId('server-wake-status')).toBeVisible();
-    await expect(page.getByTestId('server-wake-status')).toContainText('Waking up the SkyAtlas server');
+    await expect(page.getByTestId('server-wake-status')).toContainText('Waking up the AtlasSphere server');
   } finally { release(); }
   expect((await read).account.email).toBe('test@example.test');
   expect(calls).toBe(2);

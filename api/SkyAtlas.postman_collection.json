@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "SkyAtlas API Phase 2",
+    "name": "AtlasSphere API Phase 2",
     "description": "Local fixture mode: APP_ENV=test FIXTURES=1 PORT=3000 npm start. Run the collection against http://127.0.0.1:3000. Pages checks database readiness before forwarding writes. On a proxy 503, retry a write only when X-SkyAtlas-Retry-Safe is 1; a 0 means the write may already have completed. Browser weather/city fallback is limited to HTTP 502/503/504; Postman requests exercise the server directly.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -318,7 +318,7 @@
         },
         "body": {
           "mode": "raw",
-          "raw": "{\"displayName\": \"SkyAtlas explorer\"}"
+          "raw": "{\"displayName\": \"AtlasSphere explorer\"}"
         }
       }
     },

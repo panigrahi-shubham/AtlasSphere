@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Use AtlasSphere for visible product branding, page titles, review author fallback and GeoGuess share UI while preserving compatibility identifiers and service URLs.
+
 - Retry city lookup and forecasts once against public Open-Meteo after HTTP 502/503/504, preserving the original error and avoiding retries on rate limits, aborts or client timeouts. Add sanitized upstream diagnostics.
 
 - Check database readiness before forwarding Pages mutations, and retry only requests explicitly marked as unforwarded; preserve refresh-token replay protection.

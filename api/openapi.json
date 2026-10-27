@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "SkyAtlas API",
+    "title": "AtlasSphere API",
     "version": "2.0.0",
     "description": "Non-commercial weather and geography API. Weather data by Open-Meteo.com."
   },

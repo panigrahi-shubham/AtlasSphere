@@ -67,6 +67,7 @@ test('leaderboard persists, share link copies, and clear asks confirmation', asy
   await page.getByTestId('gg-name').fill('Rupesh'); await page.getByTestId('gg-save').click();
   await page.getByTestId('gg-share').click();
   await expect(page.locator('#gg-share-status')).toContainText(/Link copied|Copy this link:/);
+  await expect(page.locator('#gg-share-status')).toContainText('AtlasSphere GeoGuess');
   if (await page.locator('#gg-share-status input[aria-label="Share link"]').count()) {
     await expect(page.locator('#gg-share-status')).toContainText('Copy this link:');
     await expect(page.locator('#gg-share-status input[aria-label="Share link"]')).toHaveValue(/seed=143/);

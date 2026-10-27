@@ -79,7 +79,7 @@ async function reviews() {
     const list = $('#review-list'); list.replaceChildren();
     const sorted = data.reviews.sort((a: any, b: any) => ($('#review-sort') as HTMLSelectElement).value === 'rating' ? b.rating - a.rating : Date.parse(b.createdAt) - Date.parse(a.createdAt));
     for (const review of sorted) {
-      item(list, `${review.rating}/5 — ${review.author || 'SkyAtlas explorer'}: ${review.body || 'No written comment'}`);
+      item(list, `${review.rating}/5 — ${review.author || 'AtlasSphere explorer'}: ${review.body || 'No written comment'}`);
       if (review.imageUrl) { const image = document.createElement('img'); image.src = review.imageUrl; image.loading = 'lazy'; image.alt = 'Photo submitted with landmark review'; list.lastElementChild?.append(image); }
     }
   } catch (error: any) { show('#review-status', error.message); }

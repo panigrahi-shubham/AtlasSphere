@@ -1,4 +1,4 @@
-# EarthScope test guide — Milestone 6
+# AtlasSphere test guide — Milestone 6
 
 The suites exercise behavior at three levels. They do not claim full v1.0 release
 acceptance or complete accessibility coverage. Practice and production suites are

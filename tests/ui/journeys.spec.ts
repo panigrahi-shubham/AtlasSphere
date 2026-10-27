@@ -70,7 +70,7 @@ test('trip, alert, and review controls complete their signed-in UI workflows', a
     const request = route.request(), method = request.method();
     if (method === 'GET') return route.fulfill({ json: { reviews } });
     if (method === 'PUT') {
-      const input = request.postDataJSON(); reviews.splice(0, reviews.length, { author: 'SkyAtlas explorer', ...input, createdAt: new Date().toISOString(), imageUrl: null });
+      const input = request.postDataJSON(); reviews.splice(0, reviews.length, { author: 'AtlasSphere explorer', ...input, createdAt: new Date().toISOString(), imageUrl: null });
       return route.fulfill({ json: { review: reviews[0] } });
     }
     reviews.length = 0; return route.fulfill({ status: 204, body: '' });
@@ -118,7 +118,7 @@ test('trip, alert, and review controls complete their signed-in UI workflows', a
   await page.getByTestId('review-save').click();
   await expect(page.locator('#review-status')).toHaveText('Review saved.');
   expect(reviews[0].image).toMatch(/^data:image\/jpeg;base64,/);
-  await expect(page.getByTestId('review-list')).toContainText('5/5 — SkyAtlas explorer: A wonderful place in the Andes.');
+  await expect(page.getByTestId('review-list')).toContainText('5/5 — AtlasSphere explorer: A wonderful place in the Andes.');
   await page.getByRole('button', { name: 'Delete my review' }).click();
   await expect(page.getByTestId('review-list').locator('li')).toHaveCount(0);
 });

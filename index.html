@@ -3,22 +3,22 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Explore weather and geography with SkyAtlas, a geography and weather exploration project.">
+  <meta name="description" content="Explore weather and geography with AtlasSphere, a geography and weather exploration project.">
   <script>
     (() => { let theme; try { theme = JSON.parse(localStorage.getItem('earthscope:theme:v1')); } catch {} document.documentElement.dataset.theme = theme === 'light' || theme === 'dark' ? theme : matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'; })();
   </script>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="/src/styles/main.css">
   <link rel="stylesheet" href="/src/styles/skyatlas.css">
-  <title>SkyAtlas — Weather and wonders of the world</title>
+  <title>AtlasSphere — Weather and wonders of the world</title>
 </head>
 <body class="sky-home">
   <a class="skip-link" data-testid="skip-to-search" href="#city">Skip to city search</a>
   <main>
     <p id="connection-status" data-testid="connection-status" class="connection-status" role="status" hidden></p>
     <header class="site-header">
-      <a class="brand" href="#page-title" aria-label="SkyAtlas home" data-testid="brand-home"><svg class="sky-logo" viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="13"/><path d="M2 15h26M15 2c6 6 6 20 0 26M15 2c-6 6-6 20 0 26"/><circle class="sun" cx="22" cy="8" r="4"/></svg>Sky<span>Atlas</span></a>
-      <nav id="explore-nav" class="explore-nav" data-open="false" data-testid="main-navigation" aria-label="Explore SkyAtlas">
+      <a class="brand" href="#page-title" aria-label="AtlasSphere home" data-testid="brand-home"><svg class="sky-logo" viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="13"/><path d="M2 15h26M15 2c6 6 6 20 0 26M15 2c-6 6-6 20 0 26"/><circle class="sun" cx="22" cy="8" r="4"/></svg>Atlas<span>Sphere</span></a>
+      <nav id="explore-nav" class="explore-nav" data-open="false" data-testid="main-navigation" aria-label="Explore AtlasSphere">
         <a href="#weather-home" data-testid="nav-weather">Weather</a><a href="#atlas-section" data-testid="nav-atlas">World Atlas</a><a href="/geoguess" data-testid="nav-geoguess">GeoGuess</a><a href="/journeys" data-testid="nav-journeys">Journeys</a><a href="#favorites-heading" data-testid="nav-favorites">Favorites</a><a href="#account-section" data-testid="nav-account">Account</a>
       </nav>
       <div class="header-actions">    <div class="unit-panel">
@@ -54,9 +54,9 @@
       </div>
     </section>
     <section id="account-section" class="sky-section account-card" aria-labelledby="account-heading" data-testid="account-section">
-      <h2 id="account-heading">Your SkyAtlas account</h2>
+      <h2 id="account-heading">Your AtlasSphere account</h2>
       <p>Save your favorite places across devices. Browsing without an account still works.</p>
-      <p id="account-status" data-testid="account-status" role="status" aria-live="polite"></p><p id="server-wake-status" data-testid="server-wake-status" role="status" aria-live="polite" hidden><span class="wake-spinner" aria-hidden="true">◌</span> Waking up the SkyAtlas server…</p>
+      <p id="account-status" data-testid="account-status" role="status" aria-live="polite"></p><p id="server-wake-status" data-testid="server-wake-status" role="status" aria-live="polite" hidden><span class="wake-spinner" aria-hidden="true">◌</span> Waking up the AtlasSphere server…</p>
       <div id="account-info" hidden><p>Signed in as <strong id="account-email-display" data-testid="account-email-display"></strong></p><button type="button" id="account-signout" data-testid="account-signout">Sign out</button><form id="profile-form"><label for="profile-name">Review display name</label><input id="profile-name" maxlength="40" data-testid="profile-name"><button type="submit" data-testid="profile-save">Save display name</button></form><button type="button" id="account-export" data-testid="account-export">Download my data</button><button type="button" id="account-delete" data-testid="account-delete">Delete account</button><dialog id="delete-account-dialog" aria-labelledby="delete-account-title" data-testid="delete-account-dialog"><h3 id="delete-account-title">Delete your account?</h3><p>This permanently removes your account and saved data.</p><form id="delete-account-form"><label for="delete-account-password">Current password</label><input id="delete-account-password" type="password" autocomplete="current-password" required data-testid="delete-account-password"><p id="delete-account-status" role="status"></p><button type="submit" data-testid="delete-account-confirm">Delete account</button><button type="button" id="delete-account-cancel" data-testid="delete-account-cancel">Cancel</button></form></dialog></div>
       <form id="account-form" data-testid="account-form"><label for="account-email">Email</label><input id="account-email" type="email" autocomplete="email" required data-testid="account-email"><label for="account-password">Password</label><input id="account-password" type="password" autocomplete="current-password" minlength="8" required data-testid="account-password"><button type="submit" id="account-submit" data-testid="account-submit">Sign in</button><button type="button" id="account-mode" data-testid="account-mode">Create an account</button><button type="button" id="reset-request" data-testid="reset-request">Send reset code</button></form>
       <form id="reset-form" data-testid="reset-form"><h3>Reset your password</h3><p>Request a code above, then enter it here.</p><label for="reset-code">Six-digit code</label><input id="reset-code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required data-testid="reset-code"><label for="reset-password">New password</label><input id="reset-password" type="password" minlength="8" required data-testid="reset-password"><button type="submit" data-testid="reset-submit">Update password</button></form>
@@ -229,7 +229,7 @@
       <ul id="news-list" data-testid="news-list" class="news-list" aria-label="Sample weather news"></ul>
       <button id="news-retry" data-testid="news-retry" class="secondary-button" type="button">Reload sample news</button>
     </section>
-    <footer><p><a data-testid="about-link" href="/about.html">About SkyAtlas</a></p>Weather data by <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo.com</a>. Geocoding data based on <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">GeoNames</a>.<br>Internet required for city search and weather.</footer>
+    <footer><p><a data-testid="about-link" href="/about.html">About AtlasSphere</a></p>Weather data by <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo.com</a>. Geocoding data based on <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">GeoNames</a>.<br>Internet required for city search and weather.</footer>
     <noscript><p>Please enable JavaScript to search for cities.</p></noscript>
   </main>
   <script type="module" src="/src/main.js"></script>
