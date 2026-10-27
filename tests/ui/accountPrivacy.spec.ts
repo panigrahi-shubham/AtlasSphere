@@ -48,3 +48,20 @@ test('a failed account write is not replayed after an ambiguous wake-up error', 
   expect(message).toContain('Waking up');
   expect(calls).toBe(1);
 });
+
+test('a waking server stops retrying a read after three retries', async ({ page }) => {
+  await page.route('**/api/v1/auth/refresh', route => route.fulfill({ status: 401, json: { error: { message: 'Sign in' } } }));
+  let calls = 0;
+  await page.route('**/api/v1/account/export', route => {
+    calls++;
+    return route.fulfill({ status: 503, headers: { 'Retry-After': '0' }, json: { error: { message: 'Waking' } } });
+  });
+  await page.goto('/');
+  const message = await page.evaluate(async () => {
+    try { await (await import('/src/services/account.ts')).account.request('/account/export'); return ''; }
+    catch (error) { return (error as Error).message; }
+  });
+  expect(calls).toBe(4);
+  expect(message).toContain('Waking up');
+  await expect(page.getByTestId('server-wake-status')).toBeHidden();
+});
