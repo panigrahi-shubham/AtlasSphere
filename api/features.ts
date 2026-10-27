@@ -3,6 +3,7 @@ import { db } from './database.ts';
 import bcrypt from 'bcryptjs';
 import { createHmac, createHash, randomBytes, randomInt, timingSafeEqual } from 'node:crypto';
 import { isAllowedOrigin } from './origin.ts';
+import { isAccountConfigured } from './accountConfig.ts';
 
 const sha = (value: string) => createHash('sha256').update(value).digest('hex');
 const secret = () => {
@@ -71,7 +72,7 @@ const location = (x: any) => {
 export function createFeatures(env: string) {
   const api = express.Router();
   api.use(['/auth', '/account', '/favorites'], (req, res, next) => {
-    if (!process.env.DATABASE_URL || !process.env.AUTH_SECRET || process.env.AUTH_SECRET.length < 32) return unavailable(res);
+    if (!isAccountConfigured()) return unavailable(res);
     if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method) && !isAllowedOrigin(req)) return reply(res, 403, 'Request origin is not allowed.');
     next();
   });

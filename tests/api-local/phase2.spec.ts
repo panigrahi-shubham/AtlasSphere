@@ -12,6 +12,22 @@ async function serve(options: ApiOptions = {}) {
 }
 const weather = '/api/v1/weather?lat=19.99&lon=73.78';
 
+test('example account credentials report unconfigured instead of querying a database', async ({ request }) => {
+  const savedUrl = process.env.DATABASE_URL, savedSecret = process.env.AUTH_SECRET;
+  process.env.DATABASE_URL = 'postgresql://example.invalid/skyatlas';
+  process.env.AUTH_SECRET = 'replace-with-a-random-secret-of-at-least-32-characters';
+  const server = await serve();
+  try {
+    const response = await request.get(server.base + '/api/v1/journeys/reviews/taj-mahal');
+    expect(response.status()).toBe(503);
+    expect((await response.json()).error.message).toBe('Account service is not configured.');
+  } finally {
+    await server.close();
+    if (savedUrl === undefined) delete process.env.DATABASE_URL; else process.env.DATABASE_URL = savedUrl;
+    if (savedSecret === undefined) delete process.env.AUTH_SECRET; else process.env.AUTH_SECRET = savedSecret;
+  }
+});
+
 test('configured Pages origin is accepted and other origins are rejected', async ({ request }) => {
   const previous = process.env.ALLOWED_ORIGINS;
   const previousDb = process.env.DATABASE_URL;

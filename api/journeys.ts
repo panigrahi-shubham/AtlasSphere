@@ -2,6 +2,7 @@ import express, { type Request, type Response } from 'express';
 import { db } from './database.ts';
 import { reserveOpenMeteoCall } from './providerBudget.ts';
 import { isAllowedOrigin } from './origin.ts';
+import { isAccountConfigured } from './accountConfig.ts';
 const error = (res: Response, code: number, message: string) => res.status(code).json({ error: { message } });
 const dateOnly = (value: unknown) => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(`${value}T00:00:00Z`)) && new Date(`${value}T00:00:00Z`).toISOString().slice(0, 10) === value;
 const day = 86400000;
@@ -54,7 +55,7 @@ export function createJourneys(env: string, fetcher: typeof fetch = fetch, fixtu
       } finally { clearTimeout(timer); }
     } catch { error(res, 502, 'Historical weather is unavailable.'); }
   });
-  router.use((req, res, next) => { if (!process.env.DATABASE_URL || !process.env.AUTH_SECRET) return error(res, 503, 'Account service is not configured.'); next(); });
+  router.use((req, res, next) => { if (!isAccountConfigured()) return error(res, 503, 'Account service is not configured.'); next(); });
   router.get('/trips', async (req, res) => { const id = guard(req, res); if (id) res.json({ trips: await db.trip.findMany({ where: { userId: id }, orderBy: { startDate: 'asc' } }) }); });
   router.post('/trips', async (req, res) => {
     const id = guard(req, res); if (!id) return;
