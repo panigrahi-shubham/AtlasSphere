@@ -8,7 +8,7 @@ import { fetchNews, parseNews } from '../../scripts/fetch-news.ts';
 async function serve(options: ApiOptions = {}) {
   const app = createApp({ env: 'test', fixtures: true, ...options });
   const server = await new Promise<Server>(resolve => { const server = app.listen(0, '127.0.0.1', () => resolve(server)); });
-  return { base: `http://127.0.0.1:${(server.address() as { port: number }).port}`, close: () => new Promise<void>(resolve => server.close(() => resolve())) };
+  return { app, base: `http://127.0.0.1:${(server.address() as { port: number }).port}`, close: () => new Promise<void>(resolve => server.close(() => resolve())) };
 }
 const weather = '/api/v1/weather?lat=19.99&lon=73.78';
 
@@ -55,7 +55,10 @@ test('trusted proxy hop count separates client rate limits', async ({ request })
   process.env.TRUST_PROXY_HOPS = '2';
   process.env.PROXY_SHARED_SECRET = 'proxy-test-secret';
   const server = await serve({ rateLimit: 1 });
+  server.app.get('/client-ip', (req, res) => res.json({ ip: req.ip }));
   try {
+    const client = await request.get(server.base + '/client-ip', { headers: { 'x-forwarded-for': '203.0.113.10, 192.0.2.10', 'x-skyatlas-proxy-secret': 'proxy-test-secret' } });
+    expect((await client.json()).ip).toBe('203.0.113.10');
     const path = server.base + '/api/v1/health';
     expect((await request.get(path, { headers: { 'x-forwarded-for': '203.0.113.10, 192.0.2.10', 'x-skyatlas-proxy-secret': 'proxy-test-secret' } })).status()).toBe(200);
     expect((await request.get(path, { headers: { 'x-forwarded-for': '203.0.113.11, 192.0.2.10', 'x-skyatlas-proxy-secret': 'proxy-test-secret' } })).status()).toBe(200);

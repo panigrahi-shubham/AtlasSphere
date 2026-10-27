@@ -107,6 +107,7 @@ export function createApp(options: ApiOptions = {}) {
   }
   app.get('/api/v1/health', (_req, res) => res.json({ status: 'ok', service: 'skyatlas-api', time: new Date(now()).toISOString() }));
   app.get('/api/v1/health/db', async (_req, res) => {
+    res.set('Cache-Control', 'no-store');
     let timer: ReturnType<typeof setTimeout> | undefined;
     try {
       if (!process.env.DATABASE_URL) throw new Error('Database unavailable');

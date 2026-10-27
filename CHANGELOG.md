@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Check database readiness before forwarding Pages mutations, and retry only requests explicitly marked as unforwarded; preserve refresh-token replay protection.
+
 - Retry database warm-up after each configured backoff delay, including the final delay.
 
 - Cache failed city lookups during an alert pass and apply migrations in order on fresh databases.

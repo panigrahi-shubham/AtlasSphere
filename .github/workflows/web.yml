@@ -38,6 +38,14 @@ jobs:
       - run: npm run check:syntax && npm run typecheck:api && npm run build && npm test
       - run: npx playwright install --with-deps chromium
       - run: npm run test:api:local
+      - name: Persistence smoke against the test database
+        run: npm run test:smoke:prod
+        env:
+          SKYATLAS_SMOKE_LOCAL: '1'
+          SKYATLAS_URL: http://127.0.0.1:31423
+          PORT: '31423'
+      - name: Account retry, privacy and journeys browser checks
+        run: npx playwright test --project=ui tests/ui/accountPrivacy.spec.ts tests/ui/journeys.spec.ts
       - run: npm run test:smoke
       - run: npm run test:a11y
       - run: npm run test:bugs

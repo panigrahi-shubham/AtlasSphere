@@ -17,7 +17,9 @@ export const account = {
       for (let attempt = 0; ; attempt++) {
         const response = await fetch(`/api/v1${path}`, { ...options, headers, credentials: 'same-origin' });
         if (response.status === 503 && response.headers.has('Retry-After')) {
-          if ((options.method || 'GET').toUpperCase() !== 'GET' || attempt >= 3) throw new Error('Waking up the SkyAtlas server. Try again in a moment.');
+          const safe = (options.method || 'GET').toUpperCase() === 'GET' || response.headers.get('X-SkyAtlas-Retry-Safe') === '1';
+          if (!safe) throw new Error('The server response was interrupted. Check whether your change was saved before trying again.');
+          if (attempt >= 3) throw new Error('Waking up the SkyAtlas server. Try again in a moment.');
           if (!waking) { waking = true; wakingRequests++; showWakeStatus(); }
           const seconds = Number(response.headers.get('Retry-After'));
           await new Promise(resolve => setTimeout(resolve, (Number.isFinite(seconds) ? Math.max(0, Math.min(seconds, 20)) : 2) * 1000));

@@ -43,6 +43,9 @@
                 }
               }
             }
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         }
       }
@@ -170,6 +173,9 @@
                 }
               }
             }
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         }
       }
@@ -268,6 +274,9 @@
                 }
               }
             }
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         }
       }
@@ -314,6 +323,9 @@
                 }
               }
             }
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         }
       }
@@ -332,7 +344,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "requestBody": {
@@ -361,7 +373,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "requestBody": {
@@ -390,7 +402,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "requestBody": {
@@ -419,7 +431,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "security": [
@@ -453,7 +465,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "requestBody": {
@@ -482,7 +494,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "requestBody": {
@@ -511,7 +523,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "security": [
@@ -544,7 +556,7 @@
             "description": "Too many attempts"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "requestBody": {
@@ -582,7 +594,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "security": [
@@ -616,7 +628,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "security": [
@@ -638,7 +650,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "security": [
@@ -670,7 +682,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "security": [
@@ -704,7 +716,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "security": [
@@ -738,7 +750,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "security": [
@@ -763,6 +775,9 @@
           },
           "502": {
             "description": "Historical weather unavailable"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "description": "Uses the free non-commercial archive, or the customer archive if configured. Successful responses are cached for one day."
@@ -782,7 +797,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "security": [
@@ -804,7 +819,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "security": [
@@ -838,7 +853,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "security": [
@@ -870,7 +885,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "security": [
@@ -894,7 +909,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "security": [
@@ -916,7 +931,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "security": [
@@ -950,7 +965,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "security": [
@@ -982,7 +997,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "security": [
@@ -1006,7 +1021,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "description": "Public reviews contain a display name and do not include user IDs."
@@ -1024,7 +1039,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "requestBody": {
@@ -1052,7 +1067,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         }
       }
@@ -1071,7 +1086,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         }
       }
@@ -1081,7 +1096,46 @@
         "summary": "Check database availability",
         "responses": {
           "200": {
-            "description": "Database is ok or unavailable; no internal details"
+            "description": "Database readiness; health results are not cached.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "db"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    },
+                    "db": {
+                      "type": "string",
+                      "enum": [
+                        "ok",
+                        "unavailable"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         }
       }
@@ -1116,7 +1170,7 @@
             "description": "Rate limited"
           },
           "503": {
-            "description": "Account service or alert check unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "description": "Checks each city once per pass and skips failed provider lookups."
@@ -1138,7 +1192,7 @@
             "description": "Authentication required"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         }
       }
@@ -1168,7 +1222,7 @@
             "description": "Too many requests"
           },
           "503": {
-            "description": "Service unavailable"
+            "$ref": "#/components/responses/ServiceUnavailable"
           }
         },
         "requestBody": {
@@ -1381,6 +1435,52 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT"
+      }
+    },
+    "responses": {
+      "ServiceUnavailable": {
+        "description": "Service is unconfigured or unavailable. The Pages proxy also uses this response while waking the server; its optional retry headers distinguish unforwarded mutations from uncertain writes.",
+        "headers": {
+          "Retry-After": {
+            "description": "Seconds before retrying a wake-up response.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "X-SkyAtlas-Retry-Safe": {
+            "description": "Pages proxy only: 1 means a mutation was not forwarded and may be retried; 0 means its result is uncertain. Never automatically replay an uncertain mutation.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "0",
+                "1"
+              ]
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "error"
+              ],
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "required": [
+                    "message"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
