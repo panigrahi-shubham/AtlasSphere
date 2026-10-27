@@ -1,4 +1,5 @@
 import { test, expect } from '../support/uiTest';
+import AxeBuilder from '@axe-core/playwright';
 
 test('account deletion asks for a password and supports keyboard cancellation', async ({ page }) => {
   await page.route('**/api/v1/**', route => route.fulfill({ json: { favorites: [] } }));
@@ -8,6 +9,8 @@ test('account deletion asks for a password and supports keyboard cancellation', 
   await page.getByTestId('account-delete').click();
   await expect(page.getByTestId('delete-account-dialog')).toBeVisible();
   await expect(page.getByLabel('Current password')).toBeVisible();
+  const accessibility = await new AxeBuilder({ page }).include('#delete-account-dialog').withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
+  expect(accessibility.violations.filter(item => ['serious', 'critical'].includes(item.impact || ''))).toEqual([]);
   await page.keyboard.press('Escape');
   await expect(page.getByTestId('delete-account-dialog')).not.toBeVisible();
   await expect(page.getByTestId('account-delete')).toBeFocused();
