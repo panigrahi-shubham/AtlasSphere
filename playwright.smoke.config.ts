@@ -1,6 +1,6 @@
 import { defineConfig } from '@playwright/test';
 
-const baseURL = process.env.SKYATLAS_URL || 'https://skyatlas-9mae.onrender.com';
+const baseURL = process.env.SKYATLAS_URL || 'https://atlassphere.vercel.app';
 export default defineConfig({
   testDir: './tests/smoke', workers: 1, timeout: 150000, retries: 0,
   reporter: [['list'], ['html', { outputFolder: 'playwright-report/smoke-prod', open: 'never' }]],

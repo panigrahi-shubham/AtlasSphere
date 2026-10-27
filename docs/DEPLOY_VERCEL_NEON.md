@@ -2,6 +2,8 @@
 
 This deployment uses Vercel for the built website and existing Express API, and Neon for PostgreSQL. It has no Render dependency. The owner selected a fresh, empty Neon database on 27 October 2026; this setup creates the application tables there and does not copy or delete data from any old service.
 
+Production is live at [atlassphere.vercel.app](https://atlassphere.vercel.app). The two existing migrations have been applied, and production verification passed. See [launch status](VERCEL_PUBLISH_STATUS.md).
+
 ## Required account steps
 
 1. Use a Vercel Hobby account for this non-commercial portfolio. Run `npx --yes vercel@65.4.0 login` and finish the device authorization, including the final authorization screen. Merely signing into the dashboard does not authenticate the CLI.
@@ -42,12 +44,14 @@ Static pages and assets are served from the build output. `/journeys` and `/geog
 
 ## Automatic alert checks
 
-A serverless deployment does not keep the old three-hour timer alive. In the owner's existing cron-job.org account, configure a job:
+A serverless deployment does not keep the old three-hour timer alive. The owner chose to create this job manually. In the existing cron-job.org account, click **Create cronjob** and configure:
 
-- URL: the deployed site's `/api/v1/internal/cron/alerts` route.
+- Title: `AtlasSphere alert checks`.
+- URL: `https://atlassphere.vercel.app/api/v1/internal/cron/alerts`.
 - Method: **POST**.
-- Header: `x-cron-secret`, value matching the private Vercel `CRON_SECRET`.
-- Schedule: once an hour, as in the earlier free-hosting setup. Verify a successful execution in its history.
+- Header: `x-cron-secret`, value matching the private Vercel `CRON_SECRET`. Copy it from local `.env.production.local`; do not paste it into chat or a public URL.
+- Schedule: every three hours. For a custom cron schedule, minute `17`, hours `0,3,6,9,12,15,18,21`, every day/month/weekday. Choose timezone `Asia/Kolkata` if offered.
+- Enable and save the job. Use its test action and check for HTTP **200** with numeric `checked` and `created` fields in the response. Zero counts are normal when there are no rules or matches. If a test immediately follows another successful run, the endpoint can return **429** until its one-minute cooldown has passed.
 
 No keep-warm job is needed for correctness. Alerts are in-app notifications, not push notifications. Password reset also requires the existing optional server-side email-provider configuration before it can deliver mail publicly.
 
@@ -63,6 +67,6 @@ On 27 October 2026, before account provisioning:
 - `npm run test:accounts:local`: all 25 tests reported passed with a disposable local PostgreSQL database, including the six account tests previously skipped at Gate 2. The wrapper then hung during Windows teardown and was interrupted; the command did not exit successfully. Afterwards the local test port was no longer listening. Ignored local cluster files were retained. This is not a clean pass of the wrapper command.
 - A local HTTP check imported the new entry point with stray test environment flags and verified ten routes, production-only behavior and the AtlasSphere homepage. This checks the adapter locally, not Vercel's hosted routing/build.
 
-The Vercel preview cloud build and eight hosted route checks subsequently passed; its API health also returned 200. See [VERCEL_PUBLISH_STATUS.md](VERCEL_PUBLISH_STATUS.md). Neon initialization, production publication, database-backed live checks, repository integration and the alert schedule remain pending. Do not represent the preview as a completed production deployment.
+The Vercel preview cloud build and eight hosted route checks subsequently passed. Production publication, Neon initialization, thirteen public route checks, two production smoke tests and a live browser workflow also passed. See [VERCEL_PUBLISH_STATUS.md](VERCEL_PUBLISH_STATUS.md). The owner-operated alert schedule, optional email-provider setup and automatic GitHub deployment connection remain pending.
 
-Sources checked 27 October 2026: [Vercel Express hosting](https://vercel.com/docs/frameworks/backend/express), [Vercel build configuration](https://vercel.com/docs/project-configuration/vercel-json), [Neon with Prisma](https://neon.com/docs/guides/prisma).
+Sources checked 27 October 2026: [Vercel Express hosting](https://vercel.com/docs/frameworks/backend/express), [Vercel build configuration](https://vercel.com/docs/project-configuration/vercel-json), [Neon with Prisma](https://neon.com/docs/guides/prisma), [cron-job.org request configuration](https://cron-job.org/en/faq/).

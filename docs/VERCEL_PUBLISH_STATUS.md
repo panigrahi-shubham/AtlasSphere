@@ -2,7 +2,35 @@
 
 27 October 2026. Branch: `atlassphere-quick-upgrade`.
 
-## Completed
+**Production is live:** [https://atlassphere.vercel.app](https://atlassphere.vercel.app). Vercel hosts the website/API; Neon hosts PostgreSQL. The deployed application source is commit `242210b`. Subsequent launch documentation and the smoke-test default URL do not change the running application.
+
+## Production publication completed
+
+After the owner saved the Neon URLs and said “Neon done”:
+
+- Validated paired pooled/direct connections, SSL and existing production secrets without displaying their values.
+- A direct read-only check found zero public tables in the intended Neon target.
+- `npm run prisma:migrate` passed and applied `20261027_initial` and `20261028_add_display_name`. No reset or data deletion was used.
+- Pooled readiness returned successfully; both migration records were finished and the initial account count was zero.
+- Stored `DATABASE_URL` and `DIRECT_DATABASE_URL` as private production variables, preserving the five existing production settings/secrets.
+- `npx --offline --yes vercel@65.4.0 deploy --prod --yes --scope atlas-sphere` passed. Deployment `dpl_5r51dfm1T9EpCg7fUkfGVn8DA8CQ` reached READY and was aliased to the public URL above. [Production build inspector](https://vercel.com/atlas-sphere/atlassphere/5r51dfm1T9EpCg7fUkfGVn8DA8CQ).
+
+## Live production verification
+
+All checks below ran against the real public production domain, without mocked API/weather/NASA responses:
+
+| Check | Result |
+| --- | --- |
+| Thirteen unauthenticated public route requests | Passed: `/`, `/journeys`, `/geoguess`, `/about.html`, `/api/v1/health`, `/api/v1/health/db`, `/openapi.json`, `/docs/`, `/docs/swagger-ui.css` returned 200; Test Lab, internal source and unknown-page checks returned 404. Database health reported `db: ok`. No Vercel login or protection bypass was required. |
+| `SKYATLAS_URL=https://atlassphere.vercel.app npm run test:smoke:prod` (set using PowerShell's environment variable syntax) | **2 passed**: alert persistence/validation/ownership and review persistence/image/validation/deletion. Temporary account cleanup passed. |
+| Headless Chromium live browser workflow | Passed: UI sign-up, profile update, live city/weather loading, favorite save and persistence after reload, secure HttpOnly SameSite=Lax refresh cookie, sign-out and password sign-in, trip save/reload, review save/display name, and public review response without reviewer ID/email. |
+| Historical weather and NASA in that browser workflow | Passed: historical reanalysis loaded without a paid archive key; a real 800-pixel NASA JPEG for 2024-01-01 loaded with its attribution. Desktop/mobile panel screenshots were inspected. The 390-pixel mobile page had no horizontal overflow, and the browser reported no uncaught page JavaScript errors. No particular live weather values were asserted. |
+| Authenticated alert cron endpoint check | Passed: missing secret returned 401; correct private header returned 200 with `checked: 0, created: 0` after the test rules were removed. |
+| Read-only Neon cleanup check | Passed: zero `smoke-` or `launch-` temporary test accounts remained. Their owned records were removed through the API's cascading account deletion. No unrelated records were deleted. |
+
+One-time browser and route checks ran as Node/Playwright scripts through the terminal. Screenshots are local ignored artifacts under `test-results/production-launch/`. These checks supplement the existing automated suites; they do not imply every cross-browser or accessibility scenario was rerun during publication.
+
+## Preparation history
 
 - The owner authorized publishing without Render and confirmed that the intended Neon database is empty.
 - Owner completed Vercel CLI device authorization. Verified account `panigrahishubham275-4028`, workspace `atlas-sphere`, plan **Hobby**.
@@ -11,7 +39,7 @@
 - Configured five production environment variables: `APP_ENV`, `FIXTURES`, `TRUST_PROXY_HOPS`, `AUTH_SECRET`, `CRON_SECRET`. Secret values were generated privately, passed to the CLI through stdin and retained in ignored `.env.production.local`; no secret value was included in the source or report.
 - Created an authenticated preview: [preview](https://atlassphere-oznr0z75q-atlas-sphere.vercel.app), [build inspector](https://vercel.com/atlas-sphere/atlassphere/DGAHssAK4ubde2nWt1bK4LE3aLXV). This is a protected preview with no production database connection.
 
-## Checks actually run
+## Earlier preparation checks
 
 | Command/check | Result |
 | --- | --- |
@@ -28,16 +56,14 @@
 | Eight preview requests through authenticated `vercel curl` | `/`, `/journeys`, `/geoguess`, `/openapi.json`, `/docs/swagger-ui.css`: 200. `/api/app.ts`, `/test-lab`: 404. `/api/v1/health/db`: 200 with `db: unavailable`, accurately reflecting the missing Neon connection. Page HTML also contained the AtlasSphere title. |
 | `git diff --check` | Passed. |
 
-The eight-route check saved response bodies only to ignored `test-results/vercel-preview/` and checked the HTTP status of each response. Cloud routing is verified; database-backed production workflows are not.
+The eight-route preview check saved response bodies only to ignored `test-results/vercel-preview/` and checked the HTTP status of each response. The preview was verified before production database configuration; its earlier `db: unavailable` response is historical, not the current production status.
 
-## Pending before production
+## Owner-selected remaining setup
 
-1. Owner saves Neon's pooled `DATABASE_URL` and direct `DIRECT_DATABASE_URL` in local `.env`, keeping credentials private. At the last check, the file still had its local example URL and no active direct URL.
-2. Validate that both URLs target the intended same Neon branch/database with SSL, then configure the two **production** Vercel variables. Preserve the already-created authentication secret.
-3. Apply the two existing Prisma migrations to the confirmed empty Neon target. Verify database readiness. No Neon schema or data has been changed so far.
-4. Deploy explicitly with `--prod`, verify the resulting public URL and the signup/sign-in/persistence/privacy workflows, then run the existing production smoke checks with their temporary-record cleanup.
-5. Set the existing cron-job.org POST job to the new alert endpoint and private cron secret. Optional password-reset email delivery needs its email-provider settings. See [deployment guide](DEPLOY_VERCEL_NEON.md).
+The owner chose **“I'll create the scheduled job myself using your steps.”** Configure the three-hour cron-job.org POST job using the exact URL, method and private header in [DEPLOY_VERCEL_NEON.md](DEPLOY_VERCEL_NEON.md#automatic-alert-checks). The endpoint is verified, but the external schedule has not been created or claimed as running.
+
+Password-reset email delivery still needs the existing email-provider URL/token; it is currently unavailable. Provider quota/cache counters remain per process, as documented in the deployment guide. Existing dependency audit findings and the large lazy globe chunk remain separate follow-up work.
 
 Automatic GitHub deployments are also pending: Vercel's link attempt returned “You need to add a Login Connection to your GitHub account first.” The owner can connect GitHub in Vercel's account settings and authorize the repository. CLI deployments already work and do not depend on that optional connection. Select the upgraded branch, not the older `main`, when enabling repository deployments.
 
-No Render service/database was changed or deleted, and no paid service was selected. A protected preview is ready; **full production publication is not complete** until the Neon connection and live checks above succeed.
+No Render service/database was changed or deleted, and no paid service was selected. **The website and database are published and verified.** Automatic alert scheduling, email-provider setup and optional GitHub deployment integration are separate remaining setup items, accurately listed above.

@@ -2,6 +2,8 @@
 
 AtlasSphere combines live weather, a country atlas, landmark stories, an interactive globe and GeoGuess. The homepage adapts the supplied design with bundled photos and working feature links. The concept's Explorer Lab missions are not implemented.
 
+[Live website](https://atlassphere.vercel.app) · [GitHub repository](https://github.com/panigrahi-shubham/SkyAtlas)
+
 ## What's new
 
 - AtlasSphere is the visible product name across pages and GeoGuess sharing.
@@ -13,7 +15,7 @@ AtlasSphere combines live weather, a country atlas, landmark stories, an interac
 
 NASA daily mosaics can contain clouds, gaps or swath lines; recent dates may have incomplete imagery. They are not street-level images. Satellite coverage starts on 2000-02-24 and differs from historical weather coverage. Weather and satellite requests need internet access; provider failures can still prevent loading.
 
-The GitHub repository, hosting URLs, environment names and stored-data identifiers retain their existing names for compatibility. The Neon database move is an owner action; this upgrade does not migrate live data or change hosting settings. Free hosting can sleep, and free database expiry must be managed. Existing dependency audit findings and the large globe bundle are recorded in the gate reports; they are outside this quick upgrade.
+The GitHub repository, environment names and stored-data identifiers retain their existing names for compatibility. Production now uses Vercel and a newly initialized Neon database. Automatic alert checks need the owner's scheduled job; password-reset email delivery requires an email provider. Provider quotas and caches are per process, so a shared quota/cache design is needed before traffic grows. Existing dependency audit findings and the large globe bundle are recorded in the gate reports.
 
 ## Run locally
 
@@ -27,7 +29,7 @@ Phases 3–6 are in progress: accounts/PostgreSQL, Journeys, an isolated Test La
 
 ## GitHub and hosting
 
-The current publishing target is **Vercel + Neon**, with no Render dependency. Follow [DEPLOY_VERCEL_NEON.md](docs/DEPLOY_VERCEL_NEON.md). The Vercel build packages the existing API and Vite pages together; initialize the selected Neon database separately with the existing migrations. The Render instructions below are retained for the earlier deployment.
+The live site uses **Vercel + Neon**, with no Render dependency. See the [launch report](docs/VERCEL_PUBLISH_STATUS.md) and [deployment guide](docs/DEPLOY_VERCEL_NEON.md). The Vercel build packages the existing API and Vite pages together; database migrations are applied separately. The Render instructions below are retained for the earlier deployment.
 
 Upload the source files from the ZIP to a GitHub repository. Connect that repository to a **Node web service** on Render. Use `npm ci && npm run prisma:generate && npm run prisma:migrate && npm run build` as the build command, `npm start` as the start command, and `/api/v1/health` as the health check. The included `render.yaml` supplies these settings and requires you to configure a PostgreSQL `DATABASE_URL` secret before deployment; it generates `AUTH_SECRET` and runs migrations before deployment. It does not create a database or a paid resource. `DIRECT_DATABASE_URL` is optional for local migrations and falls back to `DATABASE_URL`; use the direct connection when the application URL is pooled. `npm start` defaults to production. A static-only host cannot serve the Phase 2 API. The site uses root-relative asset paths.
 
