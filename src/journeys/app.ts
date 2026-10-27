@@ -75,6 +75,7 @@ for (const place of landmarks) { const option = document.createElement('option')
 async function reviews() {
   try {
     const response = await fetch(`/api/v1/journeys/reviews/${landmark.value}`); const data = await response.json();
+    if (!response.ok) throw new Error(data.error?.message || 'Reviews are unavailable.');
     const list = $('#review-list'); list.replaceChildren();
     const sorted = data.reviews.sort((a: any, b: any) => ($('#review-sort') as HTMLSelectElement).value === 'rating' ? b.rating - a.rating : Date.parse(b.createdAt) - Date.parse(a.createdAt));
     for (const review of sorted) {
