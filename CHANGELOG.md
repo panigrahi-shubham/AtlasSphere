@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Use the free non-commercial Open-Meteo archive for historical weather when no customer key is configured; cache successful responses.
+
 ## Phase 2 API foundation — 2026-10-27
 
 - Added same-origin Express/TypeScript weather, geocoding, news and health routes with validation, caching, limits, fixture mode and OpenAPI/Swagger docs.

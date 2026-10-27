@@ -20,6 +20,7 @@ function tripInput(body: any) {
 }
 export function createJourneys(env: string, fetcher: typeof fetch = fetch, fixtures = false, historicalApiKey = process.env.OPEN_METEO_API_KEY) {
   const router = express.Router();
+  const historicalCache = new Map<string, { date: string; label: string; kind: string; source: string; maximum: number; minimum: number; note: string }>();
   router.use(express.json({ limit: '3mb' }));
   router.use((req, res, next) => { if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method) && !origin(req)) return error(res, 403, 'Request origin is not allowed.'); next(); });
   router.get('/time-machine', async (req, res) => {
@@ -29,20 +30,27 @@ export function createJourneys(env: string, fetcher: typeof fetch = fetch, fixtu
     if (String(date) < '1940-01-01' || String(date) > new Date(Date.now() - 7 * day).toISOString().slice(0, 10)) return error(res, 400, 'Historical reanalysis is available from 1940 until seven days ago.');
     try {
       if (env === 'test' && fixtures) return res.json({ date, label: 'Real data', kind: 'Historical reanalysis', source: 'Open-Meteo ERA5', maximum: 21, minimum: 12, note: 'Modelled historical weather, not a direct station measurement.' });
-      // Open-Meteo restricts Historical Weather API access to Professional or higher.
-      // Never fall back to its free archive endpoint in a public deployment.
-      if (!historicalApiKey) return error(res, 503, 'Historical weather needs an Open-Meteo Professional or higher API key.');
+      const cacheKey = `${date}:${lat.toFixed(2)}:${lon.toFixed(2)}`;
+      const cached = historicalCache.get(cacheKey);
+      if (cached) {
+        historicalCache.delete(cacheKey); historicalCache.set(cacheKey, cached);
+        return res.set('Cache-Control', 'public, max-age=86400').json(cached);
+      }
       const query = new URLSearchParams({ latitude: String(lat), longitude: String(lon), start_date: date as string, end_date: date as string, daily: 'temperature_2m_max,temperature_2m_min', timezone: 'auto', models: 'era5' });
-      query.set('apikey', historicalApiKey);
+      if (historicalApiKey) query.set('apikey', historicalApiKey);
       if (!reserveOpenMeteoCall()) return error(res, 429, 'Weather provider usage limit reached. Try again later.');
       const controller = new AbortController(), timer = setTimeout(() => controller.abort(), 5000);
       try {
-        const result = await fetcher(`https://customer-archive-api.open-meteo.com/v1/archive?${query}`, { signal: controller.signal });
+        const host = historicalApiKey ? 'customer-archive-api.open-meteo.com' : 'archive-api.open-meteo.com';
+        const result = await fetcher(`https://${host}/v1/archive?${query}`, { signal: controller.signal });
         if (!result.ok) throw new Error('Upstream failed');
         const json: any = await result.json();
         const maximum = json?.daily?.temperature_2m_max?.[0], minimum = json?.daily?.temperature_2m_min?.[0];
         if (!Number.isFinite(maximum) || !Number.isFinite(minimum)) throw new Error('Missing historical data');
-        res.json({ date, label: 'Real data', kind: 'Historical reanalysis', source: 'Open-Meteo ERA5', maximum, minimum, note: 'Modelled historical weather, not a direct station measurement.' });
+        const data = { date: date as string, label: 'Real data', kind: 'Historical reanalysis', source: 'Open-Meteo ERA5', maximum, minimum, note: 'Modelled historical weather, not a direct station measurement.' };
+        historicalCache.set(cacheKey, data);
+        if (historicalCache.size > 2000) historicalCache.delete(historicalCache.keys().next().value!);
+        res.set('Cache-Control', 'public, max-age=86400').json(data);
       } finally { clearTimeout(timer); }
     } catch { error(res, 502, 'Historical weather is unavailable.'); }
   });

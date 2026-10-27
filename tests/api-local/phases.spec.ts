@@ -16,29 +16,26 @@ test('time-machine validates coordinates and supported historical dates', async 
     expect(result.status()).toBe(200); expect((await result.json()).label).toBe('Real data');
   } finally { await app.close(); }
 });
-test('historical weather requires licensed credentials and keeps the key server-side', async ({ request }) => {
-  const disabled = createApp({ env: 'production' });
-  const noKeyServer = await new Promise<Server>(resolve => { const server = disabled.listen(0, '127.0.0.1', () => resolve(server)); });
-  const noKeyOrigin = `http://127.0.0.1:${(noKeyServer.address() as any).port}`;
-  try {
-    const response = await request.get(`${noKeyOrigin}/api/v1/journeys/time-machine?date=1980-01-01&lat=27.175&lon=78.042`);
-    expect(response.status()).toBe(503);
-    expect((await response.json()).error.message).toContain('Professional');
-  } finally { await new Promise<void>(resolve => noKeyServer.close(() => resolve())); }
-
-  let upstreamUrl = '';
-  const enabled = createApp({ env: 'production', historicalApiKey: 'server-only-test-key', fetcher: async (input) => {
-    upstreamUrl = String(input);
-    return new Response(JSON.stringify({ daily: { temperature_2m_max: [22], temperature_2m_min: [11] } }), { status: 200, headers: { 'Content-Type': 'application/json' } });
-  } });
-  const keyServer = await new Promise<Server>(resolve => { const server = enabled.listen(0, '127.0.0.1', () => resolve(server)); });
-  try {
-    const response = await request.get(`http://127.0.0.1:${(keyServer.address() as any).port}/api/v1/journeys/time-machine?date=1980-01-01&lat=27.175&lon=78.042`);
-    expect(response.status()).toBe(200);
-    expect(upstreamUrl).toContain('customer-archive-api.open-meteo.com');
-    expect(upstreamUrl).toContain('apikey=server-only-test-key');
-    expect(JSON.stringify(await response.json())).not.toContain('server-only-test-key');
-  } finally { await new Promise<void>(resolve => keyServer.close(() => resolve())); }
+test('historical weather uses free or customer archive and caches results', async ({ request }) => {
+  for (const key of ['', 'server-only-test-key']) {
+    const urls: string[] = [];
+    const app = createApp({ env: 'production', historicalApiKey: key, fetcher: async input => {
+      urls.push(String(input));
+      return new Response(JSON.stringify({ daily: { temperature_2m_max: [22], temperature_2m_min: [11] } }), { status: 200 });
+    } });
+    const server = await new Promise<Server>(resolve => { const server = app.listen(0, '127.0.0.1', () => resolve(server)); });
+    try {
+      const endpoint = `http://127.0.0.1:${(server.address() as any).port}/api/v1/journeys/time-machine?date=1980-01-01&lat=27.175&lon=78.042`;
+      const response = await request.get(endpoint);
+      expect(response.status()).toBe(200);
+      expect(response.headers()['cache-control']).toBe('public, max-age=86400');
+      expect(JSON.stringify(await response.json())).not.toContain('server-only-test-key');
+      expect(new URL(urls[0]).hostname).toBe(key ? 'customer-archive-api.open-meteo.com' : 'archive-api.open-meteo.com');
+      expect(new URL(urls[0]).searchParams.get('apikey')).toBe(key || null);
+      expect((await request.get(endpoint)).status()).toBe(200);
+      expect(urls).toHaveLength(1);
+    } finally { await new Promise<void>(resolve => server.close(() => resolve())); }
+  }
 });
 test('test lab defects are isolated per request and failures recover', async ({ request }) => {
   const app = await serve('test');

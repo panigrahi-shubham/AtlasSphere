@@ -706,18 +706,19 @@
         "summary": "Historic ERA5 modelled weather",
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Modelled historical weather"
           },
           "400": {
             "description": "Invalid input"
           },
-          "401": {
-            "description": "Authentication required"
+          "429": {
+            "description": "Provider usage limit reached"
           },
-          "503": {
-            "description": "Service unavailable"
+          "502": {
+            "description": "Historical weather unavailable"
           }
-        }
+        },
+        "description": "Uses the free non-commercial archive, or the customer archive if configured. Successful responses are cached for one day."
       }
     },
     "/api/v1/journeys/trips": {

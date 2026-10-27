@@ -213,6 +213,38 @@
           }
         }
       ]
+    },
+    {
+      "name": "Historical Time Machine",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/journeys/time-machine?date=1980-01-01&lat=27.175&lon=78.042",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "journeys",
+            "time-machine"
+          ],
+          "query": [
+            {
+              "key": "date",
+              "value": "1980-01-01"
+            },
+            {
+              "key": "lat",
+              "value": "27.175"
+            },
+            {
+              "key": "lon",
+              "value": "78.042"
+            }
+          ]
+        }
+      }
     }
   ]
 }
