@@ -1,5 +1,5 @@
 /** Cancel obsolete requests and keep timeout errors separate from cancellation. */
-export async function fetchJSON(url, { signal, timeoutMs = 15000, service = 'Location', action = 'Search', fallbackUrl } = {}) {
+export async function fetchJSON(url, { signal, timeoutMs = 15000, service = 'Location', action = 'Search', fallbackUrl, fallbackOnSlow = false } = {}) {
   const controller = new AbortController();
   let timedOut = false;
   const cancel = () => controller.abort();
@@ -10,8 +10,25 @@ export async function fetchJSON(url, { signal, timeoutMs = 15000, service = 'Loc
     controller.abort();
   }, timeoutMs);
   try {
-    let response = await fetch(url, { signal: controller.signal });
-    if (fallbackUrl && response.status === 503 && response.headers?.has('Retry-After')) {
+    let response, usedFallback = false;
+    if (fallbackUrl && fallbackOnSlow) {
+      const primary = new AbortController();
+      let slow = false;
+      const cancelPrimary = () => primary.abort();
+      controller.signal.addEventListener('abort', cancelPrimary, { once: true });
+      if (controller.signal.aborted) cancelPrimary();
+      const slowTimer = setTimeout(() => { slow = true; primary.abort(); }, 3500);
+      try {
+        response = await fetch(url, { signal: primary.signal });
+      } catch (error) {
+        if (!slow || controller.signal.aborted) throw error;
+        usedFallback = true; response = await fetch(fallbackUrl, { signal: controller.signal });
+      } finally {
+        clearTimeout(slowTimer);
+        controller.signal.removeEventListener('abort', cancelPrimary);
+      }
+    } else response = await fetch(url, { signal: controller.signal });
+    if (fallbackUrl && !usedFallback && response.status === 503 && response.headers?.has('Retry-After')) {
       response = await fetch(fallbackUrl, { signal: controller.signal });
     }
     if (!response.ok) {

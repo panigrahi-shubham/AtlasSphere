@@ -16,9 +16,11 @@ For an optional keep-warm monitor, request `GET https://YOUR-RENDER-SERVICE/api/
 
 ## Cloudflare Pages (not ready to deploy)
 
-The repository includes a Pages proxy for `/api`, `/docs`, and `/openapi.json`. Set `API_ORIGIN` to the HTTPS origin of the Render service and add the Pages origin to `ALLOWED_ORIGINS` on Render. Use Node 24, `npm run build`, and output directory `dist`. Account wake-up handling remains incomplete, so do not switch the public site yet.
+The repository includes a Pages proxy for `/api`, `/docs`, and `/openapi.json`. Set `API_ORIGIN` to the HTTPS origin of the Render service and add the Pages origin to `ALLOWED_ORIGINS` on Render. Use Node 24, `npm run build`, and output directory `dist`. Cold-start handling remains incomplete, so do not switch the public site yet.
 
-City search and weather requests fall back to Open-Meteo directly when the proxy returns a 503 with `Retry-After`. The browser's timeout can occur before the proxy's 30-second timeout, so this does not yet guarantee immediate results during a cold start. Direct browser requests bypass the server's shared in-process provider counter; monitor usage and account for them when assessing the provider's per-application limits.
+Account reads retry when a wake-up response arrives and announce the wait. Writes show a retry message instead of replaying automatically: after a connection failure the server may already have completed the write, and replaying a refresh token can revoke a session. A safe automatic write retry needs idempotency support.
+
+City search and weather requests fall back to Open-Meteo directly when the proxy returns a 503 with `Retry-After`. Setting the public build variable `VITE_PAGES_FALLBACK=1` on Pages also enables fallback after a 3.5-second slow request. Direct browser requests bypass the server's shared in-process provider counter; monitor usage and account for them when assessing the provider's per-application limits. An abandoned slow request may still reach Open-Meteo, so it can count as an additional call.
 
 `TRUST_PROXY_HOPS` defaults to 1. For the Cloudflare-to-Render chain, configure the same long random `PROXY_SHARED_SECRET` as a secret on Pages and Render before setting `TRUST_PROXY_HOPS=2` on Render. The Pages function attaches it to proxied requests; the server ignores untrusted extra forwarding entries when it is missing or incorrect. Confirm the actual chain and client addresses after deployment. Keep this secret out of source code and screenshots.
 

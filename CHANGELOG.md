@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Announce wake-up responses and retry safe account reads; avoid replaying writes after ambiguous failures.
+
 - Add direct Open-Meteo fallback for city search and weather when the proxy reports a wake-up response.
 
 - Authenticate extra proxy hops before accepting forwarded client addresses.

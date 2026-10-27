@@ -35,5 +35,5 @@ export async function searchCities(query, options) {
   const term = query.trim();
   if (!bugEnabled('SEARCH-001') && Array.from(term).length < 2) throw new Error('Enter at least 2 characters to search for a city.');
   const params = new URLSearchParams({ q: term });
-  return validateLocations(await fetchJSON(`/api/v1/geocode?${params}`, { ...options, fallbackUrl: geocodingURL(term) }));
+  return validateLocations(await fetchJSON(`/api/v1/geocode?${params}`, { ...options, fallbackUrl: geocodingURL(term), fallbackOnSlow: import.meta.env?.VITE_PAGES_FALLBACK === '1' }));
 }

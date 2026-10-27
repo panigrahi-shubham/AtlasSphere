@@ -57,3 +57,16 @@ test('wake-up response falls back to the explicitly supplied public provider', a
     assert.equal(new URL(calls[1]).searchParams.get('name'), 'Zürich');
   } finally { globalThis.fetch = original; }
 });
+test('slow proxy falls back before the overall request timeout', async () => {
+  const original = globalThis.fetch, calls = [];
+  globalThis.fetch = (url, { signal }) => {
+    calls.push(String(url));
+    if (calls.length > 1) return Promise.resolve(Response.json({ results: [location] }));
+    return new Promise((_, reject) => signal.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError'))));
+  };
+  try {
+    const data = await fetchJSON('/api/v1/geocode?q=Zürich', { fallbackUrl: 'https://geocoding-api.open-meteo.com/v1/search?name=Z%C3%BCrich', fallbackOnSlow: true });
+    assert.equal(data.results[0].name, 'Zürich');
+    assert.equal(new URL(calls[1]).hostname, 'geocoding-api.open-meteo.com');
+  } finally { globalThis.fetch = original; }
+});
