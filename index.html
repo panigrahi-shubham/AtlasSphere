@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore weather and geography with SkyAtlas, a geography and weather exploration project.">
+  <script>
+    (() => { let theme; try { theme = JSON.parse(localStorage.getItem('earthscope:theme:v1')); } catch {} document.documentElement.dataset.theme = theme === 'light' || theme === 'dark' ? theme : matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'; })();
+  </script>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/src/styles/main.css">
+  <link rel="stylesheet" href="/src/styles/skyatlas.css">
+  <title>SkyAtlas — Weather and wonders of the world</title>
+</head>
+<body class="sky-home">
+  <a class="skip-link" data-testid="skip-to-search" href="#city">Skip to city search</a>
+  <main>
+    <p id="connection-status" data-testid="connection-status" class="connection-status" role="status" hidden></p>
+    <header class="site-header">
+      <a class="brand" href="#page-title" aria-label="SkyAtlas home" data-testid="brand-home"><svg class="sky-logo" viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="13"/><path d="M2 15h26M15 2c6 6 6 20 0 26M15 2c-6 6-6 20 0 26"/><circle class="sun" cx="22" cy="8" r="4"/></svg>Sky<span>Atlas</span></a>
+      <nav id="explore-nav" class="explore-nav" data-open="false" data-testid="main-navigation" aria-label="Explore SkyAtlas">
+        <a href="#weather-home" data-testid="nav-weather">Weather</a><a href="#atlas-section" data-testid="nav-atlas">World Atlas</a><a href="/geoguess" data-testid="nav-geoguess">GeoGuess</a><a href="/journeys" data-testid="nav-journeys">Journeys</a><a href="#favorites-heading" data-testid="nav-favorites">Favorites</a><a href="#account-section" data-testid="nav-account">Account</a>
+      </nav>
+      <div class="header-actions">    <div class="unit-panel">
+      <div role="group" aria-label="Temperature units" class="unit-buttons">
+        <span>Temperature</span>
+        <button id="unit-celsius" data-testid="unit-celsius" type="button" aria-pressed="true" aria-label="°C Celsius">°C</button>
+        <button id="unit-fahrenheit" data-testid="unit-fahrenheit" type="button" aria-pressed="false" aria-label="°F Fahrenheit">°F</button>
+      </div>
+      <p id="unit-status" data-testid="unit-status" role="status"></p>
+    </div>
+<button id="theme-toggle" data-testid="theme-toggle" type="button" aria-pressed="false">Switch theme</button><button id="menu-toggle" data-testid="menu-toggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="explore-nav">Menu</button></div>
+    </header>
+    <p id="appearance-status" data-testid="appearance-status" role="status"></p>
+    <section class="hero-section" aria-labelledby="page-title">
+      <figure class="hero-photo"><img data-geography-photo data-testid="hero-photo" src="/images/alpine-lake.jpg" alt="Mountain peaks reflected in a calm alpine lake" width="1600" height="1067" fetchpriority="high"><figcaption>Landscape inspiration · Photo by <a href="https://www.pexels.com/photo/calm-body-of-lake-between-mountains-346529/" target="_blank" rel="noopener noreferrer">Bri Schneiter / Pexels</a></figcaption></figure>
+      <div class="hero-content"><div class="eyebrow">Your window to the world</div><h1 id="page-title">Weather and wonders<br><span>of the world</span></h1><p class="intro">Search any city for weather and forecasts. Explore countries and remarkable places, or play a quick geography challenge.</p>
+        <div class="header-search">      <div class="search-panel">
+        <form id="search-form" novalidate aria-busy="false">
+          <label for="city">City name</label>
+          <div class="search-row">
+            <input id="city" data-testid="city-search-input" type="search" placeholder="Try Nashik, Zürich or Tokyo" autocomplete="off" aria-describedby="search-hint search-error" aria-controls="suggestions" maxlength="120">
+            <button type="submit" data-testid="city-search-button">Search cities →</button>
+            <button id="city-clear" data-testid="city-search-clear" class="secondary-button" type="button">Clear search</button>
+          <button id="use-location" data-testid="use-location" class="secondary-button" type="button">Use my location</button></div>
+          <p id="location-status" data-testid="location-status" role="status"></p><p class="hint" id="search-hint">Enter at least 2 characters. Search, then choose a matching city.</p>
+        </form>
+        <p id="loading" data-testid="city-search-loading" role="status" hidden>Searching cities…</p>
+        <p id="search-error" data-testid="search-error" role="alert"></p>
+        <p id="search-status" data-testid="search-status" role="status" aria-live="polite"></p>
+        <ul id="suggestions" data-testid="city-suggestions" aria-label="Matching cities" hidden></ul>
+      </div>
+</div>
+      </div>
+    </section>
+    <section id="account-section" class="sky-section account-card" aria-labelledby="account-heading" data-testid="account-section">
+      <h2 id="account-heading">Your SkyAtlas account</h2>
+      <p>Save your favorite places across devices. Browsing without an account still works.</p>
+      <p id="account-status" data-testid="account-status" role="status" aria-live="polite"></p>
+      <div id="account-info" hidden><p>Signed in as <strong id="account-email-display" data-testid="account-email-display"></strong></p><button type="button" id="account-signout" data-testid="account-signout">Sign out</button></div>
+      <form id="account-form" data-testid="account-form"><label for="account-email">Email</label><input id="account-email" type="email" autocomplete="email" required data-testid="account-email"><label for="account-password">Password</label><input id="account-password" type="password" autocomplete="current-password" minlength="8" required data-testid="account-password"><button type="submit" id="account-submit" data-testid="account-submit">Sign in</button><button type="button" id="account-mode" data-testid="account-mode">Create an account</button><button type="button" id="reset-request" data-testid="reset-request">Send reset code</button></form>
+      <form id="reset-form" data-testid="reset-form"><h3>Reset your password</h3><p>Request a code above, then enter it here.</p><label for="reset-code">Six-digit code</label><input id="reset-code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required data-testid="reset-code"><label for="reset-password">New password</label><input id="reset-password" type="password" minlength="8" required data-testid="reset-password"><button type="submit" data-testid="reset-submit">Update password</button></form>
+    </section>    <section id="weather-home" class="sky-section sky-weather-intro" aria-labelledby="weather-home-title"><div class="sky-section-heading"><div><div class="eyebrow">The forecast starts here</div><h2 id="weather-home-title">Weather preview</h2></div><span>Modelled weather by Open-Meteo</span></div><div id="home-weather-empty" class="sky-weather-empty"><div class="sky-weather-symbol" aria-hidden="true">☀</div><div><h3>Where shall we explore?</h3><p>Search a city above or use your location to see current weather, the next 24 hours and a seven-day outlook.</p></div><a href="#city">Search a city</a></div></section>
+    <section id="selection" class="selection" data-testid="selected-location" aria-labelledby="selected-city" hidden>
+      <div class="eyebrow">Your selected destination</div>
+      <h2 id="selected-city" data-testid="city-name" tabindex="-1"></h2>
+      <button id="favorite-toggle" data-testid="favorite-toggle" type="button" aria-pressed="false" disabled>Save favorite</button>
+      <button id="weather-refresh" data-testid="weather-refresh" class="secondary-button" type="button" disabled>Refresh weather</button>
+      <p><span id="selected-region" data-testid="region-name"></span> · <span id="selected-country" data-testid="country-name"></span></p>
+      <div id="weather-panel" data-testid="current-weather" aria-busy="false" aria-labelledby="weather-heading">
+        <h3 id="weather-heading">Current conditions</h3><p id="weather-story" data-testid="weather-story" class="weather-story" role="status"></p>
+        <div id="weather-skeleton" data-testid="weather-skeleton" class="skeleton-grid" aria-hidden="true" hidden><span class="skeleton"></span><span class="skeleton"></span><span class="skeleton"></span></div><p id="weather-loading" data-testid="weather-loading" role="status" hidden>Loading current weather…</p>
+        <p id="weather-error" data-testid="weather-error" role="alert"></p>
+        <button id="weather-retry" data-testid="weather-retry" type="button" hidden>Retry weather</button>
+        <p id="weather-note" data-testid="weather-note" role="status"></p>
+        <div id="weather-values" data-testid="weather-values" hidden>
+          <div class="weather-headline">
+            <span id="weather-icon" data-testid="weather-icon" class="weather-icon" role="img" aria-label="Weather condition"></span>
+            <div>
+              <div id="temperature" data-testid="current-temperature" class="temperature"></div>
+              <p id="weather-description" data-testid="weather-description" class="condition"></p>
+              <p>Feels like <strong id="feels-like" data-testid="feels-like-temperature"></strong></p>
+            </div>
+          </div>
+          <dl class="dashboard-daily" data-testid="dashboard-daily">
+            <div><dt>Forecast high</dt><dd id="dashboard-high" data-testid="dashboard-high">Not loaded</dd></div>
+            <div><dt>Forecast low</dt><dd id="dashboard-low" data-testid="dashboard-low">Not loaded</dd></div>
+            <div><dt>UV maximum</dt><dd id="dashboard-uv" data-testid="dashboard-uv">Not loaded</dd></div>
+            <div><dt>Sunrise</dt><dd id="dashboard-sunrise" data-testid="dashboard-sunrise">Not loaded</dd></div>
+            <div><dt>Sunset</dt><dd id="dashboard-sunset" data-testid="dashboard-sunset">Not loaded</dd></div>
+          </dl><p class="detail-caption" data-testid="dashboard-daily-note">Load the seven-day forecast below for daily highs, lows, UV and sun times. The first available forecast date is used.</p>
+          <dl class="weather-metrics">
+            <div><dt>Humidity</dt><dd id="humidity" data-testid="humidity-value"></dd></div>
+            <div><dt>Wind speed</dt><dd id="wind" data-testid="wind-speed"></dd></div>
+            <div><dt>Precipitation</dt><dd id="precipitation" data-testid="precipitation-value"></dd><dd class="metric-detail" id="precipitation-period" data-testid="precipitation-period"></dd></div>
+            <div class="local-clock"><dt>Local date and time</dt><dd id="local-time" data-testid="local-time"></dd></div>
+          </dl>
+          <p id="weather-as-of" data-testid="weather-as-of" class="weather-caption"></p>
+          <p id="temperature-caption" data-testid="temperature-caption" class="weather-caption">Modelled weather estimates from Open-Meteo, not direct station observations. Temperatures in Celsius.</p>
+        </div>
+      </div>
+    </section>
+    <section id="forecast-section" class="detail-panel" data-testid="forecast-section" aria-labelledby="forecast-heading" hidden>
+      <div class="eyebrow">The hours ahead</div>
+      <h2 id="forecast-heading">Next 24 hours</h2>
+      <p id="forecast-timezone" class="detail-caption" data-testid="forecast-timezone"></p>
+      <p class="detail-caption">Starts at the first forecast timestamp at or after the current weather report. Scroll for more hours.</p>
+      <p id="forecast-note" data-testid="forecast-note" role="status"></p>
+      <ol id="hourly-forecast" class="hourly-forecast" data-testid="hourly-forecast" tabindex="0" aria-label="Hourly forecast, scroll for more hours"></ol><p class="detail-caption">Weather data by <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo.com</a></p>
+    </section>
+
+    <section id="advanced-section" data-testid="advanced-section" class="detail-panel" aria-labelledby="advanced-heading" aria-busy="false" hidden>
+      <div class="eyebrow">See the bigger picture</div><h2 id="advanced-heading">Seven days ahead</h2>
+      <p>Daily highs and lows, rain, wind, UV, and sunrise/sunset. All times belong to the selected location.</p>
+      <button id="advanced-load" data-testid="advanced-load" type="button">Load seven-day forecast</button>
+      <p id="advanced-status" data-testid="advanced-status" role="status"></p>
+      <div id="advanced-results" hidden>
+        <label for="chart-metric">Chart measurement</label>
+        <select id="chart-metric" data-testid="chart-metric"><option value="temperature">Daily high temperature</option><option value="rain">Maximum rain probability</option><option value="wind">Maximum wind speed</option></select>
+        <p id="chart-caption" data-testid="chart-caption"></p>
+        <svg id="weather-chart" data-testid="weather-chart" viewBox="0 0 780 265" role="img" aria-label="Seven-day forecast chart" aria-describedby="chart-caption"></svg>
+        <div class="daily-table-scroll" tabindex="0" role="region" aria-label="Daily forecast table, scroll horizontally">
+          <table data-testid="daily-table"><caption>Daily forecast values. Missing measurements are shown as Not available.</caption><thead><tr><th scope="col">Local date</th><th scope="col">Conditions</th><th scope="col">High</th><th scope="col">Low</th><th scope="col">Rain chance</th><th scope="col">Precipitation</th><th scope="col">Max wind</th><th scope="col">UV max</th><th scope="col">Sunrise</th><th scope="col">Sunset</th></tr></thead><tbody id="daily-forecast" data-testid="daily-forecast"></tbody></table><p class="detail-caption">Weather data by <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo.com</a></p>
+        </div>
+        <p class="detail-caption">Open-Meteo model estimates, not severe-weather alerts. UV is an index; precipitation is a daily total. Sunrise and sunset may be unavailable during polar day/night. Chart gaps indicate missing values. The table provides the chart's accessible numerical equivalent.</p>
+      </div>
+    </section>
+    <section class="sky-section sky-discovery" aria-labelledby="sky-discovery-title"><div class="sky-section-heading"><div><div class="eyebrow">A whole planet to discover</div><h2 id="sky-discovery-title">Explore the world</h2></div></div><div class="sky-discovery-grid"><a class="sky-discovery-card" href="#atlas-section"><img src="/images/great-wall.jpg" alt="Great Wall stretching across green mountains" loading="lazy" width="640" height="400"><span><strong>World Atlas</strong><small>Open the map and choose a country</small></span></a><a class="sky-discovery-card" href="#directory-heading"><img src="/images/machu-picchu.jpg" alt="Machu Picchu in the Andes" loading="lazy" width="640" height="400"><span><strong>Countries &amp; Facts</strong><small>Capitals, languages and geography</small></span></a><a class="sky-discovery-card" href="#landmark-heading"><img src="/images/taj-mahal.jpg" alt="The Taj Mahal in India" loading="lazy" width="640" height="400"><span><strong>Landmarks</strong><small>Sixteen places with stories and photos</small></span></a></div><p class="sky-photo-note">Explore cards use bundled reference photos. Full photographer and license credits appear in the atlas.</p></section>
+    <section class="sky-section sky-guess" aria-labelledby="home-guess-title" data-testid="home-geoguess"><div><div class="eyebrow">Five rounds, thirty seconds each</div><h2 id="home-guess-title">GeoGuess</h2><p>How well do you know our planet? Pin a landmark on the map or name a country from its outline.</p><a class="sky-primary" href="/geoguess" data-testid="home-geoguess-play">Play GeoGuess</a></div><div class="sky-guess-modes"><div><span aria-hidden="true">◎</span><strong>Landmark Pin</strong><p>Find a famous place on the world map.</p></div><div><span aria-hidden="true">◇</span><strong>Country Outline</strong><p>Recognise a country by its shape.</p></div><p id="home-guess-best" class="sky-guess-best" data-testid="home-guess-best">Your best scores are saved in this browser.</p></div></section>
+    <section class="featured-section sky-section" aria-labelledby="featured-heading"><div class="sky-section-heading"><div><div class="eyebrow">Follow your curiosity</div><h2 id="featured-heading">Featured landmarks</h2></div><a href="#landmark-heading" data-testid="featured-atlas-link">Open the explorer →</a></div><div class="featured-grid"><figure class="featured-card"><img data-geography-photo data-testid="featured-photo" src="/images/taj-mahal.jpg" alt="Taj Mahal — geography reference photograph" width="640" height="400" loading="lazy" decoding="async"><figcaption><h3>Taj Mahal</h3><a href="https://commons.wikimedia.org/wiki/File:Taj_Mahal_(Edited).jpeg" target="_blank" rel="noopener noreferrer">Photo: Yann; edited by Jim Carter</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a></figcaption></figure><figure class="featured-card"><img data-geography-photo data-testid="featured-photo" src="/images/great-wall.jpg" alt="Great Wall of China — geography reference photograph" width="640" height="400" loading="lazy" decoding="async"><figcaption><h3>Great Wall</h3><a href="https://commons.wikimedia.org/wiki/File:The_Great_Wall_of_China_at_Jinshanling-edit.jpg" target="_blank" rel="noopener noreferrer">Photo: Severin.stalder</a> · <a href="https://creativecommons.org/licenses/by-sa/3.0" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a></figcaption></figure><figure class="featured-card"><img data-geography-photo data-testid="featured-photo" src="/images/machu-picchu.jpg" alt="Machu Picchu — geography reference photograph" width="640" height="400" loading="lazy" decoding="async"><figcaption><h3>Machu Picchu</h3><a href="https://commons.wikimedia.org/wiki/File:Machu_Picchu,_2023_(012).jpg" target="_blank" rel="noopener noreferrer">Photo: Draceane</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a></figcaption></figure></div></section>
+    <section id="atlas-section" class="detail-panel atlas-section" data-testid="atlas-section" aria-labelledby="atlas-heading">
+      <div class="eyebrow">Your next chapter starts somewhere</div>
+      <h2 id="atlas-heading">Your window to the world</h2>
+      <p>Explore country borders, discover remarkable landscapes, and see a place's weather on a living globe.</p>
+      <button id="atlas-load" data-testid="atlas-load" type="button">Open world atlas</button>
+      <p id="atlas-status" data-testid="atlas-status" role="status"></p>
+      <div id="atlas-content" hidden>
+        <div class="map-toolbar" role="group" aria-label="World map controls">
+          <button id="map-zoom-in" data-testid="map-zoom-in" type="button" aria-label="Zoom in map">+</button>
+          <button id="map-zoom-out" data-testid="map-zoom-out" type="button" aria-label="Zoom out map">−</button>
+          <button id="map-reset" data-testid="map-reset" class="secondary-button" type="button">Reset map</button>
+          <output id="map-zoom-level" data-testid="map-zoom-level" aria-live="polite">100%</output>
+        </div>
+        <svg id="world-map" data-testid="world-map" viewBox="0 0 960 490" tabindex="0" role="group" aria-label="Interactive world map" aria-describedby="map-hint"></svg>
+        <p id="map-hint" class="detail-caption">Choose a country. Drag the ocean to pan. Focus the map to pan with arrow keys and zoom with +/−. The directory below includes small territories omitted by the simplified map.</p>
+        <p id="map-location" data-testid="map-location" role="status">Select a city or landmark to place a marker.</p>
+        <div class="atlas-grid">
+          <section aria-labelledby="directory-heading">
+            <h3 id="directory-heading">Country directory</h3>
+            <label for="country-filter">Find a country or capital</label>
+            <input id="country-filter" data-testid="country-filter" type="search" placeholder="Try India, Peru or Tokyo" maxlength="100">
+            <label for="country-region">Region</label>
+            <select id="country-region" data-testid="country-region"><option value="">All regions</option><option>Africa</option><option>Americas</option><option>Asia</option><option>Europe</option><option>Oceania</option><option>Antarctic</option></select>
+            <p id="country-count" data-testid="country-count" role="status"></p>
+            <ul id="country-directory" data-testid="country-directory" aria-label="Countries and territories"></ul>
+          </section>
+          <section id="country-details" data-testid="country-details" aria-labelledby="country-title" hidden>
+            <h3 id="country-title" data-testid="country-title"></h3>
+            <dl id="country-facts" data-testid="country-facts" class="geography-grid"></dl>
+            <button id="country-weather" data-testid="country-weather" type="button">Find capital weather</button>
+            <p id="country-source" class="detail-caption"></p>
+            <a href="https://github.com/mledoze/countries" target="_blank" rel="noopener noreferrer">Country reference source</a>
+          </section>
+        </div>
+        <p id="country-status" data-testid="country-status" role="status"></p>
+        <section class="landmarks-section" aria-labelledby="landmark-heading">
+          <div class="eyebrow">Landscapes with a story</div><h3 id="landmark-heading">Facts &amp; landmarks</h3>
+          <button id="landmarks-worldwide" data-testid="landmarks-worldwide" class="secondary-button" type="button">Show worldwide collection</button>
+          <p id="landmark-count" data-testid="landmark-count" role="status"></p>
+          <div id="landmark-list" data-testid="landmark-list" class="landmark-grid"></div>
+        </section>
+        <section aria-labelledby="globe-heading" class="globe-section">
+          <div class="eyebrow">A different perspective</div><h3 id="globe-heading">Earth in three dimensions</h3>
+          <p>Real country outlines, an interactive Three.js globe, and illustrative weather effects at your selected location.</p>
+          <button id="globe-load" data-testid="globe-load" type="button">Launch 3D globe</button>
+          <p id="globe-status" data-testid="globe-status" role="status"></p>
+          <div id="globe-canvas" data-testid="globe-canvas"></div>
+          <div id="globe-controls" data-testid="globe-controls" class="map-toolbar" role="group" aria-label="Globe controls" hidden>
+            <button id="globe-rotate" data-testid="globe-rotate" type="button" aria-pressed="false">Auto rotate</button>
+            <button id="globe-zoom-in" data-testid="globe-zoom-in" type="button" aria-label="Zoom in globe">+</button>
+            <button id="globe-zoom-out" data-testid="globe-zoom-out" type="button" aria-label="Zoom out globe">−</button>
+            <button id="globe-reset" data-testid="globe-reset" class="secondary-button" type="button">Reset globe</button>
+          </div>
+          <p id="globe-weather" data-testid="globe-weather" role="status">Select a city or landmark to place a weather marker.</p>
+        </section>
+        <p class="detail-caption">Map: Natural Earth via world-atlas. Reference boundaries are generalized and may differ from current administrative claims. This atlas is for exploration, not navigation.</p>
+      </div>
+    </section>
+    <section id="geography-section" class="detail-panel" data-testid="geography-details" aria-labelledby="geography-heading" hidden>
+      <div class="eyebrow">Know the place</div>
+      <h2 id="geography-heading">Geography details</h2>
+      <dl class="geography-grid">
+        <div><dt>Latitude</dt><dd id="latitude" data-testid="latitude-value"></dd></div>
+        <div><dt>Longitude</dt><dd id="longitude" data-testid="longitude-value"></dd></div>
+        <div><dt>Country</dt><dd id="geo-country" data-testid="geography-country"></dd></div>
+        <div><dt>Administrative region</dt><dd id="geo-region" data-testid="geography-region"></dd></div>
+        <div><dt>Elevation (geocoding)</dt><dd id="elevation" data-testid="elevation-value"></dd></div>
+        <div><dt>Timezone</dt><dd id="geo-timezone" data-testid="timezone-value"></dd></div>
+        <div class="geo-clock"><dt>Local date and time</dt><dd id="geo-local-time" data-testid="geography-local-time"></dd></div>
+      </dl>
+      <p class="detail-caption">Coordinates and elevation describe the selected geocoding location. Elevation is in metres above sea level, not the weather model grid altitude. Unavailable details are not estimated.</p>
+    </section>
+    <section class="detail-panel" data-testid="favorites-section" aria-labelledby="favorites-heading">
+      <div class="eyebrow">Places to return to</div>
+      <h2 id="favorites-heading">Favorite locations</h2>
+      <div class="favorite-controls">
+        <div><label for="favorites-filter">Filter favorites</label><input id="favorites-filter" data-testid="favorites-filter" type="search" placeholder="City, region or country" maxlength="120"></div>
+        <div><label for="favorites-sort">Sort favorites</label><select id="favorites-sort" data-testid="favorites-sort"><option value="saved">Saved order</option><option value="name-asc">Name A–Z</option><option value="name-desc">Name Z–A</option></select></div>
+      </div>
+      <p id="favorites-count" data-testid="favorites-count" role="status"></p>
+      <p id="favorites-no-matches" data-testid="favorites-no-matches" hidden>No favorites match this filter.</p>
+      <button id="favorites-clear" data-testid="favorites-clear" type="button" class="secondary-button" disabled>Clear all favorites</button>
+      <dialog id="favorites-clear-dialog" data-testid="favorites-clear-dialog" aria-labelledby="clear-dialog-title" aria-describedby="clear-dialog-description">
+        <h2 id="clear-dialog-title">Clear all favorites?</h2>
+        <p id="clear-dialog-description">All saved locations will be removed, including locations hidden by the current filter.</p>
+        <button id="favorites-cancel-clear" data-testid="favorites-cancel-clear" type="button" autofocus>Keep favorites</button>
+        <button id="favorites-confirm-clear" data-testid="favorites-confirm-clear" type="button" class="danger-button">Remove all favorites</button>
+      </dialog>
+      <p id="favorites-empty" data-testid="favorites-empty" tabindex="-1">No favorites yet. Select a city and choose Save favorite.</p>
+      <ul id="favorites-list" class="favorites-list" data-testid="favorites-list" aria-label="Favorite locations"></ul>
+      <p id="favorites-status" data-testid="favorites-status" role="status"></p>
+      <p class="detail-caption">Favorites and temperature preferences are saved in this browser. Opening a favorite needs internet to fetch fresh weather.</p>
+    </section>
+    <section id="news-section" data-testid="news-section" class="detail-panel" aria-labelledby="news-heading" aria-busy="false">
+      <div class="eyebrow">Weather reading · sample content</div><h2 id="news-heading">Weather news preview</h2>
+      <p data-testid="news-fixture-label">Fixture data · demonstration entries, not live news or current headlines.</p>
+      <p id="news-status" data-testid="news-status" role="status"></p>
+      <div id="news-skeleton" data-testid="news-skeleton" class="skeleton-grid" aria-hidden="true" hidden><span class="skeleton"></span><span class="skeleton"></span></div>
+      <ul id="news-list" data-testid="news-list" class="news-list" aria-label="Sample weather news"></ul>
+      <button id="news-retry" data-testid="news-retry" class="secondary-button" type="button">Reload sample news</button>
+    </section>
+    <footer><p><a data-testid="about-link" href="/about.html">About SkyAtlas</a></p>Weather data by <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo.com</a>. Geocoding data based on <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">GeoNames</a>.<br>Internet required for city search and weather.</footer>
+    <noscript><p>Please enable JavaScript to search for cities.</p></noscript>
+  </main>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
+
+
+

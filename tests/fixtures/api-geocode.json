@@ -1,0 +1,15 @@
+{
+  "results": [
+    {
+      "id": 1261731,
+      "name": "Nashik",
+      "country": "India",
+      "country_code": "IN",
+      "admin1": "Maharashtra",
+      "latitude": 19.99,
+      "longitude": 73.78,
+      "timezone": "Asia/Kolkata",
+      "elevation": 570
+    }
+  ]
+}

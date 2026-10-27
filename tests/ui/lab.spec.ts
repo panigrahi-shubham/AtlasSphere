@@ -1,0 +1,22 @@
+import { test, expect } from '@playwright/test';
+test.skip(process.env.EARTHSCOPE_UI_SOURCE === 'memory', 'The Test Lab requires the development API and Vite.');
+test('Test Lab practices dialogs, frames, shadow roots, files and dynamic rows', async ({ page }) => {
+  await page.goto('/test-lab');
+  page.once('dialog', dialog => dialog.accept());
+  await page.getByRole('button', { name: 'Confirm' }).click();
+  await expect(page.locator('#dialog-result')).toHaveText('Confirmed');
+  await expect(page.frameLocator('iframe[title="Practice iframe"]').locator('#inside-frame')).toBeVisible();
+  await page.locator('#open-shadow').locator('button').click();
+  await expect(page.locator('#shadow-result')).toHaveText('Open shadow clicked');
+  await page.locator('#closed-shadow').click();
+  await expect(page.locator('#shadow-result')).toHaveText('Closed shadow clicked');
+  await page.locator('#lab-upload').setInputFiles({ name: 'sample.txt', mimeType: 'text/plain', buffer: Buffer.from('sample') });
+  await expect(page.locator('#upload-result')).toContainText('sample.txt');
+  const download = page.waitForEvent('download');
+  await page.locator('#lab-download').click();
+  expect((await download).suggestedFilename()).toBe('skyatlas-lab.txt');
+  await page.locator('#drag-item').dragTo(page.locator('#drop-zone'));
+  await expect(page.locator('#drop-zone')).toHaveText('Card dropped');
+  await page.locator('#add-row').click();
+  await expect(page.locator('#dynamic-rows tr')).toHaveCount(1);
+});

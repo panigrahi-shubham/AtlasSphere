@@ -1,0 +1,16 @@
+node_modules/
+dist/
+playwright-report/
+test-results/
+.env
+.env.*
+!.env.example
+*.log
+releases/
+prompt-review/
+
+.playwright-browsers/
+lighthouse-report/
+
+.local-postgres/
+

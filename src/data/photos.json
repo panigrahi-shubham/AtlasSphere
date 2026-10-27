@@ -1,0 +1,130 @@
+{
+  "Taj Mahal": {
+    "src": "/images/taj-mahal.jpg",
+    "author": "Yann; edited by Jim Carter",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Taj_Mahal_(Edited).jpeg",
+    "alt": "Taj Mahal — geography reference photograph"
+  },
+  "Great Wall": {
+    "src": "/images/great-wall.jpg",
+    "author": "Severin.stalder",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:The_Great_Wall_of_China_at_Jinshanling-edit.jpg",
+    "alt": "Great Wall of China — geography reference photograph"
+  },
+  "Western Ghats": {
+    "src": "/images/western-ghats.jpg",
+    "author": "Mdmadhu",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:AnaimudiPeak_DSC_4834.jpg",
+    "alt": "Western Ghats — geography reference photograph"
+  },
+  "Machu Picchu": {
+    "src": "/images/machu-picchu.jpg",
+    "author": "Draceane",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Machu_Picchu,_2023_(012).jpg",
+    "alt": "Machu Picchu — geography reference photograph"
+  },
+  "Serengeti National Park": {
+    "src": "/images/serengeti-national-park.jpg",
+    "author": "Bjørn Christian Tørrissen",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Serengeti-Landscape-2012.JPG",
+    "alt": "Serengeti National Park — geography reference photograph"
+  },
+  "Yellowstone National Park": {
+    "src": "/images/yellowstone-national-park.jpg",
+    "author": "Rhododendrites",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Grand_Canyon_of_the_Yellowstone_Lower_Falls_(95819p).jpg",
+    "alt": "Yellowstone National Park — geography reference photograph"
+  },
+  "Grand Canyon National Park": {
+    "src": "/images/grand-canyon-national-park.jpg",
+    "author": "\nLennart Sikkema",
+    "license": "CC BY 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Canyon_River_Tree_(165872763).jpeg",
+    "alt": "Grand Canyon — geography reference photograph"
+  },
+  "Great Barrier Reef": {
+    "src": "/images/great-barrier-reef.jpg",
+    "author": "NASA/Kjell Lindgren",
+    "license": "Public domain",
+    "licenseUrl": "https://commons.wikimedia.org/wiki/File:ISS-45_StoryOfWater,_Great_Barrier_Reef,_Australia.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:ISS-45_StoryOfWater,_Great_Barrier_Reef,_Australia.jpg",
+    "alt": "Great Barrier Reef — geography reference photograph"
+  },
+  "Fujisan": {
+    "src": "/images/fujisan.jpg",
+    "author": "Suicasmo",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:View_of_Mount_Fuji_from_%C5%8Cwakudani_20211202.jpg",
+    "alt": "Mount Fuji — geography reference photograph"
+  },
+  "Swiss Alps Jungfrau-Aletsch": {
+    "src": "/images/swiss-alps-jungfrau-aletsch.jpg",
+    "author": "Robert J Heath",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Switzerland,_Bettmeralp_(19505442736).jpg",
+    "alt": "Aletsch Glacier — geography reference photograph"
+  },
+  "Pyramids of Giza": {
+    "src": "/images/pyramids-of-giza.jpg",
+    "author": "KennyOMG",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Pyramids_of_the_Giza_Necropolis.jpg",
+    "alt": "Giza pyramid complex — geography reference photograph"
+  },
+  "Central Amazon Conservation Complex": {
+    "src": "/images/central-amazon-conservation-complex.jpg",
+    "author": "Diego Lezama",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Jau_National_Park.jpg",
+    "alt": "Jaú National Park — geography reference photograph"
+  },
+  "Mont-Saint-Michel and its Bay": {
+    "src": "/images/mont-saint-michel-and-its-bay.jpg",
+    "author": "Amaustan",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Mont-Saint-Michel_vu_du_ciel.jpg",
+    "alt": "Mont-Saint-Michel — geography reference photograph"
+  },
+  "The Dolomites": {
+    "src": "/images/the-dolomites.jpg",
+    "author": "kallerna",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Faloria_Cortina_d%27Ampezzo_10.jpg",
+    "alt": "Dolomites — geography reference photograph"
+  },
+  "Sagarmatha National Park": {
+    "src": "/images/sagarmatha-national-park.jpg",
+    "author": "Rdevany",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Mt._Everest_from_Gokyo_Ri_November_5,_2012.jpg",
+    "alt": "Mount Everest — geography reference photograph"
+  },
+  "Los Glaciares National Park": {
+    "src": "/images/los-glaciares-national-park.jpg",
+    "author": "Fernando",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Perito_Moreno_Glacier_2023.jpg",
+    "alt": "Perito Moreno Glacier — geography reference photograph"
+  }
+}

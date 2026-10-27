@@ -1,0 +1,25 @@
+name: Refresh weather news
+on:
+  schedule:
+    - cron: '7 */3 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run news:fetch
+      - name: Commit updated snapshot
+        run: |
+          git add api/news.json
+          if ! git diff --cached --quiet; then
+            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Update weather news snapshot'
+            git push
+          fi

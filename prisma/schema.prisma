@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  passwordHash String
+  theme        String        @default("dark")
+  failedLogins Int           @default(0)
+  lockedUntil  DateTime?
+  createdAt    DateTime      @default(now())
+  favorites    Favorite[]
+  sessions     RefreshToken[]
+  resetCodes   ResetCode[]
+  trips        Trip[]
+  alerts       WeatherAlert[]
+  notifications Notification[]
+  reviews      Review[]
+}
+
+model RefreshToken {
+  hash       String   @id
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt  DateTime
+  usedAt     DateTime?
+  revokedAt  DateTime?
+  createdAt  DateTime @default(now())
+}
+
+model ResetCode {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hash       String
+  expiresAt  DateTime
+  usedAt     DateTime?
+  createdAt  DateTime @default(now())
+}
+
+model Favorite {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  key        String
+  name       String
+  country    String?
+  region     String?
+  latitude   Float
+  longitude  Float
+  createdAt  DateTime @default(now())
+  @@unique([userId, key])
+}
+
+model Trip {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name       String
+  city       String
+  startDate  DateTime
+  endDate    DateTime
+  createdAt  DateTime @default(now())
+}
+
+model WeatherAlert {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  city       String
+  condition  String
+  threshold  Float
+  lastSentAt DateTime?
+  createdAt  DateTime @default(now())
+}
+
+model Notification {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  message    String
+  createdAt  DateTime @default(now())
+  @@index([userId, createdAt])
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  landmarkId String
+  rating     Int
+  body       String
+  imageData  Bytes?
+  imageType  String?
+  createdAt  DateTime @default(now())
+  @@unique([userId, landmarkId])
+}
