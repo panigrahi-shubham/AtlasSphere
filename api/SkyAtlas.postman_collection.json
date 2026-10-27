@@ -245,6 +245,24 @@
           ]
         }
       }
+    },
+    {
+      "name": "Database health",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/health/db",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "health",
+            "db"
+          ]
+        }
+      }
     }
   ]
 }

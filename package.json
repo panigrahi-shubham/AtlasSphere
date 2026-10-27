@@ -30,7 +30,7 @@
     "test:v2": "node scripts/test-v2.mjs",
     "report:v2": "playwright show-report playwright-report/v2",
     "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate deploy",
+    "prisma:migrate": "node scripts/prisma-migrate.mjs",
     "test:smoke": "playwright test --project=ui --grep @smoke",
     "test:a11y": "playwright test --project=ui --grep @a11y",
     "test:cross-browser": "playwright test --project=ui --project=firefox --project=webkit",

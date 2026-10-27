@@ -12,6 +12,20 @@ async function serve(options: ApiOptions = {}) {
 }
 const weather = '/api/v1/weather?lat=19.99&lon=73.78';
 
+test('database health reports unavailable without exposing configuration', async ({ request }) => {
+  const savedUrl = process.env.DATABASE_URL;
+  delete process.env.DATABASE_URL;
+  const server = await serve();
+  try {
+    const response = await request.get(server.base + '/api/v1/health/db');
+    expect(await response.json()).toEqual({ status: 'ok', db: 'unavailable' });
+    expect((await request.get(server.base + '/api/v1/health')).status()).toBe(200);
+  } finally {
+    await server.close();
+    if (savedUrl !== undefined) process.env.DATABASE_URL = savedUrl;
+  }
+});
+
 test('fixture endpoints, arrays, health and OpenAPI contract', async ({ request }) => {
   const server = await serve();
   try {

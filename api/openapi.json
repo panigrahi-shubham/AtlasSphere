@@ -1026,6 +1026,16 @@
           }
         }
       }
+    },
+    "/api/v1/health/db": {
+      "get": {
+        "summary": "Check database availability",
+        "responses": {
+          "200": {
+            "description": "Database is ok or unavailable; no internal details"
+          }
+        }
+      }
     }
   },
   "components": {

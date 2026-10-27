@@ -15,7 +15,7 @@ try {
   await pg.start(); started = true;
   const env = { ...process.env, DATABASE_URL: 'postgresql://skyatlas:local-test-password@127.0.0.1:54329/skyatlas_test', AUTH_SECRET: 'local-test-secret-never-deploy-32-characters', APP_ENV: 'test', FIXTURES: '1' };
   try { await pg.createDatabase('skyatlas_test'); } catch (error) { if (!String(error).includes('already exists')) throw error; }
-  run(resolve('node_modules/prisma/build/index.js'), ['migrate', 'deploy'], env);
+  run(resolve('scripts/prisma-migrate.mjs'), [], env);
   run(resolve('node_modules/@playwright/test/cli.js'), ['test', '--config=playwright.api-local.config.ts', '--reporter=list'], env);
 } catch (error) { console.error(error); process.exitCode = 1; }
 finally { if (started) await pg.stop(); }

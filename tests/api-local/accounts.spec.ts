@@ -11,6 +11,7 @@ test('accounts, reset, favorites and trips isolate users', async ({ request }) =
   test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
   const app = await serve();
   try {
+    expect(await (await request.get(app.origin + '/api/v1/health/db')).json()).toEqual({ status: 'ok', db: 'ok' });
     const firstEmail = `skyatlas-${test.info().workerIndex}-${crypto.randomUUID()}@example.test`, secondEmail = `skyatlas-${crypto.randomUUID()}@example.test`;
     const pass = 'Strong!23';
     const register = async (email: string) => request.post(app.origin + '/api/v1/auth/register', { data: { email, password: pass } });

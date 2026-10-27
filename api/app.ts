@@ -7,6 +7,7 @@ import swaggerUi from 'swagger-ui-express';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { db, waitForDatabaseWarmup } from './database.ts';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const file = (name: string) => path.join(root, name);
@@ -87,6 +88,15 @@ export function createApp(options: ApiOptions = {}) {
     }
   }
   app.get('/api/v1/health', (_req, res) => res.json({ status: 'ok', service: 'skyatlas-api', time: new Date(now()).toISOString() }));
+  app.get('/api/v1/health/db', async (_req, res) => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      if (!process.env.DATABASE_URL) throw new Error('Database unavailable');
+      await Promise.race([db.$queryRaw`SELECT 1`, new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('Timeout')), 3000); })]);
+      res.json({ status: 'ok', db: 'ok' });
+    } catch { res.json({ status: 'ok', db: 'unavailable' }); }
+    finally { if (timer) clearTimeout(timer); }
+  });
   app.get('/api/v1/weather', async (req, res) => {
     const lat = coordinate(req, res, 'lat', 90); if (lat === null) return;
     const lon = coordinate(req, res, 'lon', 180); if (lon === null) return;
@@ -121,6 +131,12 @@ export function createApp(options: ApiOptions = {}) {
     app.use('/api/v1/test-lab', createTestLab(env));
     app.get('/test-lab', (_req, res) => res.sendFile(file('test-lab.html')));
   }
+  app.use('/api/v1', (req, _res, next) => {
+    if (/^\/(auth|account|favorites)(\/|$)/.test(req.path) || (/^\/journeys\//.test(req.path) && req.path !== '/journeys/time-machine')) {
+      void waitForDatabaseWarmup().then(() => next()); return;
+    }
+    next();
+  });
   app.use('/api/v1', express.json({ limit: '3mb' }), createFeatures(env));
   app.use('/api/v1/journeys', createJourneys(env, fetcher, fixtureMode, options.historicalApiKey ?? process.env.OPEN_METEO_API_KEY));
   app.get('/api/v1/{*path}', (_req, res) => { fail(res, 404, 'NOT_FOUND', 'API route not found.'); });
