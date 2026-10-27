@@ -1,2 +1,2 @@
-import { proxy } from '../proxy';
+import { proxy } from '../../shared/pagesProxy';
 export const onRequest = proxy;
