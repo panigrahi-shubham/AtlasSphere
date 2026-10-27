@@ -1,5 +1,8 @@
 import { account } from '../services/account.ts';
 import { landmarks } from '../data/landmarks.js';
+import { initSatellitePanel } from './satellitePanel.ts';
+
+initSatellitePanel();
 
 const $ = (selector: string) => document.querySelector(selector) as HTMLElement;
 const show = (selector: string, message: string) => { $(selector).textContent = message; };
