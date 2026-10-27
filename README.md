@@ -2,6 +2,19 @@
 
 AtlasSphere combines live weather, a country atlas, landmark stories, an interactive globe and GeoGuess. The homepage adapts the supplied design with bundled photos and working feature links. The concept's Explorer Lab missions are not implemented.
 
+## What's new
+
+- AtlasSphere is the visible product name across pages and GeoGuess sharing.
+- City search and weather retry once directly with Open-Meteo after a server HTTP 502, 503 or 504.
+- Historical Time Machine uses Open-Meteo's free non-commercial archive, with validation and an in-memory cache.
+- Journeys now includes a separate NASA satellite view with a UTC date picker, daily MODIS Terra imagery and linked NASA attribution. See [imagery verification and coverage](docs/SATELLITE_IMAGERY.md).
+
+## Known limitations
+
+NASA daily mosaics can contain clouds, gaps or swath lines; recent dates may have incomplete imagery. They are not street-level images. Satellite coverage starts on 2000-02-24 and differs from historical weather coverage. Weather and satellite requests need internet access; provider failures can still prevent loading.
+
+The GitHub repository, hosting URLs, environment names and stored-data identifiers retain their existing names for compatibility. The Neon database move is an owner action; this upgrade does not migrate live data or change hosting settings. Free hosting can sleep, and free database expiry must be managed. Existing dependency audit findings and the large globe bundle are recorded in the gate reports; they are outside this quick upgrade.
+
 ## Run locally
 
 Requires Node.js 24 and npm. Run `npm ci`, `npm run prisma:generate`, then `npm run dev`; Vite serves the website and Express API together at http://127.0.0.1:5173. For a production-style run, use `npm run build`, then `npm start` and open http://127.0.0.1:3000. The server serves the built pages, `/api/v1/*`, `/docs` and `/openapi.json` from one origin. Browser location needs HTTPS or localhost.
@@ -22,7 +35,7 @@ The owner-operated [Neon move and rollback guide](docs/DATABASE_MOVE_NEON.md) co
 
 ## Verify
 
-Run `npm test`, `npm run typecheck:api`, `npm run test:accounts:local`, `npm run test:api:local`, `npm run test:smoke`, `npm run test:a11y`, `npm run test:ui`, `npm run test:bugs` and `npm run test:release`. Browser suites require Playwright browsers. `npm run test:api` contains separate `@live` checks and requires access to Open-Meteo.
+Run `npm test`, `npm run typecheck:api`, `npm run test:accounts:local`, `npm run test:api:local`, `npm run test:smoke`, `npm run test:a11y`, `npm run test:ui`, `npm run test:bugs` and `npm run test:release`. Browser suites require Playwright browsers. `npm run test:api` contains separate `@live` checks and requires access to Open-Meteo and NASA GIBS.
 
 ## Earlier phases
 ## GeoGuess — Phase 1.5
