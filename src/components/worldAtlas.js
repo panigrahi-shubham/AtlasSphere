@@ -5,7 +5,7 @@ import snapshot from '../data/countries.json';
 import { landmarks } from '../data/landmarks.js';
 import { normalizeCountries, filterCountries, hemisphere } from '../utils/countries.js';
 import { fetchJSON } from '../services/http.js';
-import { validateLocations } from '../services/geocodingService.js';
+import { validateLocations, geocodingURL } from '../services/geocodingService.js';
 import photos from '../data/photos.json';
 
 const NS = 'http://www.w3.org/2000/svg';
@@ -83,7 +83,7 @@ export function createAtlas({ onOpen }) {
     status.textContent = `Finding ${c.capital}…`; document.querySelector('#country-weather').disabled = true;
     try {
       const params = new URLSearchParams({ q: c.capital.split(',')[0], countryCode: c.alpha2 });
-      const raw = await fetchJSON(`/api/v1/geocode?${params}`, { signal: controller.signal });
+      const raw = await fetchJSON(`/api/v1/geocode?${params}`, { signal: controller.signal, fallbackUrl: geocodingURL(c.capital.split(',')[0], c.alpha2) });
       if (token !== request) return;
       const matching = { ...raw, results: raw.results?.filter(r => r.country_code?.toUpperCase() === c.alpha2) };
       const locations = validateLocations(matching);

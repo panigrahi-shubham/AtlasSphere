@@ -1,5 +1,5 @@
 /** Cancel obsolete requests and keep timeout errors separate from cancellation. */
-export async function fetchJSON(url, { signal, timeoutMs = 15000, service = 'Location', action = 'Search' } = {}) {
+export async function fetchJSON(url, { signal, timeoutMs = 15000, service = 'Location', action = 'Search', fallbackUrl } = {}) {
   const controller = new AbortController();
   let timedOut = false;
   const cancel = () => controller.abort();
@@ -10,7 +10,10 @@ export async function fetchJSON(url, { signal, timeoutMs = 15000, service = 'Loc
     controller.abort();
   }, timeoutMs);
   try {
-    const response = await fetch(url, { signal: controller.signal });
+    let response = await fetch(url, { signal: controller.signal });
+    if (fallbackUrl && response.status === 503 && response.headers?.has('Retry-After')) {
+      response = await fetch(fallbackUrl, { signal: controller.signal });
+    }
     if (!response.ok) {
       throw new Error(response.status === 429
         ? `${action === 'Search' ? 'Too many searches' : 'Too many weather requests'}. Please wait a moment and try again.`

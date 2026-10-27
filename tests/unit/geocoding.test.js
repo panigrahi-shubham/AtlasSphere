@@ -43,3 +43,17 @@ test('HTTP errors, unreadable JSON and timeouts give actionable messages', async
     await assert.rejects(fetchJSON('https://example.test', { timeoutMs: 1 }), /timed out/);
   } finally { globalThis.fetch = original; }
 });
+test('wake-up response falls back to the explicitly supplied public provider', async () => {
+  const original = globalThis.fetch, calls = [];
+  globalThis.fetch = async url => {
+    calls.push(String(url));
+    if (calls.length === 1) return new Response('', { status: 503, headers: { 'Retry-After': '20' } });
+    return Response.json({ results: [location] });
+  };
+  try {
+    const cities = await searchCities('Zürich');
+    assert.equal(cities[0].name, 'Zürich');
+    assert.equal(new URL(calls[1]).hostname, 'geocoding-api.open-meteo.com');
+    assert.equal(new URL(calls[1]).searchParams.get('name'), 'Zürich');
+  } finally { globalThis.fetch = original; }
+});

@@ -23,5 +23,5 @@ export function normalizeDaily(data) {
   return { timezone: data.timezone, days };
 }
 export async function getAdvancedForecast(city, options) {
-  return normalizeDaily(await fetchJSON(`/api/v1/weather?${new URLSearchParams({ lat: city.latitude, lon: city.longitude, units: 'celsius', view: 'daily' })}`, { ...options, service: 'Forecast', action: 'Extended forecast' }));
+  return normalizeDaily(await fetchJSON(`/api/v1/weather?${new URLSearchParams({ lat: city.latitude, lon: city.longitude, units: 'celsius', view: 'daily' })}`, { ...options, fallbackUrl: advancedForecastURL(city), service: 'Forecast', action: 'Extended forecast' }));
 }

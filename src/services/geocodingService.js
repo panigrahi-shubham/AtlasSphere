@@ -2,6 +2,11 @@ import { fetchJSON } from './http.js';
 import { bugEnabled } from '../dev/bugMode.js';
 
 export const GEOCODING_ENDPOINT = 'https://geocoding-api.open-meteo.com/v1/search';
+export function geocodingURL(query, countryCode) {
+  const params = new URLSearchParams({ name: query, count: '5', language: 'en', format: 'json' });
+  if (countryCode) params.set('countryCode', countryCode);
+  return `${GEOCODING_ENDPOINT}?${params}`;
+}
 
 export function validateLocations(data) {
   if (!data || typeof data !== 'object' || Array.isArray(data) || data.error) {
@@ -30,5 +35,5 @@ export async function searchCities(query, options) {
   const term = query.trim();
   if (!bugEnabled('SEARCH-001') && Array.from(term).length < 2) throw new Error('Enter at least 2 characters to search for a city.');
   const params = new URLSearchParams({ q: term });
-  return validateLocations(await fetchJSON(`/api/v1/geocode?${params}`, options));
+  return validateLocations(await fetchJSON(`/api/v1/geocode?${params}`, { ...options, fallbackUrl: geocodingURL(term) }));
 }

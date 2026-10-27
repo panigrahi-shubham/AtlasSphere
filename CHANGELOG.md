@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add direct Open-Meteo fallback for city search and weather when the proxy reports a wake-up response.
+
 - Authenticate extra proxy hops before accepting forwarded client addresses.
 
 - Add account data export, password-confirmed deletion and review display names; remove public review user IDs and compress uploaded photos.

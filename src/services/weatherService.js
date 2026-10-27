@@ -57,7 +57,7 @@ export function validateCurrentWeather(data) {
 
 export async function getCurrentWeather(city, options = {}) {
   const data = await fetchJSON(`/api/v1/weather?${new URLSearchParams({ lat: city.latitude, lon: city.longitude, units: 'celsius' })}`, {
-    ...options, service: 'Weather', action: 'Weather request'
+    ...options, fallbackUrl: weatherURL(city), service: 'Weather', action: 'Weather request'
   });
   const current = validateCurrentWeather(data);
   return { ...current, forecast: validateHourlyForecast(data, current.time) };
