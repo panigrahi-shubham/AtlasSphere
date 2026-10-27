@@ -18,6 +18,8 @@ Upload the source files from the ZIP to a GitHub repository. Connect that reposi
 
 The server proxies weather and geocoding to Open-Meteo. The browser retries once against the public provider after HTTP 502, 503 or 504. It never falls back on 400, 404, 429, cancellation or a client timeout, and preserves the original error if both sources fail. It enforces per-process hourly, minutely and daily call budgets below the free service limits; run one API instance unless you add a shared quota store. Historical Time Machine uses the free non-commercial Open-Meteo archive by default. An optional server-only `OPEN_METEO_API_KEY` selects the customer archive. Do not expose that key in frontend variables. The bundled news file initially contains clearly labeled sample entries. A GitHub Action runs every three hours to fetch the Met Office RSS feed and commit relevant headlines to `api/news.json`. If the feed fails, the previous snapshot remains. See `docs/PHASE2.md` for behavior and testing.
 
+The owner-operated [Neon move and rollback guide](docs/DATABASE_MOVE_NEON.md) covers preserving existing data before changing database connections.
+
 ## Verify
 
 Run `npm test`, `npm run typecheck:api`, `npm run test:accounts:local`, `npm run test:api:local`, `npm run test:smoke`, `npm run test:a11y`, `npm run test:ui`, `npm run test:bugs` and `npm run test:release`. Browser suites require Playwright browsers. `npm run test:api` contains separate `@live` checks and requires access to Open-Meteo.
