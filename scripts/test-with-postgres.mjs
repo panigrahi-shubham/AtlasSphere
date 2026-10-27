@@ -17,5 +17,9 @@ try {
   try { await pg.createDatabase('skyatlas_test'); } catch (error) { if (!String(error).includes('already exists')) throw error; }
   run(resolve('scripts/prisma-migrate.mjs'), [], env);
   run(resolve('node_modules/@playwright/test/cli.js'), ['test', '--config=playwright.api-local.config.ts', '--reporter=list'], env);
+  if (process.argv.includes('--smoke')) {
+    const smokeEnv = { ...env, SKYATLAS_SMOKE_LOCAL: '1', SKYATLAS_URL: 'http://127.0.0.1:31423', PORT: '31423' };
+    run(resolve('node_modules/@playwright/test/cli.js'), ['test', '--config=playwright.smoke.config.ts', '--reporter=list'], smokeEnv);
+  }
 } catch (error) { console.error(error); process.exitCode = 1; }
 finally { if (started) await pg.stop(); }

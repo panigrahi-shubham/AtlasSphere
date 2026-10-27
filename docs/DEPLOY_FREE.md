@@ -20,4 +20,8 @@ The repository includes a Pages proxy for `/api`, `/docs`, and `/openapi.json`. 
 
 `TRUST_PROXY_HOPS` defaults to 1. Do not blindly set it to 2 while Render is directly reachable: an untrusted client could spoof forwarding headers. Confirm the proxy chain and restrict or authenticate the connection before trusting an additional hop.
 
-Production smoke instructions are not yet implemented.
+## Production smoke monitoring
+
+After deploying the account deletion and other Stage A changes, set GitHub's repository variable `SKYATLAS_URL` to the public site URL. The production smoke workflow runs every six hours and can be started from Actions. It registers two temporary accounts, creates alert rules and a review, then deletes the records and accounts. It uploads a report and opens or updates a single issue on failure. GitHub Actions needs permission to write issues.
+
+To run it manually after deployment, set `SKYATLAS_URL` in your shell and run `npm run test:smoke:prod`. This writes temporary records to the chosen site. For a local disposable database instead, run `node scripts/test-with-postgres.mjs --smoke`.

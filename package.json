@@ -32,6 +32,7 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "node scripts/prisma-migrate.mjs",
     "test:smoke": "playwright test --project=ui --grep @smoke",
+    "test:smoke:prod": "playwright test --config=playwright.smoke.config.ts",
     "test:a11y": "playwright test --project=ui --grep @a11y",
     "test:cross-browser": "playwright test --project=ui --project=firefox --project=webkit",
     "check:syntax": "node scripts/check-syntax.mjs",

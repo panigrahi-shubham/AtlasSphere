@@ -1,0 +1,39 @@
+name: Production smoke
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - run: npm run test:smoke:prod
+        env:
+          SKYATLAS_URL: ${{ vars.SKYATLAS_URL }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: production-smoke-report
+          path: playwright-report/smoke-prod/
+          if-no-files-found: ignore
+      - uses: actions/github-script@v7
+        if: failure()
+        with:
+          script: |
+            const title = 'Production smoke failing';
+            const { owner, repo } = context.repo;
+            const issues = await github.paginate(github.rest.issues.listForRepo, { owner, repo, state: 'open', per_page: 100 });
+            const existing = issues.find(issue => !issue.pull_request && issue.title === title);
+            const body = `The production smoke workflow failed. Inspect [run ${context.runId}](${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}) and its report.`;
+            if (existing) await github.rest.issues.update({ owner, repo, issue_number: existing.number, body });
+            else await github.rest.issues.create({ owner, repo, title, body });
