@@ -1,5 +1,15 @@
 import { test, expect } from '../support/uiTest';
 
+test('Time Machine reports a generic archive provider failure', async ({ page }) => {
+  await page.route('**/api/v1/auth/refresh', route => route.fulfill({ status: 401, json: { error: { message: 'Sign in' } } }));
+  await page.route('**/api/v1/journeys/reviews/**', route => route.fulfill({ json: { reviews: [] } }));
+  await page.route('**/api/v1/journeys/time-machine?**', route => route.fulfill({ status: 502, json: { error: { message: 'Historical weather is unavailable.' } } }));
+  await page.goto('/journeys');
+  await page.getByTestId('time-year').fill('1980');
+  await page.getByTestId('time-explore').click();
+  await expect(page.getByTestId('time-result')).toHaveText('Historical weather is unavailable.');
+});
+
 test('Time Machine separates historical data, climate context, and fiction', async ({ page }) => {
   await page.route('**/api/v1/auth/refresh', route => route.fulfill({ status: 401, json: { error: { message: 'Sign in' } } }));
   await page.route('**/api/v1/journeys/reviews/**', route => route.fulfill({ json: { reviews: [] } }));
