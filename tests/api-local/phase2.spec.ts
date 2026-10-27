@@ -12,6 +12,39 @@ async function serve(options: ApiOptions = {}) {
 }
 const weather = '/api/v1/weather?lat=19.99&lon=73.78';
 
+test('configured Pages origin is accepted and other origins are rejected', async ({ request }) => {
+  const previous = process.env.ALLOWED_ORIGINS;
+  const previousDb = process.env.DATABASE_URL;
+  const previousSecret = process.env.AUTH_SECRET;
+  process.env.ALLOWED_ORIGINS = 'https://sky.pages.dev';
+  process.env.DATABASE_URL = 'test-only';
+  process.env.AUTH_SECRET = 'test-secret-for-origin-checks-at-least-32';
+  const server = await serve();
+  try {
+    for (const path of ['/api/v1/auth/logout', '/api/v1/journeys/alerts']) {
+      expect((await request.post(server.base + path, { headers: { origin: 'https://evil.example' } })).status()).toBe(403);
+    }
+    expect((await request.post(server.base + '/api/v1/journeys/alerts', { headers: { origin: 'https://sky.pages.dev' } })).status()).toBe(401);
+  } finally {
+    await server.close();
+    if (previous === undefined) delete process.env.ALLOWED_ORIGINS; else process.env.ALLOWED_ORIGINS = previous;
+    if (previousDb === undefined) delete process.env.DATABASE_URL; else process.env.DATABASE_URL = previousDb;
+    if (previousSecret === undefined) delete process.env.AUTH_SECRET; else process.env.AUTH_SECRET = previousSecret;
+  }
+});
+
+test('trusted proxy hop count separates client rate limits', async ({ request }) => {
+  const previous = process.env.TRUST_PROXY_HOPS;
+  process.env.TRUST_PROXY_HOPS = '2';
+  const server = await serve({ rateLimit: 1 });
+  try {
+    const path = server.base + '/api/v1/health';
+    expect((await request.get(path, { headers: { 'x-forwarded-for': '203.0.113.10, 192.0.2.10' } })).status()).toBe(200);
+    expect((await request.get(path, { headers: { 'x-forwarded-for': '203.0.113.11, 192.0.2.10' } })).status()).toBe(200);
+    expect((await request.get(path, { headers: { 'x-forwarded-for': '203.0.113.10, 192.0.2.10' } })).status()).toBe(429);
+  } finally { await server.close(); if (previous === undefined) delete process.env.TRUST_PROXY_HOPS; else process.env.TRUST_PROXY_HOPS = previous; }
+});
+
 test('alert cron is hidden, authenticates, prevents overlap and limits calls', async ({ request }) => {
   const savedSecret = process.env.CRON_SECRET;
   let started!: () => void, finish!: () => void;

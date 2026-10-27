@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add a preliminary Cloudflare Pages API proxy and configurable allowed origins.
+
 - Add a secret-protected scheduled alert endpoint with overlap protection and rate limiting.
 
 - Add a database health endpoint and support direct migration URLs for hosted PostgreSQL.

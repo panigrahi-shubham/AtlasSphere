@@ -37,7 +37,8 @@ export function createApp(options: ApiOptions = {}) {
     return res.status(status).json({ error: { code, message, ...(field ? { field } : {}) } });
   }
   app.disable('x-powered-by');
-  app.set('trust proxy', 1);
+  const hops = Number(process.env.TRUST_PROXY_HOPS ?? 1);
+  app.set('trust proxy', Number.isInteger(hops) && hops >= 0 && hops <= 10 ? hops : 1);
   app.use('/api/v1', (req, res, next) => {
     const key = req.ip ?? 'unknown';
     const existing = requests.get(key);

@@ -14,4 +14,10 @@ Set a long random `CRON_SECRET` in the Render service environment. Configure an 
 
 For an optional keep-warm monitor, request `GET https://YOUR-RENDER-SERVICE/api/v1/health` every 10 minutes. Check the scheduler provider's current free-plan limits before relying on it. Render's free instance-hour allowance is shared by the workspace: an always-running service can use almost the entire monthly allowance, so don't keep multiple services warm in the same workspace.
 
-The Cloudflare and production smoke instructions are not yet implemented.
+## Cloudflare Pages (not ready to deploy)
+
+The repository includes a Pages proxy for `/api`, `/docs`, and `/openapi.json`. Set `API_ORIGIN` to the HTTPS origin of the Render service and add the Pages origin to `ALLOWED_ORIGINS` on Render. Use Node 24, `npm run build`, and output directory `dist`. Account wake-up handling and direct weather fallback remain incomplete, so do not switch the public site yet.
+
+`TRUST_PROXY_HOPS` defaults to 1. Do not blindly set it to 2 while Render is directly reachable: an untrusted client could spoof forwarding headers. Confirm the proxy chain and restrict or authenticate the connection before trusting an additional hop.
+
+Production smoke instructions are not yet implemented.

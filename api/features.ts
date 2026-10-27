@@ -2,6 +2,7 @@ import express, { type Request, type Response } from 'express';
 import { db } from './database.ts';
 import bcrypt from 'bcryptjs';
 import { createHmac, createHash, randomBytes, randomInt, timingSafeEqual } from 'node:crypto';
+import { isAllowedOrigin } from './origin.ts';
 
 const sha = (value: string) => createHash('sha256').update(value).digest('hex');
 const secret = () => {
@@ -37,10 +38,6 @@ function cookieValue(req: Request) {
   const part = (req.headers.cookie || '').split(';').map(s => s.trim()).find(s => s.startsWith(`${cookieName}=`));
   return part?.slice(cookieName.length + 1) || '';
 }
-function sameOrigin(req: Request) {
-  if (!req.headers.origin) return true;
-  try { return new URL(req.headers.origin).host === req.get('host'); } catch { return false; }
-}
 async function newSession(userId: string, req: Request, res: Response) {
   const value = randomBytes(32).toString('base64url');
   await db.refreshToken.create({ data: { userId, hash: sha(value), expiresAt: new Date(Date.now() + 30 * 86400000) } });
@@ -75,7 +72,7 @@ export function createFeatures(env: string) {
   const api = express.Router();
   api.use(['/auth', '/account', '/favorites'], (req, res, next) => {
     if (!process.env.DATABASE_URL || !process.env.AUTH_SECRET || process.env.AUTH_SECRET.length < 32) return unavailable(res);
-    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method) && !sameOrigin(req)) return reply(res, 403, 'Request origin is not allowed.');
+    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method) && !isAllowedOrigin(req)) return reply(res, 403, 'Request origin is not allowed.');
     next();
   });
   api.post('/auth/register', async (req, res) => {

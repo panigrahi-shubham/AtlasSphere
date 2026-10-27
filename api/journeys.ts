@@ -1,6 +1,7 @@
 import express, { type Request, type Response } from 'express';
 import { db } from './database.ts';
 import { reserveOpenMeteoCall } from './providerBudget.ts';
+import { isAllowedOrigin } from './origin.ts';
 const error = (res: Response, code: number, message: string) => res.status(code).json({ error: { message } });
 const dateOnly = (value: unknown) => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(`${value}T00:00:00Z`)) && new Date(`${value}T00:00:00Z`).toISOString().slice(0, 10) === value;
 const day = 86400000;
@@ -11,7 +12,6 @@ const tokenId = (req: Request) => {
 };
 import { authenticate } from './features.ts';
 function guard(req: Request, res: Response) { const id = tokenId(req); if (!id) error(res, 401, 'Sign in to continue.'); return id; }
-function origin(req: Request) { try { return !req.headers.origin || new URL(req.headers.origin).host === req.get('host'); } catch { return false; } }
 function tripInput(body: any) {
   if (typeof body?.name !== 'string' || !body.name.trim() || body.name.length > 100 || typeof body.city !== 'string' || !body.city.trim() || body.city.length > 100 || !dateOnly(body.startDate) || !dateOnly(body.endDate)) return null;
   const start = Date.parse(`${body.startDate}T00:00:00Z`), end = Date.parse(`${body.endDate}T00:00:00Z`);
@@ -22,7 +22,7 @@ export function createJourneys(env: string, fetcher: typeof fetch = fetch, fixtu
   const router = express.Router();
   const historicalCache = new Map<string, { date: string; label: string; kind: string; source: string; maximum: number; minimum: number; note: string }>();
   router.use(express.json({ limit: '3mb' }));
-  router.use((req, res, next) => { if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method) && !origin(req)) return error(res, 403, 'Request origin is not allowed.'); next(); });
+  router.use((req, res, next) => { if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method) && !isAllowedOrigin(req)) return error(res, 403, 'Request origin is not allowed.'); next(); });
   router.get('/time-machine', async (req, res) => {
     const date = req.query.date;
     const lat = Number(req.query.lat), lon = Number(req.query.lon);
