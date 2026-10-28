@@ -1,5 +1,5 @@
-import { test, expect } from '../support/uiTest';
-import { currentWeatherFixture } from '../fixtures/currentWeather.js';
+import { test, expect } from '../../support/uiTest';
+import { currentWeatherFixture } from '../../fixtures/currentWeather.js';
 test.beforeEach(async ({ page }) => { await page.goto('/explore.html'); });
 test('saved theme is applied before the main app module executes', async ({ page }) => {
   await page.evaluate(() => localStorage.setItem('earthscope:theme:v1', JSON.stringify('dark')));

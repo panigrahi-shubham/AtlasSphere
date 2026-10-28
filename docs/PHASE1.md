@@ -30,7 +30,7 @@ Implemented on 26 October 2026, preserving the v2 application and its test IDs.
 | Total | 156 |
 
 Production build passed. Test commands remain documented in README.md. New browser
-checks are tests/v2/design.spec.ts, included in npm run test:v2. The build retains
+checks are tests/ui/pages/design-system.spec.ts, included in npm run test:v2. The build retains
 the existing advisory for the optional Three.js chunk exceeding 500 KB uncompressed.
 
 Screenshots captured locally under docs/screenshots/: phase1-before-desktop.png,

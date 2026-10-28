@@ -1,5 +1,5 @@
-import { test, expect } from '../support/uiTest';
-import { currentWeatherFixture } from '../fixtures/currentWeather.js';
+import { test, expect } from '../../support/uiTest';
+import { currentWeatherFixture } from '../../fixtures/currentWeather.js';
 
 test.beforeEach(async ({ page }) => { await page.goto('/explore.html'); });
 

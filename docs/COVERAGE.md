@@ -3,7 +3,7 @@
 | Journey | Unit/API | Browser / release | Remaining gate |
 | --- | --- | --- | --- |
 | City search, location, weather, hourly and daily forecast | `tests/weather.test.cjs`, `tests/unit/*`, `tests/api-local/phase2.spec.ts` | `tests/ui/search.spec.ts`, `tests/ui/weather.spec.ts`, `tests/ui/forecastGeography.spec.ts`, `tests/release/production.spec.ts` | Full Chromium, Firefox and WebKit regressions pass |
-| Interactive atlas, countries, photographs, globe | `tests/unit/v2.test.js` | `tests/v2/*`, `tests/ui/forecastGeography.spec.ts` | Automated map/globe coverage passes; manual keyboard/contrast review remains |
+| Interactive atlas, countries, photographs, globe | `tests/unit/v2.test.js` | `tests/ui/pages/*`, `tests/ui/forecastGeography.spec.ts` | Automated map/globe coverage passes; manual keyboard/contrast review remains |
 | GeoGuess | `tests/unit/geoguess.test.js` | `tests/ui/geoguess.spec.ts`, `tests/bugs/geoguess.spec.ts` | Full Chromium, Firefox and WebKit regressions pass; two planted GeoGuess defects remain expected QA exercises |
 | Accounts, lockout, reset, favorites and theme sync | `tests/api-local/accounts.spec.ts` | `tests/ui/phases.spec.ts` (account UI reachability) | Browser-level multi-context session sync remains limited |
 | Historical Time Machine | `tests/api-local/phases.spec.ts` | `tests/ui/journeys.spec.ts`, `tests/release/production.spec.ts` | The free archive is available without a key; the separate live check requires network access |

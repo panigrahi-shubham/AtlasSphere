@@ -32,8 +32,8 @@ New: four URL/date/coordinate unit checks in `tests/unit/satelliteImagery.test.j
 
 Existing expectations changed only to match visible branding:
 
-- `tests/v2/skyAtlasHome.spec.ts`: homepage title and two product-facing test names now say AtlasSphere; filename remains compatible.
-- `tests/v2/roadmapPhase1.spec.ts`: About page title is now `About AtlasSphere`.
+- `tests/ui/pages/explorer-home.spec.ts`: homepage title and two product-facing test names now say AtlasSphere; filename remains compatible.
+- `tests/ui/pages/explorer-layout.spec.ts`: About page title is now `About AtlasSphere`.
 - `tests/ui/phases.spec.ts`: practice heading is `AtlasSphere Test deployment`.
 - `tests/ui/accountPrivacy.spec.ts`: wake-up status names AtlasSphere.
 - `tests/ui/geoguess.spec.ts`: additionally asserts AtlasSphere in the share status; the shared URL remains unchanged.
@@ -46,7 +46,7 @@ Existing expectations changed only to match visible branding:
 | Exact command | Result |
 | --- | --- |
 | `npx playwright test --project=ui tests/ui/geoguess.spec.ts tests/ui/journeys.spec.ts tests/ui/accountPrivacy.spec.ts tests/ui/phases.spec.ts` | 19 passed, 1 existing production-only check skipped. |
-| `npm run test:v2 -- tests/v2/skyAtlasHome.spec.ts tests/v2/roadmapPhase1.spec.ts` | 14 passed. |
+| `npm run test:v2 -- tests/ui/pages/explorer-home.spec.ts tests/ui/pages/explorer-layout.spec.ts` | 14 passed. |
 | `node --test tests/unit/satelliteImagery.test.js` | 4 passed. |
 | `npx tsc --noEmit --target ES2022 --module NodeNext --moduleResolution NodeNext --allowImportingTsExtensions --skipLibCheck src/services/satelliteImagery.ts src/journeys/satellitePanel.ts` | Passed. |
 | `npx playwright test --project=ui tests/ui/satellite.spec.ts tests/ui/journeys.spec.ts` | 7 passed. |

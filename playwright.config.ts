@@ -2,6 +2,8 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests/ui',
+  // These existing built-asset scenarios run in the separate v2 suite.
+  testIgnore: ['**/pages/design-system.spec.ts', '**/pages/atlas-features.spec.ts', '**/pages/explorer-layout.spec.ts', '**/pages/explorer-home.spec.ts'],
   fullyParallel: true,
   retries: 0,
   forbidOnly: Boolean(process.env.CI),

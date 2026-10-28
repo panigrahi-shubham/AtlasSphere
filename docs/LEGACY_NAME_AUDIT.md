@@ -31,8 +31,8 @@ Files changed by that branding commit:
 - `tests/ui/geoguess.spec.ts`
 - `tests/ui/journeys.spec.ts`
 - `tests/ui/phases.spec.ts`
-- `tests/v2/roadmapPhase1.spec.ts`
-- `tests/v2/skyAtlasHome.spec.ts`
+- `tests/ui/pages/explorer-layout.spec.ts`
+- `tests/ui/pages/explorer-home.spec.ts`
 
 ## Every remaining content match
 
@@ -205,7 +205,7 @@ Command: `git grep -n -I -i -E "skyatlas|earthscope" -- . ":!docs/LEGACY_NAME_AU
 | `tests/unit/pagesProxy.test.js:42` | `SkyAtlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
 | `tests/unit/pagesProxy.test.js:56` | `SkyAtlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
 | `tests/unit/pagesProxy.test.js:67` | `SkyAtlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
-| `tests/v2/roadmapPhase1.spec.ts:5` | `earthscope` | Kept for compatibility | Persistent browser-storage namespace; preserves preferences and scores. |
+| `tests/ui/pages/explorer-layout.spec.ts:5` | `earthscope` | Kept for compatibility | Persistent browser-storage namespace; preserves preferences and scores. |
 | `vite.config.js:22` | `skyatlas` | Kept for compatibility | Existing technical identifier, contract, fixture or related assertion. |
 
 ## Names in tracked file paths
@@ -216,6 +216,6 @@ These paths remain for compatibility and documentation history; no existing file
 - `docs/SKYATLAS_HOME.md` — kept for compatibility/history.
 - `docs/SKYATLAS_PHASE3_BUILD_PROMPT.md` — kept for compatibility/history.
 - `src/styles/skyatlas.css` — kept for compatibility/history.
-- `tests/v2/skyAtlasHome.spec.ts` — kept for compatibility/history.
+- `tests/ui/pages/explorer-home.spec.ts` — kept for compatibility/history.
 
 No external rename was performed. The current GitHub and hosting addresses continue to work under their existing names. Archived `legacy/` pages retain their original branding and are not current entry pages.

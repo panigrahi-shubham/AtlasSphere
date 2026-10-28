@@ -1,5 +1,5 @@
-import { test, expect, mockOpenMeteoDown, type Page } from '../support/uiTest';
-import { currentWeatherFixture } from '../fixtures/currentWeather.js';
+import { test, expect, mockOpenMeteoDown, type Page } from '../../support/uiTest';
+import { currentWeatherFixture } from '../../fixtures/currentWeather.js';
 
 const city = { id: 1, name: 'Nashik', country: 'India', country_code: 'IN', admin1: 'Maharashtra', latitude: 19.99, longitude: 73.78, timezone: 'Asia/Kolkata' };
 function dailyFixture() {
