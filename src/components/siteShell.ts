@@ -6,7 +6,7 @@ export function initSiteShell() {
   const links = [
     ['Home', '/'], ['Explore Earth', '/explore.html'], ['World Atlas', '/explore.html#atlas-section'],
     ['Countries', '/explore.html#country-directory'], ['Natural Wonders', '/explore.html#landmarks-worldwide'],
-    ['Explore Space', '/#universe'], ['Earth Science', '/#earth-science'], ['History', '/#history'],
+    ['Explore Space', '/#universe'], ['Solar System', '/universe/solar-system'], ['Earth Science', '/#earth-science'], ['History', '/#history'],
     ['Weather', '/explore.html#city'], ['GeoGuess', '/geoguess'], ['Journeys', '/journeys'],
     ['Learning Hub', '/#learning'], ['Account', '/explore.html#account-section'], ['About', '/about.html'], ['Data Sources', '/sources'],
   ];

@@ -198,6 +198,8 @@ Scientific content references are recorded in `docs/archive/PHASE1_SCIENCE_SOURC
 
 ## Responsive derivatives
 
+The Solar System reference dataset uses the [NASA/NSSDCA Planetary Fact Sheet](https://nssdc.gsfc.nasa.gov/planetary/factsheet/) and its [definitions](https://nssdc.gsfc.nasa.gov/planetary/factsheet/fact_notes.html), table dated 18 March 2025 and checked 28 October 2026. Planet descriptions link to their NASA Science references in `src/home/universe/planets.ts`. Diameters are equatorial; distances are reference orbital distances, not current separations. Counts are dated snapshots. The model's colors, lighting, sizes, orbital spacing and initial angles are illustrative; it does not predict real-time positions. No additional photographs are published in this milestone.
+
 The new `public/images/discovery/*-480.webp` and `*-960.webp` files are proportional WebP encodings of the original 17 photographs. Their authors, source URLs and licenses (including ShareAlike obligations) are inherited unchanged. The exact filename mapping and encoding details are recorded in `docs/archive/PHASE1_SCIENCE_SOURCES.md`; the frontend manifest is `src/home/data/photoRenditions.ts`. Original JPG files remain intact.
 
 `public/images/earth-space/earth-hero-medium.webp` is an 800 × 800 proportional derivative of the credited NASA/NOAA Earth hero, without added or composited features. Its source and credit are the same as the original hero in `docs/archive/PHASE1_EARTH_ASSETS.md`.

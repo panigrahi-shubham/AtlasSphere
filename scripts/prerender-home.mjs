@@ -2,6 +2,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { createServer } from "vite";
 import react from "@vitejs/plugin-react";
+import { discoveryPages } from '../src/pageRoutes.ts';
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const template = await readFile(
@@ -25,6 +26,7 @@ const loader = await createServer({
   server: { middlewareMode: true, watch: null },
 });
 const pages = [
+  ...discoveryPages.map(page => ({...page, title: `${page.title} — AtlasSphere`})),
   {
     route: "/",
     file: "index.html",

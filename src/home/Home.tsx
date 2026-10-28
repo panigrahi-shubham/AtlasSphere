@@ -410,12 +410,16 @@ export default function Home() {
                 Eight planets. One extraordinary star. Countless questions
                 waiting to be asked.
               </p>
-              <a className="button outline-light" href="#astronomy">
-                Start with a discovery
+              <a
+                className="button outline-light"
+                href="/universe/solar-system"
+                data-testid="home-solar-system"
+              >
+                Explore the Solar System
                 <ArrowRight size={17} />
               </a>
               <span className="coming-soon">
-                Interactive solar system · Coming soon
+                Interactive 3D · Eight worlds to explore
               </span>
             </div>
           </div>

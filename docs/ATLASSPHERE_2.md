@@ -1,6 +1,6 @@
 # AtlasSphere 2.0 implementation record
 
-Release branch: `feature/atlassphere-2-premium-explorer`. Baseline: `1e5ec28` (PR #5). Production remains on main; merging and production publication require owner review.
+Current milestone branch: `codex/atlassphere-2-solar-system`, following audit and shared-design commits on `feature/atlassphere-2-premium-explorer`. Baseline: `1e5ec28` (PR #5). Production remains on main; merging and production publication require owner review.
 
 ## Milestone 1: inventory and stability
 
@@ -20,13 +20,17 @@ Risks: Windows hidden-directory Test Lab file serving is a known local baseline 
 
 1. Audit and stability — baseline above.
 2. Shared design and existing-page modernization — shared navy/teal tokens and Manrope, legacy page hierarchy/forms, theme controls, reusable modal navigation with focus return/scroll locking, and footer added. Original desktop explorer shortcuts retained. Built explorer 39/39; legacy UI 100 passed, one existing production-only skip; homepage 20 passed, eight existing production-only skips. Desktop screenshot inspected locally. Initial overflow/contrast regressions were fixed without changing assertions. New homepage sections connect as their destination milestones are implemented.
-3. Interactive Solar System — pending.
+3. Interactive Solar System — implemented for owner review: eight selectable planets, NASA reference facts, lazy Three.js scene, deterministic adjustable clock, camera controls, orbit/label toggles, shareable selection, reduced motion and WebGL/context-loss fallback. Initial and reset camera framing adapts to screen width. Circular orbits, illustrative starting angles and compressed scales are explicitly explained. Production HTML is prerendered through an exact route allowlist shared by Vite and Express. Desktop and touch screenshots inspected.
 4. Planet encyclopedia and comparison — pending.
 5. Earth and science lab — pending.
 6. Feature-based automation — pending.
 7. Crawlable SEO and Search Console guide — pending.
 8. Cross-browser, accessibility, performance and release verification — pending.
 
-The master brief authorizes all eight milestones in sequence. Critical regressions block advancement. No merge, production deployment, database migration, Android work or paid service is part of this branch's execution.
+The updated AGENTS.md requires explicit owner approval before advancing to the next milestone. Work stops after verification of milestone 3; milestones 4–8 remain pending. Critical regressions block advancement. No merge, production deployment, database migration, Android work or paid service is part of this branch's execution.
+
+Milestone 3 validation: build, home/API/test typechecks and home/test lint pass; Node 70/70, home/model unit 7/7, emitted Vercel function 1/1 and existing production homepage 28/28 pass. Focused Solar System coverage passes in development (10 passed, two production-only skips) and production (12/12), including both themes under axe, real WebGL, loss of context, URL hydration and mobile framing. Existing assertions are preserved; new assertions cover the new behavior. Full cross-browser/device acceptance and release-wide performance work remain milestone 8; these local Chromium checks do not claim that acceptance.
 
 Baseline legacy UI: 97 passed, one skipped, three failures. Two came from Test Lab's absolute `sendFile` rejecting the hidden `.codex` parent; its Vite error overlay also interrupted the review workflow. Serving the same fixed filename relative to an explicit root fixed all three. Production still does not register this route. A separate diagnostic run was interrupted by a reused test server shutting down; the final isolated-port legacy run passed 100 tests. Evidence: `releases/m2-ui-verified.log`, `releases/m2-explorer-verified.log`, `releases/m2-home.log` (ignored local artifacts).
+
+Final milestone 3 release checks: 5/5 passed, including production exclusion of Test Lab and defect hooks. The assertion audit against `1e5ec28` retained all 876 existing `expect` calls and added 34 in the discovery suite, with zero removed assertions. Local Lighthouse mobile simulation of the built homepage (412 × 823, 4× CPU slowdown, no city selected) measured performance 94/93/94, accessibility 100/100/100 and CLS 0.00152 across three runs. These are local lab results, not field measurements or full accessibility certification. Reports are retained under ignored `releases/m3-*.log`, `releases/m3-assertion-audit.json` and `lighthouse-report/`.
