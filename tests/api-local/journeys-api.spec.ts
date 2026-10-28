@@ -1,13 +1,9 @@
 import { test, expect } from '@playwright/test';
 import { createApp } from '../../api/app.ts';
+import { startTestServer } from '../support/apiServer';
 import type { Server } from 'node:http';
-async function serve(env: string) {
-  const app = createApp({ env, fixtures: true });
-  const server = await new Promise<Server>(resolve => { const server = app.listen(0, '127.0.0.1', () => resolve(server)); });
-  return { origin: `http://127.0.0.1:${(server.address() as any).port}`, close: () => new Promise<void>(resolve => server.close(() => resolve())) };
-}
 test('time-machine validates coordinates and supported historical dates', async ({ request }) => {
-  const app = await serve('test');
+  const app = await startTestServer({ env: 'test' });
   try {
     const endpoint = app.origin + '/api/v1/journeys/time-machine';
     expect((await request.get(`${endpoint}?date=1900-01-01&lat=2&lon=3`)).status()).toBe(400);
@@ -38,7 +34,7 @@ test('historical weather uses free or customer archive and caches results', asyn
   }
 });
 test('test lab defects are isolated per request and failures recover', async ({ request }) => {
-  const app = await serve('test');
+  const app = await startTestServer({ env: 'test' });
   try {
     const endpoint = app.origin + '/api/v1/test-lab/scenario';
     const bad = await request.get(endpoint, { headers: { 'x-skyatlas-defects': 'wrong-units,missing-news,duplicate-favorite,day-offset' } });
@@ -53,7 +49,7 @@ test('test lab defects are isolated per request and failures recover', async ({ 
   } finally { await app.close(); }
 });
 test('production excludes lab, fake inbox and dev assets', async ({ request }) => {
-  const app = await serve('production');
+  const app = await startTestServer({ env: 'production' });
   try {
     expect((await request.get(app.origin + '/api/v1/test-lab/scenario')).status()).toBe(404);
     expect((await request.get(app.origin + '/api/v1/test/inbox/user@example.com')).status()).toBe(404);

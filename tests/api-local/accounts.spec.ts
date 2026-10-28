@@ -1,13 +1,13 @@
 import { test, expect } from '@playwright/test';
-import { createApp } from '../../api/app.ts';
-import type { Server } from 'node:http';
+import { startTestServer } from '../support/apiServer';
+import { databaseEnabled, createTestUser, deleteTestUser, testUserEmail } from '../support/database';
 import { db } from '../../api/database.ts';
 import { checkAlerts } from '../../api/alertWorker.ts';
 import { proxy } from '../../shared/pagesProxy.ts';
-const enabled = Boolean(process.env.DATABASE_URL && process.env.AUTH_SECRET && process.env.AUTH_SECRET.length >= 32 && process.env.AUTH_SECRET !== 'replace-with-a-random-secret-of-at-least-32-characters');
-test('alert worker persists and deduplicates matching notifications in PostgreSQL', async () => {
+const enabled = databaseEnabled;
+test('alert worker persists and deduplicates matching notifications in PostgreSQL', async ({}, testInfo) => {
   test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
-  const user = await db.user.create({ data: { email: `worker-${crypto.randomUUID()}@example.test`, passwordHash: 'not-a-login' } });
+  const user = await createTestUser(testInfo, 'not-a-login');
   try {
     await db.weatherAlert.create({ data: { userId: user.id, city: 'Delhi', condition: 'temperature-above', threshold: 20 } });
     const database = { weatherAlert: { findMany: () => db.weatherAlert.findMany({ where: { userId: user.id } }) }, $transaction: (callback: any) => db.$transaction(callback) } as unknown as typeof db;
@@ -18,22 +18,17 @@ test('alert worker persists and deduplicates matching notifications in PostgreSQ
     expect(await checkAlerts(fetcher, now, () => true, database)).toEqual({ checked: 1, created: 1 });
     expect(await checkAlerts(fetcher, now, () => true, database)).toEqual({ checked: 1, created: 0 });
     expect(await db.notification.count({ where: { userId: user.id } })).toBe(1);
-  } finally { await db.user.delete({ where: { id: user.id } }); }
+  } finally { await deleteTestUser(user.id); }
 });
-async function serve() {
-  const app = createApp({ env: 'test', fixtures: true });
-  const server = await new Promise<Server>(resolve => { const server = app.listen(0, '127.0.0.1', () => resolve(server)); });
-  return { origin: `http://127.0.0.1:${(server.address() as any).port}`, close: () => new Promise<void>(resolve => server.close(() => resolve())) };
-}
 test('Pages readiness retries preserve sessions and uncertain saves create one record', async ({ request }) => {
   test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
   const previousOrigin = process.env.ALLOWED_ORIGINS;
   process.env.ALLOWED_ORIGINS = 'https://sky.pages.dev';
-  const app = await serve();
+  const app = await startTestServer();
   let token = '';
   const password = 'Strong!23';
   try {
-    const registered = await request.post(app.origin + '/api/v1/auth/register', { data: { email: `proxy-${crypto.randomUUID()}@example.test`, password } });
+    const registered = await request.post(app.origin + '/api/v1/auth/register', { data: { email: testUserEmail(test.info()), password } });
     expect(registered.status()).toBe(201);
     const account = await registered.json(); token = account.accessToken;
     const cookie = registered.headers()['set-cookie'].split(';')[0];
@@ -68,9 +63,9 @@ test('Pages readiness retries preserve sessions and uncertain saves create one r
 });
 test('profile, export and account deletion protect private data', async ({ request }) => {
   test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
-  const app = await serve();
+  const app = await startTestServer();
   let token = '';
-  const password = 'Strong!23', email = `privacy-${crypto.randomUUID()}@example.test`;
+  const password = 'Strong!23', email = testUserEmail(test.info());
   try {
     const registered = await request.post(app.origin + '/api/v1/auth/register', { data: { email, password } });
     expect(registered.status()).toBe(201); token = (await registered.json()).accessToken;
@@ -99,12 +94,12 @@ test('profile, export and account deletion protect private data', async ({ reque
 });
 test('accounts, reset, favorites and trips isolate users', async ({ request }) => {
   test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
-  const app = await serve();
+  const app = await startTestServer();
   try {
     const health = await request.get(app.origin + '/api/v1/health/db');
     expect(health.headers()['cache-control']).toBe('no-store');
     expect(await health.json()).toEqual({ status: 'ok', db: 'ok' });
-    const firstEmail = `skyatlas-${test.info().workerIndex}-${crypto.randomUUID()}@example.test`, secondEmail = `skyatlas-${crypto.randomUUID()}@example.test`;
+    const firstEmail = testUserEmail(test.info()), secondEmail = testUserEmail(test.info());
     const pass = 'Strong!23';
     const register = async (email: string) => request.post(app.origin + '/api/v1/auth/register', { data: { email, password: pass } });
     const a = await register(firstEmail), b = await register(secondEmail);
@@ -131,9 +126,9 @@ test('accounts, reset, favorites and trips isolate users', async ({ request }) =
 
 test('refresh rotation rejects replay and lockout blocks correct password', async ({ request }) => {
   test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
-  const app = await serve();
+  const app = await startTestServer();
   try {
-    const email = `session-${crypto.randomUUID()}@example.test`, password = 'Strong!23';
+    const email = testUserEmail(test.info()), password = 'Strong!23';
     const registered = await request.post(app.origin + '/api/v1/auth/register', { data: { email, password } });
     expect(registered.status()).toBe(201);
     const oldCookie = registered.headers()['set-cookie'].split(';')[0];
@@ -153,9 +148,9 @@ test('refresh rotation rejects replay and lockout blocks correct password', asyn
 
 test('favorites cap, alert deduplication and review ownership', async ({ request }) => {
   test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
-  const app = await serve();
+  const app = await startTestServer();
   try {
-    const register = async () => (await (await request.post(app.origin + '/api/v1/auth/register', { data: { email: `ownership-${crypto.randomUUID()}@example.test`, password: 'Strong!23' } })).json()).accessToken;
+    const register = async () => (await (await request.post(app.origin + '/api/v1/auth/register', { data: { email: testUserEmail(test.info()), password: 'Strong!23' } })).json()).accessToken;
     const first = { authorization: `Bearer ${await register()}` }, second = { authorization: `Bearer ${await register()}` };
     const places = Array.from({ length: 20 }, (_, i) => ({ name: `Place ${i}`, latitude: i, longitude: i }));
     expect((await request.post(app.origin + '/api/v1/favorites/sync', { headers: first, data: { favorites: places } })).status()).toBe(200);

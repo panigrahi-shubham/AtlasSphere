@@ -11,7 +11,7 @@ test.beforeAll(async ({ request }) => {
     try { return (await request.get('/api/v1/health', { timeout: 10000 })).status(); } catch { return 0; }
   }, { timeout: 120000, intervals: [2000, 5000] }).toBe(200);
   for (let i = 0; i < 2; i++) {
-    const email = `smoke-${randomUUID()}@example.test`;
+    const email = `worker-${test.info().workerIndex}-${randomUUID()}@example.test`;
     const response = await request.post('/api/v1/auth/register', { data: { email, password } });
     expect(response.status()).toBe(201);
     users.push({ token: (await response.json()).accessToken, email });
