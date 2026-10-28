@@ -12,6 +12,8 @@ Use separate development and test PostgreSQL databases and separate secrets. Pre
 
 `npm run vercel-build` checks required production settings, generates the Prisma client and builds static pages and the single Express function. The build does not apply database migrations. Apply reviewed migrations separately to the intended database with `npm run prisma:migrate`; never reset a production database as part of testing.
 
+The Node builder reads `deployment/tsconfig.json`. It rewrites relative TypeScript imports to `.js` in emitted functions; source-mode API tests alone do not verify this packaging contract. After building, run `npm run test:vercel` to compile and boot the production entry point without its TypeScript source files, check health, and verify test routes remain absent. CI runs this check before browser tests.
+
 For a release, verify the pull-request checks and Vercel preview, then merge only after review. Confirm the production deployment is ready and check the public homepage, `/explore`, `/journeys`, `/geoguess`, `/docs/`, `/api/v1/health` and `/api/v1/health/db`. Test Lab and its API must return 404 in production. Use disposable records for any account or persistence smoke test and verify cleanup.
 
 ## Alerts and external services

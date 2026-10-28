@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fix Vercel function startup by rewriting TypeScript import extensions in the deployment compiler configuration. Add an emitted-function startup check to CI so source-mode tests cannot conceal missing runtime modules.
+
 - Refactor the test framework into feature folders with page objects, shared API/database helpers, documented risks and report steps. Add strict test lint/typechecking, JUnit CI summaries, assertion-preservation audits and portfolio documentation without changing application behavior or existing assertions.
 
 - Use AtlasSphere for visible product branding, page titles, review author fallback and GeoGuess share UI while preserving compatibility identifiers and service URLs.

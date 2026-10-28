@@ -38,6 +38,8 @@ jobs:
       - run: npm run prisma:generate
       - run: npm run prisma:migrate
       - run: npm run check:syntax && npm run typecheck:api && npm run build && npm test
+      - name: Emitted Vercel function startup
+        run: npm run test:vercel
       - name: React homepage static and unit verification
         run: npm run typecheck:home && npm run lint:home && npm run format:home:check && npm run test:home:unit
       - name: Framework static verification
