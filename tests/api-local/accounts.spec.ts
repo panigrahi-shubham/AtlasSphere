@@ -9,15 +9,16 @@
  */
 import { test, expect } from '@playwright/test';
 import { startTestServer } from '../support/apiServer';
-import { databaseEnabled, testUserEmail } from '../support/database';
+import { databaseEnabled, testUserScope } from '../support/database';
 const enabled = databaseEnabled;
 // Risk: Private account data could survive deletion or leak through public output.
 // Given an authenticated account, When profile, export and deletion are exercised, Then private data remains protected.
 test('profile, export and account deletion protect private data', { tag: ['@db'] }, async ({ request }) => {
   test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
   const app = await startTestServer();
+  const users = testUserScope(test.info());
   let token = '';
-  const password = 'Strong!23', email = testUserEmail(test.info());
+  const password = 'Strong!23', email = users.email();
   try {
     const registered = await test.step("Register a temporary account", async () => await request.post(app.origin + '/api/v1/auth/register', { data: { email, password } }));
     expect(registered.status()).toBe(201); token = (await registered.json()).accessToken;
@@ -40,8 +41,11 @@ test('profile, export and account deletion protect private data', { tag: ['@db']
     expect(deleted.status()).toBe(204); expect(deleted.headers()['set-cookie']).toContain('skyatlas_refresh='); token = '';
     expect((await request.post(app.origin + '/api/v1/auth/login', { data: { email, password } })).status()).toBe(401);
   } finally {
-    if (token) await request.delete(app.origin + '/api/v1/account', { headers: { authorization: `Bearer ${token}` }, data: { password } });
-    await app.close();
+    try {
+      if (token) await request.delete(app.origin + '/api/v1/account', { headers: { authorization: `Bearer ${token}` }, data: { password } });
+    } finally {
+      try { await app.close(); } finally { await users.close(); }
+    }
   }
 });
 
@@ -50,11 +54,12 @@ test('profile, export and account deletion protect private data', { tag: ['@db']
 test('accounts, reset, favorites and trips isolate users', { tag: ['@db'] }, async ({ request }) => {
   test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
   const app = await startTestServer();
+  const users = testUserScope(test.info());
   try {
     const health = await test.step("Check database readiness", async () => await request.get(app.origin + '/api/v1/health/db'));
     expect(health.headers()['cache-control']).toBe('no-store');
     expect(await health.json()).toEqual({ status: 'ok', db: 'ok' });
-    const firstEmail = testUserEmail(test.info()), secondEmail = testUserEmail(test.info());
+    const firstEmail = users.email(), secondEmail = users.email();
     const pass = 'Strong!23';
     const register = async (email: string) => request.post(app.origin + '/api/v1/auth/register', { data: { email, password: pass } });
     const a = await register(firstEmail), b = await register(secondEmail);
@@ -76,7 +81,9 @@ test('accounts, reset, favorites and trips isolate users', { tag: ['@db'] }, asy
     expect(code).toMatch(/^\d{6}$/);
     expect((await request.post(app.origin + '/api/v1/auth/reset/confirm', { data: { email: firstEmail, code, password: 'Newpass!23' } })).status()).toBe(204);
     expect((await request.post(app.origin + '/api/v1/auth/reset/confirm', { data: { email: firstEmail, code, password: 'Newpass!23' } })).status()).toBe(400);
-  } finally { await app.close(); }
+  } finally {
+    try { await app.close(); } finally { await users.close(); }
+  }
 });
 
 
@@ -85,8 +92,9 @@ test('accounts, reset, favorites and trips isolate users', { tag: ['@db'] }, asy
 test('favorites cap, alert deduplication and review ownership', { tag: ['@db'] }, async ({ request }) => {
   test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
   const app = await startTestServer();
+  const users = testUserScope(test.info());
   try {
-    const register = async () => (await (await test.step("Register a temporary account", async () => await request.post(app.origin + '/api/v1/auth/register', { data: { email: testUserEmail(test.info()), password: 'Strong!23' } }))).json()).accessToken;
+    const register = async () => (await (await test.step("Register a temporary account", async () => await request.post(app.origin + '/api/v1/auth/register', { data: { email: users.email(), password: 'Strong!23' } }))).json()).accessToken;
     const first = { authorization: `Bearer ${await register()}` }, second = { authorization: `Bearer ${await register()}` };
     const places = Array.from({ length: 20 }, (_, i) => ({ name: `Place ${i}`, latitude: i, longitude: i }));
     expect((await request.post(app.origin + '/api/v1/favorites/sync', { headers: first, data: { favorites: places } })).status()).toBe(200);
@@ -103,5 +111,7 @@ test('favorites cap, alert deduplication and review ownership', { tag: ['@db'] }
     expect((await request.put(app.origin + `/api/v1/journeys/reviews/${reviewLandmark}`, { headers: first, data: { rating: 5, body: 'Beautiful' } })).status()).toBe(200);
     expect((await request.delete(app.origin + `/api/v1/journeys/reviews/${reviewLandmark}`, { headers: second })).status()).toBe(404);
     expect((await (await request.get(app.origin + `/api/v1/journeys/reviews/${reviewLandmark}`)).json()).reviews).toHaveLength(1);
-  } finally { await app.close(); }
+  } finally {
+    try { await app.close(); } finally { await users.close(); }
+  }
 });

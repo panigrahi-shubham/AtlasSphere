@@ -9,7 +9,7 @@
  */
 import { test, expect } from '@playwright/test';
 import { startTestServer } from '../support/apiServer';
-import { databaseEnabled, testUserEmail } from '../support/database';
+import { databaseEnabled, testUserScope } from '../support/database';
 import { db } from '../../api/database.ts';
 import { proxy } from '../../shared/pagesProxy.ts';
 const enabled = databaseEnabled;
@@ -20,10 +20,11 @@ test('Pages readiness retries preserve sessions and uncertain saves create one r
   const previousOrigin = process.env.ALLOWED_ORIGINS;
   process.env.ALLOWED_ORIGINS = 'https://sky.pages.dev';
   const app = await startTestServer();
+  const users = testUserScope(test.info());
   let token = '';
   const password = 'Strong!23';
   try {
-    const registered = await test.step("Register a temporary account", async () => await request.post(app.origin + '/api/v1/auth/register', { data: { email: testUserEmail(test.info()), password } }));
+    const registered = await test.step("Register a temporary account", async () => await request.post(app.origin + '/api/v1/auth/register', { data: { email: users.email(), password } }));
     expect(registered.status()).toBe(201);
     const account = await registered.json(); token = account.accessToken;
     const cookie = registered.headers()['set-cookie'].split(';')[0];
@@ -51,9 +52,15 @@ test('Pages readiness retries preserve sessions and uncertain saves create one r
     expect(save.status).toBe(503); expect(save.headers.get('X-SkyAtlas-Retry-Safe')).toBe('0');
     expect(await db.weatherAlert.count({ where: { userId: account.user.id } })).toBe(1);
   } finally {
-    if (token) await request.delete(app.origin + '/api/v1/account', { headers: { authorization: `Bearer ${token}` }, data: { password } });
-    await app.close();
-    if (previousOrigin === undefined) delete process.env.ALLOWED_ORIGINS; else process.env.ALLOWED_ORIGINS = previousOrigin;
+    try {
+      if (token) await request.delete(app.origin + '/api/v1/account', { headers: { authorization: `Bearer ${token}` }, data: { password } });
+    } finally {
+      try {
+        try { await app.close(); } finally { await users.close(); }
+      } finally {
+        if (previousOrigin === undefined) delete process.env.ALLOWED_ORIGINS; else process.env.ALLOWED_ORIGINS = previousOrigin;
+      }
+    }
   }
 });
 
@@ -63,8 +70,9 @@ test('Pages readiness retries preserve sessions and uncertain saves create one r
 test('refresh rotation rejects replay and lockout blocks correct password', { tag: ['@db'] }, async ({ request }) => {
   test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
   const app = await startTestServer();
+  const users = testUserScope(test.info());
   try {
-    const email = testUserEmail(test.info()), password = 'Strong!23';
+    const email = users.email(), password = 'Strong!23';
     const registered = await test.step("Register a temporary account", async () => await request.post(app.origin + '/api/v1/auth/register', { data: { email, password } }));
     expect(registered.status()).toBe(201);
     const oldCookie = registered.headers()['set-cookie'].split(';')[0];
@@ -79,5 +87,7 @@ test('refresh rotation rejects replay and lockout blocks correct password', { ta
     const code = (await (await test.step("Read the isolated test inbox", async () => await request.get(app.origin + `/api/v1/test/inbox/${email}`))).json()).code;
     expect((await request.post(app.origin + '/api/v1/auth/reset/confirm', { data: { email, code, password } })).status()).toBe(204);
     expect((await request.post(app.origin + '/api/v1/auth/login', { data: { email, password } })).status()).toBe(200);
-  } finally { await app.close(); }
+  } finally {
+    try { await app.close(); } finally { await users.close(); }
+  }
 });
