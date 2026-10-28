@@ -5,6 +5,11 @@ import Header, { Brand } from "./Header";
 import Home from "./Home";
 import Information from "./Information";
 import SolarSystem from "./universe/SolarSystem";
+import {
+  PlanetDirectory,
+  PlanetProfile,
+  PlanetComparison,
+} from "./universe/PlanetPages";
 class ErrorBoundary extends Component<
   { children: ReactNode },
   { failed: boolean }
@@ -92,6 +97,9 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/index.html" element={<Home />} />
           <Route path="/universe/solar-system" element={<SolarSystem />} />
+          <Route path="/universe/planets" element={<PlanetDirectory />} />
+          <Route path="/universe/planets/:slug" element={<PlanetProfile />} />
+          <Route path="/universe/compare" element={<PlanetComparison />} />
           <Route path="/sources" element={<Information kind="sources" />} />
           <Route path="/privacy" element={<Information kind="privacy" />} />
           <Route

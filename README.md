@@ -11,6 +11,7 @@ AtlasSphere is a free educational website for exploring Earth, weather, geograph
 - Discover Earth and space with real geographic search, an interactive globe and sourced science content.
 - Explore city weather, forecasts, a country atlas, landmarks and satellite imagery.
 - Explore eight planets in the interactive Solar System at `/universe/solar-system`, with an adjustable teaching clock, camera controls and sourced facts.
+- Browse the planet encyclopedia at `/universe/planets`, search by name or classification, and compare up to four worlds at `/universe/compare`.
 - Play GeoGuess and save personal preferences, favorites and journeys.
 - Use the development-only Test Lab to practice diagnosing deliberate defects.
 

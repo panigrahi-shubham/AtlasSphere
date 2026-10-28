@@ -46,7 +46,8 @@ const groups = [
     links: [
       ["Explore Space", "/#universe"],
       ["Solar System", "/universe/solar-system"],
-      ["Planets and Moons", ""],
+      ["Planets and Moons", "/universe/planets"],
+      ["Compare planets", "/universe/compare"],
       ["Astronomy", "/#astronomy"],
       ["History", "/#history"],
     ],
