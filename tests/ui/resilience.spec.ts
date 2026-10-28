@@ -8,7 +8,7 @@ const city = { id: 1, name: 'Nashik', country: 'India', latitude: 19.99, longitu
 test.beforeEach(async ({ page }) => {
   await page.route(geo, route => route.fulfill({ json: { results: [city] } }));
   await page.route(weather, route => route.fulfill({ json: currentWeatherFixture }));
-  await page.goto('/');
+  await page.goto('/explore.html');
 });
 async function search(page: Page, query = 'Nashik') {
   await page.getByTestId('city-search-input').fill(query);

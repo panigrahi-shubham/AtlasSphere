@@ -20,6 +20,11 @@ export function initExploration({ onOpen }) {
     return false;
   }
   button.addEventListener('click', openAtlas);
+  // Homepage discovery links may target content behind the lazy atlas loader.
+  const requestedSection = window.location.hash;
+  if (['#country-directory', '#landmarks-worldwide'].includes(requestedSection)) {
+    void openAtlas().then(opened => { if (opened) document.querySelector(requestedSection)?.scrollIntoView({ block: 'start' }); });
+  }
   for (const link of document.querySelectorAll('.sky-discovery-card, [data-testid="featured-atlas-link"]')) {
     link.addEventListener('click', async event => {
       const target = document.querySelector(link.getAttribute('href'));

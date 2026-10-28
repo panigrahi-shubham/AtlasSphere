@@ -23,6 +23,10 @@
     }
   ],
   "routes": [
+    { "src": "/explore/?", "dest": "/explore.html" },
+    { "src": "/sources/?", "dest": "/sources.html" },
+    { "src": "/privacy/?", "dest": "/privacy.html" },
+    { "src": "/accessibility/?", "dest": "/accessibility.html" },
     { "src": "/api(?:/.*)?", "dest": "/deployment/vercel.ts" },
     { "src": "/docs(?:/.*)?", "dest": "/deployment/vercel.ts" },
     { "src": "/openapi\\.json", "dest": "/deployment/vercel.ts" },

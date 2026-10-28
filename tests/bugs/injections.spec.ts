@@ -11,7 +11,7 @@ async function select(page: Page) {
 }
 for (const id of ['TEMP-001', 'HUM-001', 'FAV-001', 'SEARCH-001', 'TIME-001']) {
   test(`practice defect ${id} is reproducible only when selected`, async ({ page }) => {
-    await page.goto(`/?bugMode=1&bugs=${id}`);
+    await page.goto(`/explore.html?bugMode=1&bugs=${id}`);
     await expect(page.getByTestId('bug-mode-panel')).toBeVisible();
     await expect(page.getByTestId(`bug-${id}`)).toBeChecked();
     if (id === 'SEARCH-001') {
@@ -27,10 +27,10 @@ for (const id of ['TEMP-001', 'HUM-001', 'FAV-001', 'SEARCH-001', 'TIME-001']) {
   });
 }
 test('practice storage cannot read or overwrite normal favorites/preferences', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/explore.html');
   const saved = JSON.stringify([{ id: '9', name: 'Original', latitude: 1, longitude: 2 }]);
   await page.evaluate(({ keys, saved }) => { localStorage.setItem(keys.favorites, saved); localStorage.setItem(keys.unit, JSON.stringify('fahrenheit')); }, { keys: STORAGE_KEYS, saved });
-  await page.goto('/?bugMode=1&bugs=FAV-001');
+  await page.goto('/explore.html?bugMode=1&bugs=FAV-001');
   await expect(page.getByTestId('favorite-item')).toHaveCount(0);
   await expect(page.getByTestId('unit-celsius')).toHaveAttribute('aria-pressed', 'true');
   await select(page); await page.getByTestId('favorite-toggle').click();
@@ -41,7 +41,7 @@ test('practice storage cannot read or overwrite normal favorites/preferences', a
   await expect(page.getByTestId('unit-fahrenheit')).toHaveAttribute('aria-pressed', 'true');
 });
 test('defects can be individually disabled and unknown IDs are ignored', async ({ page }) => {
-  await page.goto('/?bugMode=1&bugs=HUM-001,UNKNOWN');
+  await page.goto('/explore.html?bugMode=1&bugs=HUM-001,UNKNOWN');
   await page.getByTestId('bug-HUM-001').uncheck();
   await expect(page.getByTestId('bug-HUM-001')).not.toBeChecked();
   await select(page); await expect(page.getByTestId('humidity-value')).toHaveText('64 %');

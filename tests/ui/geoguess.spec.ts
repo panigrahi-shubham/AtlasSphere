@@ -4,7 +4,7 @@ test.beforeEach(() => test.skip(process.env.EARTHSCOPE_UI_SOURCE === 'memory', '
 test('GeoGuess navigation and seeded landmark perfect guess', async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem('earthscope:theme:v1', JSON.stringify('dark')));
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
-  await page.goto('/'); await page.getByTestId('nav-geoguess').click();
+  await page.goto('/explore.html'); await page.getByTestId('nav-geoguess').click();
   await expect(page.getByTestId('gg-mode-landmark')).toBeVisible();
   await page.goto('/geoguess?mode=landmark&seed=42&start=1');
   await expect(page.getByTestId('gg-round')).toHaveText('Round 1 / 5');

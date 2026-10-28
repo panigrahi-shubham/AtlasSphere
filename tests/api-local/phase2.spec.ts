@@ -222,7 +222,24 @@ test('news accepts empty and stale snapshots and rejects unsafe links', async ({
 test('production Express serves pages and never enables test fixtures', async ({ request }) => {
   const server = await serve({ env: 'production', fixtures: true, fetcher: async () => new Response('', { status: 503 }) });
   try {
-    const home = await request.get(server.base + '/'); expect(home.status()).toBe(200); expect(await home.text()).toContain('AtlasSphere');
+    const home = await request.get(server.base + '/', { headers: { 'Accept-Encoding': 'gzip' } });
+    expect(home.status()).toBe(200);
+    expect(home.headers()['content-encoding']).toBe('gzip');
+    expect(home.headers()['vary']).toContain('Accept-Encoding');
+    expect(await home.text()).toContain('AtlasSphere');
+    const plain = await request.get(server.base + '/', { headers: { 'Accept-Encoding': 'identity' } });
+    expect(plain.headers()['content-encoding']).toBeUndefined();
+    expect(await plain.text()).toContain('id="home-title"');
+    for (const explorerPath of ['/explore', '/explore.html']) {
+      const explorer = await request.get(server.base + explorerPath);
+      expect(explorer.status()).toBe(200);
+      expect(await explorer.text()).toContain('data-testid="city-search-input"');
+    }
+    for (const homePath of ['/sources', '/privacy', '/accessibility']) {
+      const home = await request.get(server.base + homePath);
+      expect(home.status()).toBe(200);
+      expect(await home.text()).toContain('id="root"');
+    }
     const game = await request.get(server.base + '/geoguess'); expect(game.status()).toBe(200);
     const missing = await request.get(server.base + '/missing-page'); expect(missing.status()).toBe(404);
     const weatherResponse = await request.get(server.base + weather); expect(weatherResponse.status()).toBe(502);

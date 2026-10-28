@@ -12,6 +12,7 @@ import { initAppearance } from './components/appearance.ts';
 import { initNews } from './components/news.ts';
 import { initLocation } from './components/location.ts';
 import { initAccount } from './components/account.ts';
+import { readExplorerPlace } from './utils/explorerEntry.ts';
 
 document.querySelector('[data-testid="skip-to-search"]')?.addEventListener('click', event => {
   const search = document.querySelector('#city');
@@ -69,6 +70,12 @@ const search = initCitySearch({
   onSelect: showCity
 });
 location = initLocation({ onSelect(city) { search.reset(); showCity(city); } });
+
+const entryPlace = readExplorerPlace(window.location.search);
+if (entryPlace) {
+  document.querySelector('#city').value = entryPlace.name;
+  showCity(entryPlace);
+}
 
 // The homepage preview reads the same local GeoGuess scoreboard as the game.
 try {

@@ -23,7 +23,7 @@ test('site searches, displays fixture weather and reads news through its own API
     const address = server.httpServer?.address();
     if (!address || typeof address === 'string') throw new Error('Vite did not start');
     const origin = `http://127.0.0.1:${address.port}`;
-    await page.goto(origin);
+    await page.goto(origin + '/explore.html');
     await expect(page.getByTestId('news-item')).toHaveCount(2);
     await page.getByTestId('city-search-input').fill('Nashik');
     await page.getByTestId('city-search-button').click();
