@@ -9,8 +9,6 @@ export function initAppearance() {
   let theme = ['light', 'dark'].includes(saved.value) ? saved.value : preference.matches ? 'light' : 'dark';
   const anonymousTheme = theme;
   const toggle = document.querySelector('#theme-toggle');
-  const menu = document.querySelector('#menu-toggle');
-  const nav = document.querySelector('#explore-nav');
   function render() {
     document.documentElement.dataset.theme = theme;
     toggle.textContent = theme === 'dark' ? '☀ Light theme' : '☾ Dark theme';
@@ -28,11 +26,6 @@ export function initAppearance() {
     if (account.signedIn) document.querySelector('#appearance-status').textContent = '';
     else document.querySelector('#appearance-status').textContent = writeJSON(key, theme) ? '' : 'Theme changed for this session. Your browser could not save it.';
   });
-  function closeMenu() { nav.dataset.open = 'false'; menu.setAttribute('aria-expanded', 'false'); }
-  menu.addEventListener('click', () => { const open = menu.getAttribute('aria-expanded') !== 'true'; nav.dataset.open = String(open); menu.setAttribute('aria-expanded', String(open)); });
-  nav.addEventListener('click', event => { if (event.target.closest('a')) closeMenu(); });
-  document.addEventListener('keydown', event => { if (event.key === 'Escape' && menu.getAttribute('aria-expanded') === 'true') { closeMenu(); menu.focus(); } });
-  matchMedia('(min-width: 701px)').addEventListener('change', closeMenu);
   render();
   function imageFallback(image) {
     if (image instanceof HTMLImageElement && image.matches('[data-geography-photo]')) {

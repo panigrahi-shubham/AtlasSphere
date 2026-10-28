@@ -1,0 +1,22 @@
+/* Shared by the React discovery pages and the preserved multi-page application. */
+:root {
+  --atlas-bg: #071019;
+  --atlas-panel: #0c1823;
+  --atlas-raised: #11212e;
+  --atlas-ink: #f2f5f6;
+  --atlas-muted: #a6b5c3;
+  --atlas-line: #253b48;
+  --atlas-accent: #83e1d2;
+  --atlas-accent-ink: #071b1a;
+  --atlas-radius: 18px;
+}
+:root[data-theme="light"] {
+  --atlas-bg: #f6f8f7;
+  --atlas-panel: #ffffff;
+  --atlas-raised: #e9eeed;
+  --atlas-ink: #142b35;
+  --atlas-muted: #4d6370;
+  --atlas-line: #c6d1d5;
+  --atlas-accent: #09685f;
+  --atlas-accent-ink: #ffffff;
+}

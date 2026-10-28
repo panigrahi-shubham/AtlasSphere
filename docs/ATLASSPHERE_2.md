@@ -19,7 +19,7 @@ Risks: Windows hidden-directory Test Lab file serving is a known local baseline 
 ## Delivery gates
 
 1. Audit and stability — baseline above.
-2. Shared design and existing-page modernization — pending.
+2. Shared design and existing-page modernization — shared navy/teal tokens and Manrope, legacy page hierarchy/forms, theme controls, reusable modal navigation with focus return/scroll locking, and footer added. Original desktop explorer shortcuts retained. Built explorer 39/39; legacy UI 100 passed, one existing production-only skip; homepage 20 passed, eight existing production-only skips. Desktop screenshot inspected locally. Initial overflow/contrast regressions were fixed without changing assertions. New homepage sections connect as their destination milestones are implemented.
 3. Interactive Solar System — pending.
 4. Planet encyclopedia and comparison — pending.
 5. Earth and science lab — pending.
@@ -28,3 +28,5 @@ Risks: Windows hidden-directory Test Lab file serving is a known local baseline 
 8. Cross-browser, accessibility, performance and release verification — pending.
 
 The master brief authorizes all eight milestones in sequence. Critical regressions block advancement. No merge, production deployment, database migration, Android work or paid service is part of this branch's execution.
+
+Baseline legacy UI: 97 passed, one skipped, three failures. Two came from Test Lab's absolute `sendFile` rejecting the hidden `.codex` parent; its Vite error overlay also interrupted the review workflow. Serving the same fixed filename relative to an explicit root fixed all three. Production still does not register this route. A separate diagnostic run was interrupted by a reused test server shutting down; the final isolated-port legacy run passed 100 tests. Evidence: `releases/m2-ui-verified.log`, `releases/m2-explorer-verified.log`, `releases/m2-home.log` (ignored local artifacts).

@@ -165,7 +165,9 @@ export function createApp(options: ApiOptions = {}) {
   });
   if (env === 'test' || env === 'development') {
     app.use('/api/v1/test-lab', createTestLab(env));
-    app.get('/test-lab', (_req, res) => res.sendFile(file('test-lab.html')));
+    // A relative file under an explicit root works inside hidden worktree parents;
+    // it does not enable serving arbitrary dotfiles or register this in production.
+    app.get('/test-lab', (_req, res) => res.sendFile('test-lab.html', { root }));
   }
   app.use('/api/v1', (req, _res, next) => {
     if (/^\/(auth|account|favorites)(\/|$)/.test(req.path) || (/^\/journeys\//.test(req.path) && req.path !== '/journeys/time-machine')) {
