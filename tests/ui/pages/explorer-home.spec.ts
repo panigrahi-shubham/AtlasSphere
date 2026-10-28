@@ -12,6 +12,9 @@ import { currentWeatherFixture } from '../../fixtures/currentWeather.js';
 
 test.beforeEach(async ({ page }) => { await page.goto('/explore.html'); });
 
+
+// Risk: A discovery card could advertise a missing destination.
+// Given the explorer homepage, When primary entry points are inspected, Then cards connect to real features.
 test('AtlasSphere homepage connects every primary card to a real feature', async ({ page }) => {
   await expect(page).toHaveTitle(/AtlasSphere/);
   await expect(page.getByRole('heading', { name: /Weather and wonders/ })).toBeVisible();
@@ -27,6 +30,9 @@ test('AtlasSphere homepage connects every primary card to a real feature', async
   await expect(page).toHaveURL(/#directory-heading$/);
 });
 
+
+// Risk: A preview could show invented weather before a city is selected.
+// Given no selection, When a real fixture city is chosen, Then the invitation becomes selected-city weather.
 test('weather preview changes from invitation to real selected city', async ({ page }) => {
   await page.route('**/api/v1/geocode?**', route => route.fulfill({ json: { results: [{ id: 1, name: 'Nashik', country: 'India', latitude: 19.99, longitude: 73.78 }] } }));
   await page.route('**/api/v1/weather?**', route => route.fulfill({ json: currentWeatherFixture }));
@@ -38,6 +44,9 @@ test('weather preview changes from invitation to real selected city', async ({ p
   await expect(page.locator('#home-weather-empty')).toBeVisible();
 });
 
+
+// Risk: Mobile discovery cards could push controls offscreen.
+// Given a narrow viewport, When the homepage renders, Then imagery and controls fit within it.
 test('mobile AtlasSphere home keeps controls and imagery within viewport', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 800 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

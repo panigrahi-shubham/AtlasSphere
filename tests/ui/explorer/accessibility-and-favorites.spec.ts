@@ -1,3 +1,4 @@
+import { ExplorerPage } from '../../support/pages/ExplorerPage';
 /**
  * Feature: Accessible controls and favorite management
  * Layer: UI regression — Playwright
@@ -21,12 +22,11 @@ test.beforeEach(async ({ page }) => {
   await page.route(weatherEndpoint, route => route.fulfill({ json: currentWeatherFixture }));
   await page.goto('/explore.html');
 });
-async function select(page: Page, name = 'Nashik') {
-  await page.getByTestId('city-search-input').fill(name); await page.getByTestId('city-search-button').click();
-  await page.getByTestId('city-suggestions').getByRole('button', { name: new RegExp(`^${name},`) }).click();
-}
-async function save(page: Page, name: string) { await select(page, name); await page.getByTestId('favorite-toggle').click(); }
+async function save(page: Page, name: string) { await new ExplorerPage(page).selectCity(name); await page.getByTestId('favorite-toggle').click(); }
 
+
+// Risk: Keyboard users could miss search or encounter unnamed controls.
+// Given the explorer, When focus navigation and accessible names are checked, Then search and ordinary controls remain identifiable.
 test('skip link and all normal form controls have accessible names', async ({ page }) => {
   const webkit = page.context().browser()?.browserType().name() === 'webkit';
   if (webkit) await page.getByTestId('skip-to-search').focus();
@@ -39,6 +39,9 @@ test('skip link and all normal form controls have accessible names', async ({ pa
   for (const control of await page.locator('input:visible, select:visible').all()) await expect(control).toHaveAccessibleName(/\S/);
 });
 
+
+// Risk: Clearing search could erase favorites or allow stale work to return.
+// Given selected weather and saved places, When search is cleared, Then the selection is removed while favorites remain.
 test('clear search clears selection, cancels pending work and retains favorites', async ({ page }) => {
   await save(page, 'Nashik');
   await page.getByTestId('city-search-clear').click();
@@ -49,8 +52,11 @@ test('clear search clears selection, cancels pending work and retains favorites'
   await expect(page.getByTestId('favorite-item')).toHaveCount(1);
 });
 
-test('refresh loads new weather without repeating geocoding', async ({ page }) => {
-  await select(page); await expect(page.getByTestId('current-temperature')).toHaveText('24°C');
+
+// Risk: Refreshing weather could waste a second geocoding request.
+// Given a selected city, When refresh is used, Then only its weather is requested again.
+test('refresh loads new weather without repeating geocoding', async ({ explorer, page }) => {
+  await explorer.selectCity(); await expect(page.getByTestId('current-temperature')).toHaveText('24°C');
   const updated = structuredClone(currentWeatherFixture); updated.current.temperature_2m = 9;
   let lookups = 0;
   await page.route('**/api/v1/geocode?**', route => { lookups++; return route.fulfill({ json: {} }); });
@@ -60,8 +66,11 @@ test('refresh loads new weather without repeating geocoding', async ({ page }) =
   expect(lookups).toBe(0);
 });
 
-test('refresh is disabled while loading and clear search discards its response', async ({ page }) => {
-  await select(page); await expect(page.getByTestId('current-temperature')).toHaveText('24°C');
+
+// Risk: Repeated refresh or clearing could allow stale weather to reappear.
+// Given an in-flight refresh, When controls are used, Then duplicate refresh is disabled and clear discards the response.
+test('refresh is disabled while loading and clear search discards its response', async ({ explorer, page }) => {
+  await explorer.selectCity(); await expect(page.getByTestId('current-temperature')).toHaveText('24°C');
   let release: () => void = () => {};
   const gate = new Promise<void>(resolve => { release = resolve; });
   await page.route(weatherEndpoint, async route => { await gate; await route.fulfill({ json: currentWeatherFixture }).catch(() => {}); });
@@ -72,10 +81,13 @@ test('refresh is disabled while loading and clear search discards its response',
   await expect(page.getByTestId('weather-error')).toBeEmpty();
 });
 
-test('offline and restored status never silently refresh the snapshot', async ({ page, context }) => {
+
+// Risk: Reconnection could silently replace the visible snapshot.
+// Given offline and restored connectivity, When status changes, Then no automatic refresh happens.
+test('offline and restored status never silently refresh the snapshot', async ({ explorer, page, context }) => {
   let calls = 0;
   await page.route(weatherEndpoint, route => { calls++; return route.fulfill({ json: currentWeatherFixture }); });
-  await select(page); await expect(page.getByTestId('current-temperature')).toHaveText('24°C');
+  await explorer.selectCity(); await expect(page.getByTestId('current-temperature')).toHaveText('24°C');
   await context.setOffline(true);
   await expect(page.getByTestId('connection-status')).toContainText('offline');
   await expect(page.getByTestId('current-temperature')).toHaveText('24°C');
@@ -84,6 +96,9 @@ test('offline and restored status never silently refresh the snapshot', async ({
   expect(calls).toBe(1);
 });
 
+
+// Risk: Favorite filtering could delete places or mishandle accents.
+// Given saved places, When city, country and accented queries are entered, Then filtering changes only the visible view.
 test('favorite filter matches city, country and accent-insensitive text without deleting data', async ({ page }) => {
   await save(page, 'Tokyo'); await save(page, 'Zürich');
   await page.getByTestId('favorites-filter').fill('zurich');
@@ -98,6 +113,9 @@ test('favorite filter matches city, country and accent-insensitive text without 
   expect(saved).toHaveLength(2);
 });
 
+
+// Risk: Sorting could overwrite the persisted favorite order.
+// Given saved locations, When another display order is chosen, Then the original saved order remains.
 test('favorite sort changes display order and preserves saved order', async ({ page }) => {
   await save(page, 'Tokyo'); await save(page, 'Nashik'); await save(page, 'Zürich');
   const names = page.getByTestId('favorite-item').locator('.favorite-open');
@@ -109,6 +127,9 @@ test('favorite sort changes display order and preserves saved order', async ({ p
   await expect(names).toHaveText(['Tokyo, Japan', 'Nashik, India', 'Zürich, Switzerland']);
 });
 
+
+// Risk: A destructive confirmation could trap or lose focus.
+// Given a clear-all request, When it is cancelled or escaped, Then focus and saved places remain correct.
 test('clear-all confirmation supports cancel, keyboard focus and Escape', async ({ page }) => {
   await save(page, 'Tokyo');
   await page.getByTestId('favorites-clear').click();
@@ -124,6 +145,9 @@ test('clear-all confirmation supports cancel, keyboard focus and Escape', async 
   await expect(page.getByTestId('favorite-item')).toHaveCount(1);
 });
 
+
+// Risk: Clear-all could remove only filtered rows or reset unrelated preferences.
+// Given filtered favorites and chosen units, When clear-all is confirmed, Then all favorites are removed while weather and units remain.
 test('confirmed clear-all removes filtered favorites, persists, and preserves weather and units', async ({ page }) => {
   await save(page, 'Tokyo'); await save(page, 'Nashik');
   await page.getByTestId('unit-fahrenheit').click();
@@ -139,7 +163,10 @@ test('confirmed clear-all removes filtered favorites, persists, and preserves we
 });
 
 for (const width of [320, 768, 1440]) {
-  test(`layout stays within ${width}px with usable buttons`, async ({ page }) => {
+
+// Risk: A narrow layout could make controls unreachable.
+// Given each target width, When the page renders, Then buttons remain usable within the viewport.
+test(`layout stays within ${width}px with usable buttons`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 }); await save(page, 'Nashik');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     for (const id of ['city-search-button', 'city-search-clear', 'unit-celsius', 'unit-fahrenheit', 'favorite-toggle', 'weather-refresh']) {
@@ -148,6 +175,9 @@ for (const width of [320, 768, 1440]) {
   });
 }
 
+
+// Risk: Practice tools could appear during ordinary regression.
+// Given an ordinary page URL, When the explorer loads, Then practice controls remain absent.
 test('practice mode is absent during normal regression', async ({ page }) => {
   await expect(page.getByTestId('bug-mode-panel')).toHaveCount(0);
 });

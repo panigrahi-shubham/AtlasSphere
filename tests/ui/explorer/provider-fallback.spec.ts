@@ -17,7 +17,10 @@ test.beforeEach(async ({ page }) => {
 });
 
 for (const [searchStatus, weatherStatus] of [[502, 503], [503, 502]]) {
-  test(`search ${searchStatus} and weather ${weatherStatus} recover through the public provider`, async ({ page }) => {
+
+// Risk: A temporary proxy outage could prevent a permitted recovery.
+// Given the allowed outage statuses, When search and weather retry, Then public-provider responses restore the flow.
+test(`search ${searchStatus} and weather ${weatherStatus} recover through the public provider`, async ({ page }) => {
     let geoCalls = 0, weatherCalls = 0;
     await page.route('**/api/v1/geocode?**', route => route.fulfill({ status: searchStatus, json: {} }));
     await page.route('**/api/v1/weather?**', route => route.fulfill({ status: weatherStatus, json: {} }));
@@ -35,7 +38,10 @@ for (const [searchStatus, weatherStatus] of [[502, 503], [503, 502]]) {
 }
 
 for (const stage of ['search', 'weather']) {
-  test(`${stage} 429 never contacts the direct provider`, async ({ page }) => {
+
+// Risk: Rate limiting could be bypassed by automatic fallback.
+// Given a 429 response, When the request fails, Then the direct provider is not contacted.
+test(`${stage} 429 never contacts the direct provider`, async ({ page }) => {
     let fallbackCalls = 0;
     await page.route(/^https:\/\/(?:api|geocoding-api)\.open-meteo\.com\//, route => { fallbackCalls++; return route.fulfill({ json: {} }); });
     await page.route('**/api/v1/geocode?**', route => route.fulfill({ status: stage === 'search' ? 429 : 200, json: { results: [city] } }));
@@ -48,6 +54,9 @@ for (const stage of ['search', 'weather']) {
   });
 }
 
+
+// Risk: A failed fallback could hide the useful original error.
+// Given both services fail, When search completes, Then the original server error remains visible.
 test('a failed direct lookup keeps the original server error', async ({ page }) => {
   await page.route('**/api/v1/geocode?**', route => route.fulfill({ status: 502, json: {} }));
   await page.route('https://geocoding-api.open-meteo.com/**', route => route.fulfill({ status: 503, json: {} }));
@@ -56,6 +65,9 @@ test('a failed direct lookup keeps the original server error', async ({ page }) 
   await expect(page.getByTestId('search-error')).toContainText('Location service unavailable (502)');
 });
 
+
+// Risk: Fallback could select a capital outside the requested country.
+// Given a restricted capital query, When fallback runs, Then the country filter is retained.
 test('capital lookup fallback keeps the country restriction', async ({ page }) => {
   let calls = 0;
   await page.route('**/api/v1/geocode?**', route => route.fulfill({ status: 503, json: {} }));
@@ -71,6 +83,9 @@ test('capital lookup fallback keeps the country restriction', async ({ page }) =
   await expect(page.getByTestId('city-name')).toHaveText('New Delhi'); expect(calls).toBe(1);
 });
 
+
+// Risk: A daily forecast outage could erase usable current conditions.
+// Given current weather and a daily outage, When fallback resolves the forecast, Then current weather remains visible.
 test('seven-day forecast fallback retains the current weather', async ({ page }) => {
   const daily = JSON.parse(await readFile(new URL('../../fixtures/api-daily.json', import.meta.url), 'utf8'));
   let calls = 0;

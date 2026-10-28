@@ -10,12 +10,15 @@
 import { test, expect } from '../../support/uiTest';
 import AxeBuilder from '@axe-core/playwright';
 
-test('account deletion asks for a password and supports keyboard cancellation', async ({ page }) => {
+
+// Risk: Account deletion could proceed without a safe confirmation.
+// Given a signed-in user, When deletion is requested and cancelled, Then the password dialog is accessible and focus returns.
+test('account deletion asks for a password and supports keyboard cancellation', async ({ page, account }) => {
   await page.route('**/api/v1/**', route => route.fulfill({ json: { favorites: [] } }));
   await page.route('**/api/v1/auth/refresh', route => route.fulfill({ json: { accessToken: 'test-token', user: { email: 'test@example.test', theme: 'dark', displayName: null } } }));
   await page.goto('/explore.html');
   await expect(page.getByTestId('account-email-display')).toHaveText('test@example.test');
-  await page.getByTestId('account-delete').click();
+  await account.requestDeletion();
   await expect(page.getByTestId('delete-account-dialog')).toBeVisible();
   await expect(page.getByLabel('Current password')).toBeVisible();
   const accessibility = await new AxeBuilder({ page }).include('#delete-account-dialog').withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
@@ -25,6 +28,9 @@ test('account deletion asks for a password and supports keyboard cancellation', 
   await expect(page.getByTestId('account-delete')).toBeFocused();
 });
 
+
+// Risk: A sleeping backend could make a safe read look permanently broken.
+// Given one wake-up response, When the read retries, Then progress is announced and data eventually returns.
 test('a waking server is announced and a safe read retries successfully', async ({ page }) => {
   await page.route('**/api/v1/auth/refresh', route => route.fulfill({ status: 401, json: { error: { message: 'Sign in' } } }));
   let calls = 0, release!: () => void;
@@ -45,6 +51,9 @@ test('a waking server is announced and a safe read retries successfully', async 
   await expect(page.getByTestId('server-wake-status')).toBeHidden();
 });
 
+
+// Risk: An uncertain write could be replayed and duplicate data.
+// Given an ambiguous wake-up failure, When the client handles it, Then it does not repeat the write.
 test('a failed account write is not replayed after an ambiguous wake-up error', async ({ page }) => {
   await page.route('**/api/v1/auth/refresh', route => route.fulfill({ status: 401, json: { error: { message: 'Sign in' } } }));
   let calls = 0;
@@ -58,6 +67,9 @@ test('a failed account write is not replayed after an ambiguous wake-up error', 
   expect(calls).toBe(1);
 });
 
+
+// Risk: A write confirmed as unforwarded could become unrecoverable.
+// Given an explicit safe-retry response, When the client retries, Then the save succeeds without duplicate forwarding.
 test('a save retries when the proxy confirms no write was forwarded', async ({ page }) => {
   await page.route('**/api/v1/auth/refresh', route => route.fulfill({ status: 401, json: { error: { message: 'Sign in' } } }));
   let calls = 0, saves = 0, release!: () => void;
@@ -77,6 +89,9 @@ test('a save retries when the proxy confirms no write was forwarded', async ({ p
   await expect(page.getByTestId('server-wake-status')).toBeHidden();
 });
 
+
+// Risk: A wake-up failure could destroy a still-valid session.
+// Given an unforwarded refresh attempt, When the backend wakes, Then refresh recovers without losing the session.
 test('session refresh survives an unforwarded wake-up attempt', async ({ page }) => {
   await page.route('**/api/v1/**', route => route.fulfill({ json: { favorites: [] } }));
   let calls = 0;
@@ -91,6 +106,9 @@ test('session refresh survives an unforwarded wake-up attempt', async ({ page })
   await expect(page.getByTestId('server-wake-status')).toBeHidden();
 });
 
+
+// Risk: A sleeping backend could cause an endless retry loop.
+// Given repeated wake-up responses, When the retry budget is exhausted, Then the client stops after three retries.
 test('a waking server stops retrying a read after three retries', async ({ page }) => {
   await page.route('**/api/v1/auth/refresh', route => route.fulfill({ status: 401, json: { error: { message: 'Sign in' } } }));
   let calls = 0;

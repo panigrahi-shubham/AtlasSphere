@@ -9,6 +9,9 @@
  */
 import { test, expect } from '@playwright/test';
 
+
+// Risk: A live search response could contain unusable locations.
+// Given a real city query, When geocoding responds, Then its coordinates are valid.
 test('live geocoding lookup returns valid coordinates', { tag: ['@live'] }, async ({ request }) => {
   const response = await request.get('https://geocoding-api.open-meteo.com/v1/search', {
     params: { name: 'Zurich', count: 5, language: 'en', format: 'json' }, timeout: 15000

@@ -18,6 +18,9 @@ const pages = [
   ['/accessibility', 'Exploration is for everyone.'],
 ] as const;
 
+
+// Risk: Static HTML could become dependent on a streaming reveal script.
+// Given a production build, When HTML is requested, Then real page content exists without pending reveal markup.
 test('initial HTML includes real content and no streaming reveal dependency', async ({ request }) => {
   for (const [path, heading] of pages) {
     const response = await request.get(path);
@@ -34,7 +37,10 @@ test('initial HTML includes real content and no streaming reveal dependency', as
 
 test.describe('without JavaScript', () => {
   test.use({ javaScriptEnabled: false });
-  test('homepage and information routes display their own content', async ({ page }) => {
+
+// Risk: Visitors without JavaScript could see an empty shell.
+// Given JavaScript is disabled, When each public page opens, Then its own heading and content remain visible.
+test('homepage and information routes display their own content', async ({ page }) => {
     for (const [path, heading] of pages) {
       await page.goto(path);
       await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible();
@@ -44,7 +50,10 @@ test.describe('without JavaScript', () => {
 });
 
 for (const theme of ['dark', 'light']) {
-  test(`${theme} page hydrates without errors and keeps menu and focus working`, async ({ page }) => {
+
+// Risk: Hydration could break theme, menu or focus behavior.
+// Given a saved theme, When each production page hydrates, Then it stays error-free and its menu and focus work.
+test(`${theme} page hydrates without errors and keeps menu and focus working`, async ({ page }) => {
     const errors: string[] = [];
     page.on('pageerror', error => errors.push(error.message));
     page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });

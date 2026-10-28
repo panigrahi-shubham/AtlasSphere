@@ -16,6 +16,9 @@ const { haversine, landmarkPoints } = await import(corePath) as {
 };
 test.beforeEach(() => test.skip(process.env.EARTHSCOPE_UI_SOURCE === 'memory', 'GeoGuess requires the Vite multi-page route.'));
 
+
+// Risk: Changing display units could alter score mathematics.
+// Given the planted miles-scoring defect, When a landmark guess is scored, Then the correct-distance assertion exposes the expected failure.
 test('GG-BUG-1: Fahrenheit changes distance units, never score maths', async ({ page }) => {
   test.fail(true, 'GG-BUG-1 intentionally scores miles as kilometres in practice mode');
   await page.addInitScript(() => localStorage.setItem('earthscope:practice:earthscope:temperature-unit:v1', JSON.stringify('fahrenheit')));
@@ -26,6 +29,9 @@ test('GG-BUG-1: Fahrenheit changes distance units, never score maths', async ({ 
   await expect(page.getByTestId('gg-points')).toHaveText(`${landmarkPoints(haversine(0, 0, answer.lat, answer.lon))} points`);
 });
 
+
+// Risk: A countdown could continue after an answer.
+// Given the planted timer defect, When simulated time advances after answering, Then the stopped-timer assertion exposes the expected failure.
 test('GG-BUG-2: timer stops immediately after the answer', async ({ page }) => {
   test.fail(true, 'GG-BUG-2 intentionally keeps the visible countdown running for three seconds');
   await page.clock.install(); await page.goto('/geoguess?mode=outline&seed=42&start=1&bugMode=1&bugs=GG-BUG-2');

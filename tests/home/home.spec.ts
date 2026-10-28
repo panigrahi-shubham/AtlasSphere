@@ -9,17 +9,21 @@
  */
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { HomePage } from '../support/pages/HomePage';
 const places = { results: [{ id: 1857910, name: 'Kyoto', admin1: 'Kyoto', country: 'Japan', latitude: 35.021, longitude: 135.754 }] };
 
 test.beforeEach(async ({ context }) => {
   await context.route('**/api/v1/geocode?*', route => route.fulfill({ json: places }));
 });
 
+
+// Risk: The homepage could lose essential sections or load 3D before it is needed.
+// Given the initial page, When it renders, Then discovery sections and real imagery appear while the globe renderer stays unloaded.
 test('homepage presents all discovery sections, real imagery and a lazy globe', async ({ page }) => {
   const requested: string[] = [], errors: string[] = [];
   page.on('request', request => requested.push(request.url()));
   page.on('pageerror', error => errors.push(error.message));
-  await page.goto('/');
+  await new HomePage(page).open();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Explore Earth and Beyond.');
   await expect(page.getByTestId('home-globe-fallback')).toBeVisible();
   await expect(page.getByTestId('home-menu-toggle')).toBeVisible();
@@ -30,6 +34,9 @@ test('homepage presents all discovery sections, real imagery and a lazy globe', 
   await expect.poll(() => page.getByTestId('home-globe-fallback').evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
 });
 
+
+// Risk: A modal menu could strand keyboard focus.
+// Given an open menu, When users tab, close or press Escape, Then focus stays contained and returns correctly.
 test('navigation traps focus, closes on Escape and returns focus; explicit close works', async ({ page, isMobile }) => {
   await page.goto('/');
   const toggle = page.getByTestId('home-menu-toggle');
@@ -47,6 +54,9 @@ test('navigation traps focus, closes on Escape and returns focus; explicit close
   await toggle.click(); await close.click(); await expect(toggle).toBeFocused();
 });
 
+
+// Risk: Search could hand off an invalid or unintended location.
+// Given fixture results, When keyboard selection is used, Then validated coordinates reach the explorer link.
 test('geographic search validates input, selects by keyboard and hands off real coordinates', async ({ page }) => {
   await page.goto('/');
   await page.getByTestId('home-search-submit').click();
@@ -64,6 +74,9 @@ test('geographic search validates input, selects by keyboard and hands off real 
   await expect(page.getByTestId('home-globe-selection')).toHaveCount(0);
 });
 
+
+// Risk: Search failures could leave users without an honest recovery path.
+// Given empty or failed responses, When search and retry run, Then their corresponding states remain clear.
 test('search has meaningful empty, outage and retry states', async ({ page }) => {
   let calls = 0;
   await page.route('**/api/v1/geocode?*', route => { calls++; return route.fulfill(calls === 1 ? { status: 503, json: {} } : calls === 2 ? {json: places} : { json: {results:[]} }); });
@@ -75,6 +88,9 @@ test('search has meaningful empty, outage and retry states', async ({ page }) =>
   await expect(page.getByTestId('home-search-status')).toContainText('No places found');
 });
 
+
+// Risk: An older search could overwrite newer results.
+// Given delayed overlapping requests, When the older response arrives last, Then only the new result is displayed.
 test('a newer search cannot display obsolete results', async ({ page }) => {
   let release: (() => void) | undefined;
   const hold = new Promise<void>(resolve => { release = resolve; });
@@ -89,6 +105,9 @@ test('a newer search cannot display obsolete results', async ({ page }) => {
   await expect(page.getByTestId('home-search-results')).not.toContainText('Oldtown');
 });
 
+
+// Risk: Preferences or science controls could appear interactive without working.
+// Given a theme preference and sourced content, When controls change, Then preference and selected content update.
 test('themes persist and educational controls reveal sourced content', async ({ page }) => {
   await page.goto('/');
   await page.getByTestId('home-theme-toggle').click();
@@ -104,7 +123,10 @@ test('themes persist and educational controls reveal sourced content', async ({ 
   await expect(page.locator('.history-detail')).toContainText('20 July 1969');
 });
 
-for (const theme of ['dark', 'light']) test(`homepage and menu accessibility in ${theme} theme`, async ({ page }) => {
+for (const theme of ['dark', 'light'])
+// Risk: A theme or menu state could introduce accessibility barriers.
+// Given each theme, When homepage and menu are scanned, Then the selected accessibility checks report no violations.
+test(`homepage and menu accessibility in ${theme} theme`, async ({ page }) => {
   await page.addInitScript(value => localStorage.setItem('earthscope:theme:v1', JSON.stringify(value)), theme);
   await page.goto('/');
   await expect(page.getByRole('heading', {level:1})).toBeVisible();
@@ -114,6 +136,9 @@ for (const theme of ['dark', 'light']) test(`homepage and menu accessibility in 
   expect((await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
 });
 
+
+// Risk: WebGL failure could remove the Earth or break search.
+// Given a failed context, When 3D is requested, Then the image, search and retry state remain usable.
 test('WebGL failure retains the image and search with an honest retry state', async ({ page }) => {
   await page.addInitScript(() => { const original = HTMLCanvasElement.prototype.getContext; HTMLCanvasElement.prototype.getContext = function(this: HTMLCanvasElement, type, ...args) { if (String(type).startsWith('webgl')) return null; return original.call(this, type, ...args); } as typeof original; });
   await page.goto('/'); await page.getByTestId('home-globe-activate').click();
@@ -123,6 +148,9 @@ test('WebGL failure retains the image and search with an honest retry state', as
   await expect(page.getByTestId('home-search-input')).toBeVisible();
 });
 
+
+// Risk: Information links could work only after client navigation.
+// Given each direct information URL, When loaded independently, Then its own content is readable.
 test('sources, privacy and accessibility routes are readable directly', async ({ page }) => {
   for (const [route, heading] of [['/sources','A world of trusted sources.'], ['/privacy','Your privacy, explained.'], ['/accessibility','Exploration is for everyone.']]) {
     await page.goto(route); await expect(page.getByRole('heading', {level:1})).toHaveText(heading);

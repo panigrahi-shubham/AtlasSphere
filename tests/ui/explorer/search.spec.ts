@@ -22,11 +22,10 @@ test.beforeEach(async ({ page }) => {
   await page.goto('/explore.html');
 });
 
-async function search(page: import('@playwright/test').Page, query = 'Zürich') {
-  await page.getByTestId('city-search-input').fill(query);
-  await page.getByTestId('city-search-button').click();
-}
 
+
+// Risk: Opening the explorer could make unexpected provider calls.
+// Given a fresh browser context, When the page opens, Then no automatic lookup or uncaught error occurs.
 test('loads without console errors or an automatic API call', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
@@ -39,8 +38,11 @@ test('loads without console errors or an automatic API call', async ({ page }) =
   expect(errors).toEqual([]);
 });
 
-test('shows matching countries and lets the user select a city', async ({ page }) => {
-  await search(page);
+
+// Risk: Similar city names could make the selected country ambiguous.
+// Given multiple matching places, When one is selected, Then its city and country are displayed.
+test('shows matching countries and lets the user select a city', async ({ explorer, page }) => {
+  await explorer.search('Zürich');
   await expect(page.getByTestId('city-suggestions').getByRole('button')).toHaveCount(2);
   await page.getByRole('button', { name: 'Zürich, Zurich, Switzerland', exact: true }).click();
   await expect(page.getByTestId('city-name')).toHaveText('Zürich');
@@ -48,6 +50,9 @@ test('shows matching countries and lets the user select a city', async ({ page }
   await expect(page.getByTestId('city-suggestions')).toBeHidden();
 });
 
+
+// Risk: Search could require a mouse despite appearing keyboard accessible.
+// Given matching suggestions, When Enter and arrow keys are used, Then a city can be selected.
 test('supports Enter, arrow navigation and keyboard selection', async ({ page }) => {
   const input = page.getByTestId('city-search-input');
   await input.fill('Zurich'); await input.press('Enter');
@@ -58,8 +63,11 @@ test('supports Enter, arrow navigation and keyboard selection', async ({ page })
   await expect(page.getByTestId('country-name')).toHaveText('United States');
 });
 
-test('Escape closes suggestions and returns focus', async ({ page }) => {
-  await search(page);
+
+// Risk: Closing suggestions could lose keyboard focus.
+// Given an open result list, When Escape is pressed, Then suggestions close and focus returns.
+test('Escape closes suggestions and returns focus', async ({ explorer, page }) => {
+  await explorer.search('Zürich');
   await expect(page.getByTestId('city-suggestion')).toHaveCount(2);
   await page.getByTestId('city-search-input').press('ArrowDown');
   await page.keyboard.press('Escape');
@@ -67,26 +75,35 @@ test('Escape closes suggestions and returns focus', async ({ page }) => {
   await expect(page.getByTestId('city-search-input')).toBeFocused();
 });
 
-test('rejects whitespace without making an API request', async ({ page }) => {
+
+// Risk: Whitespace could generate unnecessary provider traffic.
+// Given blank input, When search is submitted, Then validation runs without an API call.
+test('rejects whitespace without making an API request', async ({ explorer, page }) => {
   let calls = 0;
   await page.route(endpoint, route => { calls++; return route.fulfill({ json: {} }); });
-  await search(page, '   ');
+  await explorer.search( '   ');
   await expect(page.getByTestId('search-error')).toHaveText('Enter a city name.');
   expect(calls).toBe(0);
 });
 
-test('no matches clears previous suggestions', async ({ page }) => {
-  await search(page); await expect(page.getByTestId('city-suggestion')).toHaveCount(2);
+
+// Risk: A no-match result could leave stale options selectable.
+// Given earlier suggestions, When a new query has no matches, Then the old list is cleared.
+test('no matches clears previous suggestions', async ({ explorer, page }) => {
+  await explorer.search('Zürich'); await expect(page.getByTestId('city-suggestion')).toHaveCount(2);
   await page.route(endpoint, route => route.fulfill({ json: {} }));
-  await search(page, 'zzzzunknown');
+  await explorer.search( 'zzzzunknown');
   await expect(page.getByTestId('search-error')).toContainText('No cities found');
   await expect(page.getByTestId('city-suggestions')).toBeHidden();
 });
 
-test('reports API errors and allows retry', async ({ page }) => {
+
+// Risk: A failed lookup could leave search permanently unusable.
+// Given a provider error, When it recovers and search is retried, Then the error and result states recover.
+test('reports API errors and allows retry', async ({ explorer, page }) => {
   await mockOpenMeteoDown(page);
   await page.route(endpoint, route => route.fulfill({ status: 503, json: {} }));
-  await search(page);
+  await explorer.search('Zürich');
   await expect(page.getByTestId('search-error')).toContainText('503');
   await expect(page.getByTestId('city-search-loading')).toBeHidden();
   await page.route(endpoint, route => route.fulfill({ json: { results: cities } }));
@@ -94,11 +111,14 @@ test('reports API errors and allows retry', async ({ page }) => {
   await expect(page.getByTestId('city-suggestion')).toHaveCount(2);
 });
 
-test('editing a pending search cancels its stale results', async ({ page }) => {
+
+// Risk: A pending result could overwrite an edited query.
+// Given a delayed search, When the input changes first, Then the obsolete response stays hidden.
+test('editing a pending search cancels its stale results', async ({ explorer, page }) => {
   let release: () => void = () => {};
   const gate = new Promise<void>(resolve => { release = resolve; });
   await page.route(endpoint, async route => { await gate; await route.fulfill({ json: { results: cities } }).catch(() => {}); });
-  await search(page);
+  await explorer.search('Zürich');
   await expect(page.getByTestId('city-search-loading')).toBeVisible();
   await page.getByTestId('city-search-input').fill('Tokyo');
   release();
@@ -107,9 +127,12 @@ test('editing a pending search cancels its stale results', async ({ page }) => {
   await expect(page.getByTestId('search-error')).toBeEmpty();
 });
 
-test('works at mobile width without horizontal page overflow', async ({ page }) => {
+
+// Risk: Mobile search controls could overflow the page.
+// Given a narrow viewport, When a search is performed, Then controls and results fit the viewport.
+test('works at mobile width without horizontal page overflow', async ({ explorer, page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
-  await search(page);
+  await explorer.search('Zürich');
   await expect(page.getByTestId('city-suggestion')).toHaveCount(2);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });

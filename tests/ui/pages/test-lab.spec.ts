@@ -9,6 +9,9 @@
  */
 import { test, expect } from '@playwright/test';
 test.skip(process.env.EARTHSCOPE_UI_SOURCE === 'memory', 'The Test Lab requires the development API and Vite.');
+
+// Risk: Practice controls could become unusable across browser interaction types.
+// Given the development lab, When dialogs, frames, shadow roots, files and dynamic rows are exercised, Then their visible results remain correct.
 test('Test Lab practices dialogs, frames, shadow roots, files and dynamic rows', async ({ page }) => {
   await page.goto('/test-lab');
   page.once('dialog', dialog => dialog.accept());

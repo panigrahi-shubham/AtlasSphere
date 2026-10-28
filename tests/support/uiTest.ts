@@ -14,6 +14,7 @@ import { HomePage } from './pages/HomePage';
 
 // Every UI test gets a clean browser context. Page-level API mocks take priority
 // over this context-level boundary; an omitted mock must never contact a live API.
+/** Provide test-scoped page objects and enforce the automatic browser network boundary. */
 export const test = base.extend<{ appBoundary: void; explorer: ExplorerPage; journeys: JourneysPage; geoGuess: GeoGuessPage; account: AccountPanel; home: HomePage }>({
   explorer: async ({ page }, use) => { await use(new ExplorerPage(page)); },
   journeys: async ({ page }, use) => { await use(new JourneysPage(page)); },

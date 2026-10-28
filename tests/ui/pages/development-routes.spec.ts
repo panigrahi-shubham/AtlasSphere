@@ -22,6 +22,9 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
     route.continue({ headers: { ...route.request().headers(), 'x-forwarded-for': address } }));
 });
 
+
+// Risk: A route change could break access to preserved application features.
+// Given the explorer, When Journeys is opened, Then account controls and future-year content remain reachable.
 test('preserved explorer, journeys and account controls are reachable', { tag: ['@smoke'] }, async ({ page }) => {
   await page.goto('/explore.html');
   await expect(page.getByTestId('account-section')).toBeVisible();
@@ -32,6 +35,9 @@ test('preserved explorer, journeys and account controls are reachable', { tag: [
   await page.getByTestId('time-explore').click();
   await expect(page.getByTestId('time-result')).toContainText('Fiction');
 });
+
+// Risk: Practice scenarios could lose the ability to return to normal behavior.
+// Given the development lab, When a defect is selected and cleared, Then both planted and normal responses are shown.
 test('isolated lab presents practice controls only in development', { tag: ['@smoke'] }, async ({ page }) => {
   await page.goto('/test-lab');
   await expect(page.getByRole('heading', { name: 'AtlasSphere Test deployment' })).toBeVisible();
@@ -42,6 +48,9 @@ test('isolated lab presents practice controls only in development', { tag: ['@sm
   await page.getByTestId('lab-run').click();
   await expect(page.getByTestId('lab-result')).toContainText('celsius');
 });
+
+// Risk: Preserved routes could introduce serious accessibility barriers.
+// Given explorer and Journeys pages, When axe checks run, Then no serious or critical issues are reported.
 test('preserved explorer and journeys have no serious axe issues', { tag: ['@a11y'] }, async ({ page }) => {
   for (const path of ['/explore.html', '/journeys']) {
     await page.goto(path);

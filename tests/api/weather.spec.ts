@@ -10,6 +10,9 @@
 import { test, expect } from '@playwright/test';
 import { weatherURL, validateCurrentWeather, validateHourlyForecast, HOURLY_VARIABLES } from '../../src/services/weatherService.js';
 
+
+// Risk: The live weather schema could drift from application validation.
+// Given a real forecast request, When normalized, Then metric units, timestamps and required values satisfy the existing contract.
 test('live current weather has metric units, valid values and a usable timezone', { tag: ['@live'] }, async ({ request }) => {
   const response = await request.get(weatherURL({ latitude: 19.99, longitude: 73.78 }), { timeout: 15000 });
   expect(response.ok()).toBeTruthy();
@@ -35,6 +38,9 @@ test('live current weather has metric units, valid values and a usable timezone'
   expect(forecast.hours[0].time).toBeGreaterThanOrEqual(weather.time);
 });
 
+
+// Risk: The provider could accept invalid coordinates.
+// Given out-of-range coordinates, When the live endpoint receives them, Then it rejects the request.
 test('live weather rejects invalid coordinates', { tag: ['@live'] }, async ({ request }) => {
   const response = await request.get('https://api.open-meteo.com/v1/forecast', {
     params: { latitude: 100, longitude: 0, current: 'temperature_2m' }, timeout: 15000

@@ -18,6 +18,9 @@ test.beforeEach(async ({ page }) => {
   await page.route('**/api/v1/journeys/reviews/**', route => route.fulfill({ json: { reviews: [] } }));
 });
 
+
+// Risk: Satellite imagery could be fetched eagerly or shown without context.
+// Given an image fixture, When imagery is requested, Then exactly that image appears with its date, credit and limitations.
 test('satellite view loads one fixture image on request and shows date, credit and limitations', async ({ page }) => {
   const jpeg = await readFile(new URL('../../fixtures/satellite.jpg', import.meta.url));
   let calls = 0, release!: () => void;
@@ -48,6 +51,9 @@ test('satellite view loads one fixture image on request and shows date, credit a
   expect(result.violations.filter(item => ['serious', 'critical'].includes(item.impact || ''))).toEqual([]);
 });
 
+
+// Risk: A failed image could leave a misleading empty panel.
+// Given an image failure, When the viewer loads, Then an honest retry message is shown.
 test('a satellite image failure offers an honest retry message', async ({ page }) => {
   await page.route(imagery, route => route.fulfill({ status: 404, body: '' }));
   await page.goto('/journeys'); await page.getByTestId('sat-load').click();
@@ -56,6 +62,9 @@ test('a satellite image failure offers an honest retry message', async ({ page }
   await expect(page.getByTestId('sat-load')).toBeEnabled();
 });
 
+
+// Risk: An unsupported date could waste NASA requests.
+// Given an invalid satellite date, When submitted, Then the valid range is shown without an upstream image request.
 test('an unsupported satellite date shows the range without requesting NASA', async ({ page }) => {
   let calls = 0;
   await page.route(imagery, route => { calls++; return route.fulfill({ status: 404, body: '' }); });
@@ -65,6 +74,9 @@ test('an unsupported satellite date shows the range without requesting NASA', as
   expect(calls).toBe(0);
 });
 
+
+// Risk: Invalid shared coordinates could reach the imagery service.
+// Given malformed coordinates, When imagery is requested, Then validation prevents an invalid request.
 test('satellite view validates the shared coordinate controls', async ({ page }) => {
   let calls = 0;
   await page.route(imagery, route => { calls++; return route.fulfill({ status: 404, body: '' }); });

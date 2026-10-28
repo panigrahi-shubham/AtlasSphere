@@ -11,6 +11,8 @@ import { describe, expect, it, vi } from "vitest";
 import { explorerLink, findPlaces, validatePlaces } from "./placeSearch";
 import { readExplorerPlace } from "../utils/explorerEntry";
 describe("geographic search boundaries", () => {
+  // Risk: Zero coordinates or missing country metadata could be mishandled.
+  // Given valid zero coordinates, When normalized, Then they remain valid and missing metadata receives an honest label.
   it("keeps valid zero coordinates and labels missing country metadata", () => {
     expect(
       validatePlaces({
@@ -23,6 +25,9 @@ describe("geographic search boundaries", () => {
     });
     expect(validatePlaces({})).toEqual([]);
   });
+
+  // Risk: Malformed service data could become a selectable place.
+  // Given invalid payloads and coordinates, When validated, Then the response is rejected.
   it("rejects malformed service responses and invalid coordinates", () => {
     for (const value of [
       null,
@@ -33,6 +38,9 @@ describe("geographic search boundaries", () => {
     ])
       expect(() => validatePlaces(value)).toThrow();
   });
+
+  // Risk: URL handoff could corrupt names or accept invalid locations.
+  // Given encoded place details, When handed to the explorer and read back, Then valid values survive and invalid coordinates are rejected.
   it("makes a validated round trip into the preserved explorer", () => {
     const place = {
       name: "Zürich & Lake",
@@ -53,6 +61,9 @@ describe("geographic search boundaries", () => {
     ])
       expect(readExplorerPlace(query)).toBeNull();
   });
+
+  // Risk: Invalid query length could still consume upstream requests.
+  // Given short or excessive text, When lookup is called, Then validation fails before fetch runs.
   it("does not issue an upstream request for a short or excessive query", async () => {
     const fetcher = vi.spyOn(globalThis, "fetch");
     await expect(
@@ -64,6 +75,9 @@ describe("geographic search boundaries", () => {
     expect(fetcher).not.toHaveBeenCalled();
     fetcher.mockRestore();
   });
+
+  // Risk: A rate limit could cause repeated calls and worsen the outage.
+  // Given a 429 response, When lookup fails, Then the user gets a wait message after one call.
   it("turns rate limits into an actionable message without an automatic retry", async () => {
     const fetcher = vi
       .spyOn(globalThis, "fetch")
