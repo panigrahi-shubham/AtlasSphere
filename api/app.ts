@@ -11,6 +11,7 @@ import path from 'node:path';
 import { db, waitForDatabaseWarmup } from './database.ts';
 import { checkAlerts, alertsRunning } from './alertWorker.ts';
 import { timingSafeEqual } from 'node:crypto';
+import { discoveryPages } from '../src/pageRoutes.ts';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const file = (name: string) => path.join(root, name);
@@ -165,7 +166,9 @@ export function createApp(options: ApiOptions = {}) {
   });
   if (env === 'test' || env === 'development') {
     app.use('/api/v1/test-lab', createTestLab(env));
-    app.get('/test-lab', (_req, res) => res.sendFile(file('test-lab.html')));
+    // A relative file under an explicit root works inside hidden worktree parents;
+    // it does not enable serving arbitrary dotfiles or register this in production.
+    app.get('/test-lab', (_req, res) => res.sendFile('test-lab.html', { root }));
   }
   app.use('/api/v1', (req, _res, next) => {
     if (/^\/(auth|account|favorites)(\/|$)/.test(req.path) || (/^\/journeys\//.test(req.path) && req.path !== '/journeys/time-machine')) {
@@ -186,6 +189,7 @@ export function createApp(options: ApiOptions = {}) {
     const dist = file('dist'); app.use(express.static(dist));
     app.get('/explore', (_req, res) => res.sendFile('explore.html', { root: dist }));
     for (const page of ['sources', 'privacy', 'accessibility']) app.get(`/${page}`, (_req, res) => res.sendFile(`${page}.html`, { root: dist }));
+    for (const page of discoveryPages) app.get(page.route, (_req, res) => res.sendFile(page.file, { root: dist }));
     app.get('/journeys', (_req, res) => res.sendFile('journeys.html', { root: dist }));
     app.get('/geoguess', (_req, res) => res.sendFile('geoguess.html', { root: dist }));
     app.get('/{*path}', (_req, res) => res.status(404).sendFile('404.html', { root: dist }));

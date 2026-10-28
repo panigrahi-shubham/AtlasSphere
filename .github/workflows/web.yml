@@ -56,6 +56,12 @@ jobs:
         run: npm run test:home
         env:
           HOME_PRODUCTION: '1'
+      - name: Solar System desktop and touch regression
+        run: npm run test:discovery
+      - name: Production science page and hydration verification
+        run: npm run test:discovery
+        env:
+          HOME_PRODUCTION: '1'
       - name: Persistence smoke against the test database
         run: npm run test:smoke:prod
         env:

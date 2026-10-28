@@ -10,6 +10,7 @@ AtlasSphere is a free educational website for exploring Earth, weather, geograph
 
 - Discover Earth and space with real geographic search, an interactive globe and sourced science content.
 - Explore city weather, forecasts, a country atlas, landmarks and satellite imagery.
+- Explore eight planets in the interactive Solar System at `/universe/solar-system`, with an adjustable teaching clock, camera controls and sourced facts.
 - Play GeoGuess and save personal preferences, favorites and journeys.
 - Use the development-only Test Lab to practice diagnosing deliberate defects.
 
@@ -24,7 +25,8 @@ The following counts describe verified local runs; some scenarios are represente
 | Layer | Command | Verified result |
 | --- | --- | --- |
 | Node unit and integration | `npm test` | 70 passed |
-| Homepage unit | `npm run test:home:unit` | 5 passed |
+| Homepage and orbital-model unit | `npm run test:home:unit` | 7 passed |
+| Solar System desktop and touch | `npm run test:discovery` | 10 passed, two production-only skips; 12 passed with `HOME_PRODUCTION=1` |
 | API with isolated PostgreSQL | `npm run test:accounts:local` | 25 passed |
 | Browser regression | `npm run test:ui` | 100 passed, one production-only skip in a normal-path checkout |
 | Built explorer and geography | `npm run test:v2` | 39 passed |

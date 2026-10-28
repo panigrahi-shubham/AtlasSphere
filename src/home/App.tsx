@@ -4,6 +4,7 @@ import { ArrowUpRight } from "lucide-react";
 import Header, { Brand } from "./Header";
 import Home from "./Home";
 import Information from "./Information";
+import SolarSystem from "./universe/SolarSystem";
 class ErrorBoundary extends Component<
   { children: ReactNode },
   { failed: boolean }
@@ -90,6 +91,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/index.html" element={<Home />} />
+          <Route path="/universe/solar-system" element={<SolarSystem />} />
           <Route path="/sources" element={<Information kind="sources" />} />
           <Route path="/privacy" element={<Information kind="privacy" />} />
           <Route

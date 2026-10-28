@@ -45,7 +45,7 @@ const groups = [
     label: "Beyond Earth",
     links: [
       ["Explore Space", "/#universe"],
-      ["Solar System", ""],
+      ["Solar System", "/universe/solar-system"],
       ["Planets and Moons", ""],
       ["Astronomy", "/#astronomy"],
       ["History", "/#history"],

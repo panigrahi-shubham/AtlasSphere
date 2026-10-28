@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "../styles/tokens.css";
 
 @theme {
   --font-sans: "Manrope Variable", sans-serif;
@@ -42,6 +43,17 @@ body {
   font-size: 14px;
   line-height: 1.65;
   overflow: clip;
+}
+:root,
+:root[data-theme="light"] {
+  --home-bg: var(--atlas-bg);
+  --home-panel: var(--atlas-panel);
+  --home-raised: var(--atlas-raised);
+  --home-ink: var(--atlas-ink);
+  --home-muted: var(--atlas-muted);
+  --home-line: var(--atlas-line);
+  --home-accent: var(--atlas-accent);
+  --home-accent-ink: var(--atlas-accent-ink);
 }
 .atlas-home *,
 .atlas-home *::before,
