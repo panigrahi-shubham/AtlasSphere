@@ -12,7 +12,7 @@ Files changed by that branding commit:
 - `CHANGELOG.md`
 - `README.md`
 - `about.html`
-- `api/SkyAtlas.postman_collection.json`
+- `api/AtlasSphere.postman_collection.json`
 - `api/journeys.ts`
 - `api/news.json`
 - `api/openapi.json`
@@ -63,7 +63,7 @@ Command: `git grep -n -I -i -E "skyatlas|earthscope" -- . ":!docs/LEGACY_NAME_AU
 | `CHANGELOG.md:42` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
 | `README.md:114` | `SkyAtlas` | Owner action | Existing repository, service, project or local path; any external rename is owner-controlled and optional. |
 | `about.html:2` | `earthscope` | Kept for compatibility | Persistent browser-storage namespace; preserves preferences and scores. |
-| `api/SkyAtlas.postman_collection.json:4` | `SkyAtlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
+| `api/AtlasSphere.postman_collection.json:4` | `SkyAtlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
 | `api/app.ts:45` | `skyatlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
 | `api/app.ts:52` | `skyatlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
 | `api/app.ts:111` | `skyatlas` | Kept for compatibility | Existing technical identifier, contract, fixture or related assertion. |
@@ -212,7 +212,7 @@ Command: `git grep -n -I -i -E "skyatlas|earthscope" -- . ":!docs/LEGACY_NAME_AU
 
 These paths remain for compatibility and documentation history; no existing file needs renaming for the visible rebrand.
 
-- `api/SkyAtlas.postman_collection.json` — kept for compatibility/history.
+- `api/AtlasSphere.postman_collection.json` — kept for compatibility/history.
 - `docs/SKYATLAS_HOME.md` — kept for compatibility/history.
 - `docs/SKYATLAS_PHASE3_BUILD_PROMPT.md` — kept for compatibility/history.
 - `src/styles/skyatlas.css` — kept for compatibility/history.

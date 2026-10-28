@@ -11,7 +11,7 @@ SkyAtlas now serves a same-origin Express API. The website calls `/api/v1/weathe
 
 Input failures return HTTP 400 and `{ "error": { "code": "INVALID_INPUT", "message": "...", "field": "..." } }`. Unknown API routes return 404. Each IP has 60 requests per minute; excess requests return 429 and `Retry-After`. Provider errors return 502, and the five-second abort returns 504. Cache responses have `X-Cache: HIT` or `MISS`. Cache and rate buckets are per server process and reset on restart; multiple instances do not share them.
 
-Swagger UI is at `/docs/` and its source contract at `/openapi.json`. The Postman collection is `api/SkyAtlas.postman_collection.json`. `APP_ENV=test FIXTURES=1` enables deterministic JSON under `tests/fixtures` without calling Open-Meteo. The API checks use an ephemeral in-process server; live provider tests remain separate.
+Swagger UI is at `/docs/` and its source contract at `/openapi.json`. The Postman collection is `api/AtlasSphere.postman_collection.json`. `APP_ENV=test FIXTURES=1` enables deterministic JSON under `tests/fixtures` without calling Open-Meteo. The API checks use an ephemeral in-process server; live provider tests remain separate.
 
 The news file starts with visibly marked sample items. `npm run news:fetch` fetches the Met Office news RSS feed, keeps entries matching weather topics, strips markup, limits snippets to 200 characters, verifies HTTPS links and saves at most 30 items. If all feeds fail, it leaves the previous snapshot intact. The scheduled workflow runs at minute 7 every three hours and commits updates. The source links must continue to open the original Met Office content.
 

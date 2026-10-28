@@ -1,4 +1,4 @@
-/* SkyAtlas homepage adapts the supplied design to the existing live modules. */
+/* AtlasSphere homepage adapts the supplied design to the existing live modules. */
 :root{--page:#faf6ee;--panel:#fff;--raised:#f3eee4;--ink:#0b2540;--muted:#4b5f73;--line:#dcd6c8;--accent:#0f7c86;--accent-ink:#fff;--shadow:0 16px 45px #0b25401a;--sky-navy:#0b2540;--sky-gold:#e8a93a;color-scheme:light}
 :root[data-theme="dark"]{--page:#07182b;--panel:#0e2742;--raised:#173754;--ink:#f3eee2;--muted:#a9bacb;--line:#32516d;--accent:#50c7cf;--accent-ink:#07182b;--shadow:0 16px 48px #0005;color-scheme:dark}
 .sky-home{background:var(--page);color:var(--ink);font-family:Inter,system-ui,-apple-system,'Segoe UI',sans-serif}
