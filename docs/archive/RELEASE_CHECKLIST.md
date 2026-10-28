@@ -76,7 +76,7 @@ npm run test:ui:all
 5. Refresh weather. Disconnect/reconnect and check status/retry behavior.
 6. Use only the keyboard: skip link, search, suggestions, units, forecast End/Home,
    favorites and clear-all dialog. Check the controls at narrow width and zoom.
-7. Open development Bug Mode using docs/BUG_MODE.md; exit and verify normal saved
+7. Open development Bug Mode using docs/archive/BUG_MODE.md; exit and verify normal saved
    data is intact. Preview must ignore the same defect URL flags.
 
 No fixed live temperature is expected. Provider/model availability and missing

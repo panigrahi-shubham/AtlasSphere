@@ -12,7 +12,7 @@ Work on one phase at a time. Do not start the next phase until the current phase
 
 ## Permanent rules
 
-These rules apply in every phase. Copy them into AGENTS.md at the repository root, and keep this roadmap separately in docs/ROADMAP.md.
+These rules apply in every phase. Copy them into AGENTS.md at the repository root, and keep this roadmap separately in docs/archive/ROADMAP.md.
 
 - **Existing work first.** Inventory and run the existing tests before changing anything. Regression tests must pass at the end of every phase. If a test has to change, say why.
 - **Stable test IDs.** Every interactive element and every displayed data value has a kebab-case `data-testid` (for example `search-input`, `temp-value`, `news-list`). Never rename or remove one without approval.
@@ -43,7 +43,7 @@ Keep the existing website and add to it. Do not rewrite it in a framework.
 ```text
 weather-app/
   AGENTS.md
-  docs/ROADMAP.md, INVENTORY.md, KNOWN_DEFECTS.md
+  docs/archive/ROADMAP.md, INVENTORY.md, KNOWN_DEFECTS.md
   web/          website (HTML, CSS, JS, TS modules)
   api/          backend (from Phase 2)
   mobile/       Capacitor project (from Phase 3)
@@ -60,10 +60,10 @@ weather-app/
 Do this once, before Phase 1, so nothing already working gets broken.
 
 1. If the folder is not a Git repository, run `git init`, add a `.gitignore` (including `node_modules`, `.env`, build output) and make a first commit named "baseline".
-2. Write `docs/INVENTORY.md` listing every existing feature, page, `data-testid` and external API call.
+2. Write `docs/archive/INVENTORY.md` listing every existing feature, page, `data-testid` and external API call.
 3. Run the existing Playwright suite and record passed, failed and skipped counts plus run time. Fix nothing yet. Report any test that already fails.
 4. Tag the commit `baseline`.
-5. Create `AGENTS.md` from the permanent rules and move this roadmap to `docs/ROADMAP.md`.
+5. Create `AGENTS.md` from the permanent rules and move this roadmap to `docs/archive/ROADMAP.md`.
 
 **Acceptance:** the inventory is committed, baseline results are recorded, and the tag exists.
 
@@ -254,7 +254,7 @@ Goal: connect the tests written in earlier phases into frameworks that run thems
 - **Accessibility checks:** automated axe scans on the main pages.
 - **Appium Python framework:** pytest, page objects, device settings in config, screenshots and an HTML report on failure.
 - **Flaky-test policy:** no fixed sleeps, at most one retry, and a list of tests that needed a retry.
-- **Coverage matrix** in `docs/COVERAGE.md`: each feature against web, API and mobile tests.
+- **Coverage matrix** in `docs/archive/COVERAGE.md`: each feature against web, API and mobile tests.
 
 **GitHub Actions workflows**
 
@@ -313,7 +313,7 @@ Use these wherever a phase mentions the topic.
 Paste this short prompt into the coding tool at the start of each session, replacing N with the phase number. Use `0` for the baseline step.
 
 ```text
-Read AGENTS.md and docs/ROADMAP.md. Do Phase N only.
+Read AGENTS.md and docs/archive/ROADMAP.md. Do Phase N only.
 Before coding, list the files you will change and the tests you will add.
 Keep every existing data-testid and every passing test.
 When finished, run the full test suite, report passed, failed and skipped

@@ -1,4 +1,4 @@
-# EarthScope v2 data attribution
+# AtlasSphere data attribution
 
 Country reference snapshot: https://github.com/mledoze/countries
 Retrieved: 2026-10-26. The original records were reduced to English common/official

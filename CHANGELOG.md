@@ -57,7 +57,7 @@
 - Added About, custom 404, favicon, visible Open-Meteo credits and narrow-screen layout checks.
 - Expanded deterministic unit and Chromium coverage while preserving previous test IDs and the photographic atlas/globe experience.
 
-See `docs/ROADMAP_PHASE1.md` for measured results and outstanding acceptance checks.
+See `docs/archive/ROADMAP_PHASE1.md` for measured results and outstanding acceptance checks.
 
 ## v3 Phase 1 — 2026-10-26
 
@@ -70,4 +70,4 @@ See `docs/ROADMAP_PHASE1.md` for measured results and outstanding acceptance che
 - Added eight browser scenarios for appearance, persistence, navigation and images.
 - Preserved the existing application features, endpoints and test IDs.
 
-Full execution record and limits: docs/PHASE1.md.
+Full execution record and limits: docs/archive/PHASE1.md.

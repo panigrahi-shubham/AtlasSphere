@@ -22,7 +22,7 @@ No merge, tag, push, live deployment, database migration or hosting/secret chang
 | `about.html` | Explains that selected coordinates/date are sent to NASA when an image is requested. |
 | `docs/SATELLITE_IMAGERY.md` | NASA documentation/capabilities evidence, earliest date 2000-02-24, WMS axis order, availability gaps and honest limitations. A real fixed-date request returned a JPEG. |
 | `README.md` | What's new, known limitations and current verification instructions. |
-| `docs/LEGACY_NAME_AUDIT.md` | Every remaining tracked-text content match and legacy file path, classified with reasons. |
+| `docs/archive/LEGACY_NAME_AUDIT.md` | Every remaining tracked-text content match and legacy file path, classified with reasons. |
 
 The live NASA capabilities were checked before coding: exact layer `MODIS_Terra_CorrectedReflectance_TrueColor`, WMS 1.3.0 EPSG:4326 latitude/longitude order, ISO date and JPEG output agree with the requested approach. The actual start date is 2000-02-24. Current/recent dates are selectable but do not guarantee clear imagery or complete coverage.
 

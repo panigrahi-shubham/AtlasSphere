@@ -5,7 +5,7 @@ implements city search, current weather, a 24-hour forecast and geography detail
 Milestone 4 adds persistent Celsius/Fahrenheit preferences and favorite locations.
 All six implementation milestones are present. Milestone 6 adds accessible favorite
 management, refresh/connection flows, isolated development Bug Mode and built-asset
-verification. Final live/local acceptance is still pending; see docs/RELEASE_CHECKLIST.md.
+verification. Final live/local acceptance is still pending; see docs/archive/RELEASE_CHECKLIST.md.
 
 ## Implementation checklist
 
@@ -82,7 +82,7 @@ verification. Final live/local acceptance is still pending; see docs/RELEASE_CHE
 - [x] Add five named development-only defects using isolated practice storage.
 - [x] Verify defect flags are ignored by built production code.
 - [x] Pass 34 Node checks, 69 normal Chromium scenarios, 7 practice checks and 3 built-asset checks.
-- [x] Document broad supported flows in docs/PLAYWRIGHT_COVERAGE.md.
+- [x] Document broad supported flows in docs/archive/PLAYWRIGHT_COVERAGE.md.
 - [ ] Confirm final candidate locally against Vite and all 9 live API contracts.
 - [ ] Confirm Firefox/WebKit and manual screen-reader/real-device usability.
 
@@ -350,9 +350,9 @@ with mocked external APIs, including an attempt to enable every defect URL flag.
 - scripts/test-ui-all.mjs: cross-browser runner and binary preflight.
 - tests/README.md: suite commands and debugging guide.
 - tests/bugs and tests/release: isolated practice and built-asset verification.
-- docs/PLAYWRIGHT_COVERAGE.md: feature-to-test matrix.
-- docs/BUG_MODE.md: enabling/disabling each intentional defect.
-- docs/RELEASE_CHECKLIST.md: final acceptance evidence and pending checks.
+- docs/archive/PLAYWRIGHT_COVERAGE.md: feature-to-test matrix.
+- docs/archive/BUG_MODE.md: enabling/disabling each intentional defect.
+- docs/archive/RELEASE_CHECKLIST.md: final acceptance evidence and pending checks.
 - tests/api: live geocoding, current/hourly weather and invalid-request checks.
 - legacy: preserved pre-milestone weather prototype and documentation.
 
@@ -363,7 +363,7 @@ http://127.0.0.1:5173/?bugMode=1&bugs=TEMP-001 to open the practice panel. Its
 checkboxes individually select TEMP-001, HUM-001, FAV-001, SEARCH-001 and TIME-001.
 Changing a selection reloads; Exit practice mode returns to normal data.
 All practice storage uses a separate earthscope:practice: namespace. See
- docs/BUG_MODE.md for intentional behaviors and isolation details.
+ docs/archive/BUG_MODE.md for intentional behaviors and isolation details.
 
 ## Known limitations and final validation
 
@@ -382,7 +382,7 @@ All practice storage uses a separate earthscope:practice: namespace. See
 ## Roadmap
 
 The six planned implementation milestones are finished. Final release sign-off is
-pending the checks listed in docs/RELEASE_CHECKLIST.md; no extra v1.0 milestone is added.
+pending the checks listed in docs/archive/RELEASE_CHECKLIST.md; no extra v1.0 milestone is added.
 
 Later planning only: maps/countries (v1.1), charts (v1.2), facts (v1.3), Three.js
 (v2.0), Capacitor APK (v2.5), native/offline (v3.0), Appium Python (v3.5), news (v4.0).

@@ -92,4 +92,4 @@ The derivatives retain each original’s license and attribution, including Shar
 
 Combined originals: 3,229,773 bytes. Combined 960px derivatives: 2,331,594 bytes. Combined 480px derivatives: 510,900 bytes. These are asset totals, not a measured page-transfer or Lighthouse result.
 
-`public/images/earth-space/earth-hero-medium.webp`: 800 × 800, 92,510 bytes, quality 82, method 6. Proportional derivative of the existing `earth-hero.webp`; no crop, composite, or added content. It inherits the NASA Earth image source and permitted educational reuse/credit recorded in `docs/PHASE1_EARTH_ASSETS.md`. Parent integration selects this 800px option through responsive image metadata; the original Earth image remains unchanged.
+`public/images/earth-space/earth-hero-medium.webp`: 800 × 800, 92,510 bytes, quality 82, method 6. Proportional derivative of the existing `earth-hero.webp`; no crop, composite, or added content. It inherits the NASA Earth image source and permitted educational reuse/credit recorded in `docs/archive/PHASE1_EARTH_ASSETS.md`. Parent integration selects this 800px option through responsive image metadata; the original Earth image remains unchanged.

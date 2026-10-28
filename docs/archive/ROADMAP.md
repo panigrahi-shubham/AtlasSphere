@@ -1,14 +1,14 @@
 # SkyAtlas development roadmap — website first
 
-Updated 27 October 2026. This supersedes the earlier APK-first phase order; `docs/ROADMAP_ORIGINAL.md` preserves the original plan. SkyAtlas is a non-commercial geography and weather QA portfolio project. Keep the existing HTML/CSS/JavaScript/Vite website and Express/TypeScript API; do not rewrite the stack.
+Updated 27 October 2026. This supersedes the earlier APK-first phase order; `docs/archive/ROADMAP_ORIGINAL.md` preserves the original plan. SkyAtlas is a non-commercial geography and weather QA portfolio project. Keep the existing HTML/CSS/JavaScript/Vite website and Express/TypeScript API; do not rewrite the stack.
 
 ## Current state
 
-Website Phases 3–6 are authorized and under active implementation. See `docs/PHASES3-6_STATUS.md` for actual verification status and blockers.
+Website Phases 3–6 are authorized and under active implementation. See `docs/archive/PHASES3-6_STATUS.md` for actual verification status and blockers.
 
 - Phase 1 web polish and the SkyAtlas image-led homepage are implemented. The atlas, landmarks, Three.js globe, weather dashboard, favorites and responsive themes remain.
 - Phase 1.5 GeoGuess is implemented with landmark and country-outline games.
-- Phase 2 own API is implemented: `/api/v1/weather`, `/api/v1/geocode`, `/api/v1/news`, `/api/v1/health`, OpenAPI/Swagger, fixture mode, cache, validation, rate limiting and scheduled RSS snapshot. See `docs/PHASE2.md`.
+- Phase 2 own API is implemented: `/api/v1/weather`, `/api/v1/geocode`, `/api/v1/news`, `/api/v1/health`, OpenAPI/Swagger, fixture mode, cache, validation, rate limiting and scheduled RSS snapshot. See `docs/archive/PHASE2.md`.
 - Android has **not** started. Finish the website and web automation through Phase 5 or 6 first. Android is planned as Phase 7, only when the owner explicitly says to begin. Do not scaffold Capacitor or install an APK as part of Phases 3-6.
 
 ## Non-negotiable rules for every phase
@@ -71,7 +71,7 @@ Tests: each planted defect is caught while its off state passes; each failure ha
 
 - Organize Playwright projects for Chromium, Firefox, WebKit, mobile emulation and API. Add page objects/shared fixtures where they reduce duplication, worker-isolated data, `@smoke`, `@regression`, `@live`, `@a11y`, HTML reports, traces and failure screenshots. No fixed sleeps as a substitute for state waits; at most one retry with a flaky-test log.
 - GitHub Actions: pull-request lint/typecheck/API/Chromium smoke; nightly cross-browser, selected live checks and accessibility/performance; preserve the existing three-hour news job. Upload reports/traces as artifacts.
-- Add `docs/COVERAGE.md` mapping every web/API feature to tests. Run axe checks on main pages and a manual keyboard/contrast review. On a production build, measure Lighthouse three times under documented mobile conditions; target mobile performance >=80, accessibility >=90 and dashboard CLS <0.1, or record a measured shortfall with remediation.
+- Add `docs/archive/COVERAGE.md` mapping every web/API feature to tests. Run axe checks on main pages and a manual keyboard/contrast review. On a production build, measure Lighthouse three times under documented mobile conditions; target mobile performance >=80, accessibility >=90 and dashboard CLS <0.1, or record a measured shortfall with remediation.
 - Deploy the website **with its Node API** as one service or a documented equivalent. A static-only host cannot serve `/api/v1`. Verify health, API, routes, news timestamp, credits and absence of test controls on the hosted site. Keep development fixture mode off.
 
 Acceptance: CI passes, the hosted web product works, test coverage is documented, and web accessibility/performance results are reported. At this point ask the owner whether to start Android, or complete any deferred Phase 4/5 work first.
@@ -87,7 +87,7 @@ Complete cross-platform regression, production safety, accessibility/performance
 ## Session prompt
 
 ```text
-Read AGENTS.md, README.md, docs/ROADMAP.md and the current source.
+Read AGENTS.md, README.md, docs/archive/ROADMAP.md and the current source.
 Work only on the phase or substep I authorize. Before changing code, inspect
 the baseline and relevant tests. Preserve existing IDs and working journeys.
 Implement the smallest reviewable slice with deterministic tests. Run its

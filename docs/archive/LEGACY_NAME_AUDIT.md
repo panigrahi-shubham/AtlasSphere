@@ -36,7 +36,7 @@ Files changed by that branding commit:
 
 ## Every remaining content match
 
-Command: `git grep -n -I -i -E "skyatlas|earthscope" -- . ":!docs/LEGACY_NAME_AUDIT.md" ":!docs/ATLASSPHERE_GATE2_REPORT.md"`. This searches every tracked text file, including the lockfile, historical prompts and archived sources. Ignored/generated assets, Git history and this audit/final report are outside the snapshot to avoid recursive report matches. One row represents one matching source line and lists every matched token, including repeats.
+Command: `git grep -n -I -i -E "skyatlas|earthscope" -- . ":!docs/archive/LEGACY_NAME_AUDIT.md" ":!docs/archive/ATLASSPHERE_GATE2_REPORT.md"`. This searches every tracked text file, including the lockfile, historical prompts and archived sources. Ignored/generated assets, Git history and this audit/final report are outside the snapshot to avoid recursive report matches. One row represents one matching source line and lists every matched token, including repeats.
 
 {"matchingLines":165,"occurrences":185,"keptLines":155,"ownerLines":10}
 
@@ -54,11 +54,6 @@ Command: `git grep -n -I -i -E "skyatlas|earthscope" -- . ":!docs/LEGACY_NAME_AU
 | `.github/workflows/web.yml:45` | `SKYATLAS` | Kept for compatibility | Existing environment variable contract. |
 | `404.html:2` | `earthscope` | Kept for compatibility | Persistent browser-storage namespace; preserves preferences and scores. |
 | `AGENTS.md:1` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `ATLASSPHERE_QUICK_CODEX_PROMPT.md:8` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `ATLASSPHERE_QUICK_CODEX_PROMPT.md:19` | `SkyAtlas`, `skyatlas` | Owner action | Existing repository, service, project or local path; any external rename is owner-controlled and optional. |
-| `ATLASSPHERE_QUICK_CODEX_PROMPT.md:40` | `skyatlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `ATLASSPHERE_QUICK_CODEX_PROMPT.md:79` | `skyatlas`, `skyatlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
-| `ATLASSPHERE_QUICK_CODEX_PROMPT.md:80` | `SkyAtlas`, `skyatlas`, `EarthScope`, `earthscope` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
 | `CHANGELOG.md:39` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
 | `CHANGELOG.md:42` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
 | `README.md:114` | `SkyAtlas` | Owner action | Existing repository, service, project or local path; any external rename is owner-controlled and optional. |
@@ -72,47 +67,36 @@ Command: `git grep -n -I -i -E "skyatlas|earthscope" -- . ":!docs/LEGACY_NAME_AU
 | `api/openapi.json:1452` | `SkyAtlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
 | `api/server.ts:7` | `SkyAtlas` | Kept for compatibility | Existing technical identifier, contract, fixture or related assertion. |
 | `api/testLab.ts:7` | `skyatlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
-| `docs/ATLASSPHERE_GATE1_AUDIT.md:23` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `docs/ATLASSPHERE_GATE1_REPORT.md:40` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
+| `docs/archive/ATLASSPHERE_GATE1_AUDIT.md:23` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
+| `docs/archive/ATLASSPHERE_GATE1_REPORT.md:40` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
 | `docs/ATTRIBUTION.md:1` | `EarthScope` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
 | `docs/AUTH.md:1` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `docs/BUG_MODE.md:28` | `earthscope` | Kept for compatibility | Persistent browser-storage namespace; preserves preferences and scores. |
-| `docs/COVERAGE.md:1` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `docs/DATABASE_MOVE_NEON.md:25` | `SkyAtlas` | Owner action | Existing repository, service, project or local path; any external rename is owner-controlled and optional. |
-| `docs/DATABASE_MOVE_NEON.md:38` | `skyatlas` | Owner action | Existing repository, service, project or local path; any external rename is owner-controlled and optional. |
-| `docs/DEPLOY_FREE.md:13` | `SkyAtlas` | Owner action | Existing repository, service, project or local path; any external rename is owner-controlled and optional. |
-| `docs/DEPLOY_FREE.md:15` | `SkyAtlas` | Owner action | Existing repository, service, project or local path; any external rename is owner-controlled and optional. |
-| `docs/DEPLOY_FREE.md:16` | `skyatlas` | Owner action | Existing repository, service, project or local path; any external rename is owner-controlled and optional. |
-| `docs/DEPLOY_FREE.md:27` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `docs/DEPLOY_FREE.md:33` | `SkyAtlas`, `skyatlas` | Owner action | Existing repository, service, project or local path; any external rename is owner-controlled and optional. |
-| `docs/DEPLOY_FREE.md:37` | `SkyAtlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
-| `docs/DEPLOY_FREE.md:45` | `SKYATLAS` | Kept for compatibility | Existing environment variable contract. |
-| `docs/DEPLOY_FREE.md:47` | `SKYATLAS` | Kept for compatibility | Existing environment variable contract. |
+| `docs/archive/BUG_MODE.md:28` | `earthscope` | Kept for compatibility | Persistent browser-storage namespace; preserves preferences and scores. |
+| `docs/archive/COVERAGE.md:1` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
+| `docs/archive/DATABASE_MOVE_NEON.md:25` | `SkyAtlas` | Owner action | Existing repository, service, project or local path; any external rename is owner-controlled and optional. |
+| `docs/archive/DATABASE_MOVE_NEON.md:38` | `skyatlas` | Owner action | Existing repository, service, project or local path; any external rename is owner-controlled and optional. |
 | `docs/KNOWN_DEFECTS.md:3` | `SkyAtlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
-| `docs/PHASE1_5.md:23` | `EARTHSCOPE` | Kept for compatibility | Existing environment variable contract. |
-| `docs/PHASE2.md:1` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `docs/PHASE2.md:3` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `docs/PHASE2.md:14` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `docs/PHASES3-6_STATUS.md:24` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `docs/PLAYWRIGHT_COVERAGE.md:1` | `EarthScope` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `docs/RELEASE_CHECKLIST.md:1` | `EarthScope` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `docs/RELEASE_CHECKLIST.md:10` | `EarthScope` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `docs/ROADMAP.md:1` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `docs/ROADMAP.md:3` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `docs/ROADMAP.md:9` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `docs/SKYATLAS_HOME.md:1` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `docs/SKYATLAS_PHASE3_BUILD_PROMPT.md:1` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `docs/SKYATLAS_PHASE3_BUILD_PROMPT.md:3` | `SkyAtlas`, `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `docs/SKYATLAS_PHASE3_BUILD_PROMPT.md:18` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `docs/V1_IMPLEMENTATION_HISTORY.md:1` | `EarthScope` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `docs/V1_IMPLEMENTATION_HISTORY.md:3` | `EarthScope` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `docs/V1_IMPLEMENTATION_HISTORY.md:96` | `EarthScope` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
-| `docs/V1_IMPLEMENTATION_HISTORY.md:219` | `earthscope` | Kept for compatibility | Persistent browser-storage namespace; preserves preferences and scores. |
-| `docs/V1_IMPLEMENTATION_HISTORY.md:220` | `earthscope` | Kept for compatibility | Persistent browser-storage namespace; preserves preferences and scores. |
-| `docs/V1_IMPLEMENTATION_HISTORY.md:248` | `EARTHSCOPE` | Kept for compatibility | Existing environment variable contract. |
-| `docs/V1_IMPLEMENTATION_HISTORY.md:250` | `EARTHSCOPE` | Kept for compatibility | Existing environment variable contract. |
-| `docs/V1_IMPLEMENTATION_HISTORY.md:365` | `earthscope` | Kept for compatibility | Persistent browser-storage namespace; preserves preferences and scores. |
-| `docs/V2_VALIDATION.md:1` | `EarthScope` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
+| `docs/archive/PHASE1_5.md:23` | `EARTHSCOPE` | Kept for compatibility | Existing environment variable contract. |
+| `docs/archive/PHASE2.md:1` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
+| `docs/archive/PHASE2.md:3` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
+| `docs/archive/PHASE2.md:14` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
+| `docs/archive/PHASES3-6_STATUS.md:24` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
+| `docs/archive/PLAYWRIGHT_COVERAGE.md:1` | `EarthScope` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
+| `docs/archive/RELEASE_CHECKLIST.md:1` | `EarthScope` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
+| `docs/archive/RELEASE_CHECKLIST.md:10` | `EarthScope` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
+| `docs/archive/ROADMAP.md:1` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
+| `docs/archive/ROADMAP.md:3` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
+| `docs/archive/ROADMAP.md:9` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
+| `docs/archive/SKYATLAS_HOME.md:1` | `SkyAtlas` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
+| `docs/archive/V1_IMPLEMENTATION_HISTORY.md:1` | `EarthScope` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
+| `docs/archive/V1_IMPLEMENTATION_HISTORY.md:3` | `EarthScope` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
+| `docs/archive/V1_IMPLEMENTATION_HISTORY.md:96` | `EarthScope` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
+| `docs/archive/V1_IMPLEMENTATION_HISTORY.md:219` | `earthscope` | Kept for compatibility | Persistent browser-storage namespace; preserves preferences and scores. |
+| `docs/archive/V1_IMPLEMENTATION_HISTORY.md:220` | `earthscope` | Kept for compatibility | Persistent browser-storage namespace; preserves preferences and scores. |
+| `docs/archive/V1_IMPLEMENTATION_HISTORY.md:248` | `EARTHSCOPE` | Kept for compatibility | Existing environment variable contract. |
+| `docs/archive/V1_IMPLEMENTATION_HISTORY.md:250` | `EARTHSCOPE` | Kept for compatibility | Existing environment variable contract. |
+| `docs/archive/V1_IMPLEMENTATION_HISTORY.md:365` | `earthscope` | Kept for compatibility | Persistent browser-storage namespace; preserves preferences and scores. |
+| `docs/archive/V2_VALIDATION.md:1` | `EarthScope` | Kept for compatibility | Historical documentation, archived version or supplied instructions; preserves context. |
 | `geoguess.html:1` | `earthscope` | Kept for compatibility | Persistent browser-storage namespace; preserves preferences and scores. |
 | `index.html:8` | `earthscope` | Kept for compatibility | Persistent browser-storage namespace; preserves preferences and scores. |
 | `index.html:12` | `skyatlas` | Kept for compatibility | Existing technical identifier, contract, fixture or related assertion. |
@@ -131,7 +115,6 @@ Command: `git grep -n -I -i -E "skyatlas|earthscope" -- . ":!docs/LEGACY_NAME_AU
 | `playwright.config.ts:23` | `EARTHSCOPE` | Kept for compatibility | Existing environment variable contract. |
 | `playwright.smoke.config.ts:3` | `SKYATLAS`, `skyatlas` | Owner action | Existing repository, service, project or local path; any external rename is owner-controlled and optional. |
 | `playwright.smoke.config.ts:8` | `SKYATLAS` | Kept for compatibility | Existing environment variable contract. |
-| `render.yaml:7` | `skyatlas` | Owner action | Existing repository, service, project or local path; any external rename is owner-controlled and optional. |
 | `scripts/capture-web-polish.ts:17` | `earthscope` | Kept for compatibility | Existing technical identifier, contract, fixture or related assertion. |
 | `scripts/capture-web-polish.ts:25` | `earthscope` | Kept for compatibility | Existing technical identifier, contract, fixture or related assertion. |
 | `scripts/test-production.mjs:5` | `EARTHSCOPE` | Kept for compatibility | Existing environment variable contract. |
@@ -213,8 +196,7 @@ Command: `git grep -n -I -i -E "skyatlas|earthscope" -- . ":!docs/LEGACY_NAME_AU
 These paths remain for compatibility and documentation history; no existing file needs renaming for the visible rebrand.
 
 - `api/AtlasSphere.postman_collection.json` — kept for compatibility/history.
-- `docs/SKYATLAS_HOME.md` — kept for compatibility/history.
-- `docs/SKYATLAS_PHASE3_BUILD_PROMPT.md` — kept for compatibility/history.
+- `docs/archive/SKYATLAS_HOME.md` — kept for compatibility/history.
 - `src/styles/skyatlas.css` — kept for compatibility/history.
 - `tests/ui/pages/explorer-home.spec.ts` — kept for compatibility/history.
 

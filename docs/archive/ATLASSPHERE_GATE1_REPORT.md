@@ -38,7 +38,7 @@ Node `v24.15.0`; npm `11.12.1`; starting working tree clean. Full script invento
 - The earlier slow-request fallback was replaced by the new prompt's precise HTTP-only behavior. The legacy `VITE_PAGES_FALLBACK` name remains documented for compatibility but no longer enables a timed fallback.
 - The free archive, validation, server budget reservations and 2,000-entry historical cache already existed and were retained. Added the missing generic 502 UI path.
 - Existing review display names and the current privacy response shape were retained. No reviewer ID or email is selected or exposed. Kept the SkyAtlas author fallback until Part 2's coordinated rebrand; did not reintroduce a previously removed review ID.
-- `docs/DATABASE_MOVE_NEON.md`: owner steps, verification, data-copy precautions and rollback of both connection variables. Existing `directUrl`, migration-script fallback and free-instance build command were retained.
+- `docs/archive/DATABASE_MOVE_NEON.md`: owner steps, verification, data-copy precautions and rollback of both connection variables. Existing `directUrl`, migration-script fallback and free-instance build command were retained.
 - README, changelog, OpenAPI and Postman notes document the fallback. README records the Prisma-generation prerequisite.
 
 ## Tests
@@ -67,7 +67,7 @@ The public-review API fixture supplies a non-empty model result without using a 
 ## Known issues confirmed / refuted
 
 1. **Live geocode 502:** not reproduced at audit time: the live health and Delhi geocode endpoints returned 200, and direct Open-Meteo returned 200. The shared-IP explanation is not proven. Source evidence: `api/app.ts:107` now records safe diagnostics; `src/services/http.js:38` implements the fallback. The source fix is prepared for intermittent failures, not claimed as deployed.
-2. **Database expiry:** Render Free PostgreSQL's 30-day expiry and 14-day subsequent upgrade grace period are confirmed by [Render's documentation](https://render.com/docs/free). The current live database plan and credentials were not inspected. Preparation: `prisma/schema.prisma:8`, `scripts/prisma-migrate.mjs:6`, `render.yaml:9` and the new owner guide.
+2. **Database expiry:** Render Free PostgreSQL's 30-day expiry and 14-day subsequent upgrade grace period are confirmed by [Render's documentation](https://render.com/docs/free). The current live database plan and credentials were not inspected. Preparation: `prisma/schema.prisma:8`, `scripts/prisma-migrate.mjs:6`, `retired historical file:9` and the new owner guide.
 3. **Paid historical key:** the live endpoint returned 503 with the old Professional-key message. The local implementation already uses the free archive without a key (`api/journeys.ts:45`) and caches results (`:35` and `:54`). Stubbed API tests passed. The endpoint was not redeployed by this work.
 4. **Reviewer IDs:** fixed in the local source (`api/journeys.ts:99`) and verified with a non-empty API fixture. The live response had zero reviews, so its empty array cannot establish the privacy behavior of older deployed code. The original `main` source exposed `userId`.
 

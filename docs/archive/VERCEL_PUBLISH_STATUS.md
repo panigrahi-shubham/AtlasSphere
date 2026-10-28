@@ -62,7 +62,7 @@ The eight-route preview check saved response bodies only to ignored `test-result
 
 ## Owner-selected remaining setup
 
-The owner chose **“I'll create the scheduled job myself using your steps.”** Configure the three-hour cron-job.org POST job using the exact URL, method and private header in [DEPLOY_VERCEL_NEON.md](DEPLOY_VERCEL_NEON.md#automatic-alert-checks). The endpoint is verified, but the external schedule has not been created or claimed as running.
+The owner chose **“I'll create the scheduled job myself using your steps.”** Configure the three-hour cron-job.org POST job using the exact URL, method and private header in [DEPLOY_VERCEL_NEON.md](../DEPLOY_VERCEL_NEON.md#automatic-alert-checks). The endpoint is verified, but the external schedule has not been created or claimed as running.
 
 Password-reset email delivery still needs the existing email-provider URL/token; it is currently unavailable. Provider quota/cache counters remain per process, as documented in the deployment guide. Existing dependency audit findings and the large lazy globe chunk remain separate follow-up work.
 

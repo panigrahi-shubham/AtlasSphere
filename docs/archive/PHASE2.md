@@ -15,6 +15,6 @@ Swagger UI is at `/docs/` and its source contract at `/openapi.json`. The Postma
 
 The news file starts with visibly marked sample items. `npm run news:fetch` fetches the Met Office news RSS feed, keeps entries matching weather topics, strips markup, limits snippets to 200 characters, verifies HTTPS links and saves at most 30 items. If all feeds fail, it leaves the previous snapshot intact. The scheduled workflow runs at minute 7 every three hours and commits updates. The source links must continue to open the original Met Office content.
 
-Deploy source from GitHub as a Render Node web service with `npm ci && npm run build`, `npm start`, and health check `/api/v1/health`. The included `render.yaml` has those settings. Keep `APP_ENV=production` and `FIXTURES` unset. The production server serves the `dist` assets and `/geoguess` route. Do not use a static-only host for this phase.
+Deploy source from GitHub as a Render Node web service with `npm ci && npm run build`, `npm start`, and health check `/api/v1/health`. The included `retired historical file` has those settings. Keep `APP_ENV=production` and `FIXTURES` unset. The production server serves the `dist` assets and `/geoguess` route. Do not use a static-only host for this phase.
 
 Checks: `npm run typecheck:api`, `npm test`, `npm run test:api:local`, `npm run test:v2 -- --workers=1`, `npm run test:ui -- --workers=1`, `npm run test:bugs -- --workers=1`, `npm run test:release`. The app has no login or database in Phase 2.
