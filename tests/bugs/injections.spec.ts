@@ -1,4 +1,3 @@
-import { ExplorerPage } from '../support/pages/ExplorerPage';
 /**
  * Feature: Practice defect selection and storage isolation
  * Layer: UI regression — Playwright
@@ -8,6 +7,8 @@ import { ExplorerPage } from '../support/pages/ExplorerPage';
  * Run: npm run test:bugs
  * Needs: Installed Chromium and the suite’s local server or production build
  */
+import { ExplorerPage } from '../support/pages/ExplorerPage';
+
 import { test, expect, type Page } from '../support/uiTest';
 import { currentWeatherFixture } from '../fixtures/currentWeather.js';
 import { STORAGE_KEYS } from '../../src/utils/storage.js';

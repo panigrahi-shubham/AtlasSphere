@@ -8,7 +8,8 @@
  * Needs: Installed Chromium and the suite’s local server or production build
  */
 import { test, expect } from '@playwright/test';
-test.beforeEach(() => test.skip(process.env.EARTHSCOPE_UI_SOURCE === 'memory', 'GeoGuess uses Vite-transformed package imports and a multi-page route.'));
+import { applyGeoGuessMemoryGuard } from '../../support/geoguessTest';
+applyGeoGuessMemoryGuard();
 
 
 // Risk: Saved scores or confirmation could fail across reload.
