@@ -3,6 +3,16 @@ import AxeBuilder from '@axe-core/playwright';
 // The legacy raw-file harness cannot transpile the new Journeys TypeScript.
 test.skip(process.env.EARTHSCOPE_UI_SOURCE === 'memory', 'Journeys requires Vite module transforms.');
 
+// The shared server rate-limits per client IP. Keep each worker's Test Lab
+// requests separate from other suites without changing the server's limits.
+test.beforeEach(async ({ page, baseURL }, testInfo) => {
+  const prefix = new URL('/api/v1/test-lab/', baseURL).href;
+  const worker = testInfo.workerIndex;
+  const address = `198.18.${Math.floor(worker / 254) % 256}.${worker % 254 + 1}`;
+  await page.route(url => url.href.startsWith(prefix), route =>
+    route.continue({ headers: { ...route.request().headers(), 'x-forwarded-for': address } }));
+});
+
 test('@smoke preserved explorer, journeys and account controls are reachable', async ({ page }) => {
   await page.goto('/explore.html');
   await expect(page.getByTestId('account-section')).toBeVisible();
