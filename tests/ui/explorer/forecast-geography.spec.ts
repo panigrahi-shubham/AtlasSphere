@@ -9,12 +9,13 @@
  */
 import { test, expect, mockOpenMeteoDown } from '../../support/uiTest';
 import { currentWeatherFixture } from '../../fixtures/currentWeather.js';
+import { mockGeocode, mockCurrentWeather } from '../../support/mocks';
 
 const endpoint = '**/api/v1/weather?**';
 const city = { id: 1, name: 'Nashik', admin1: 'Maharashtra', country: 'India', latitude: 19.99, longitude: 73.78, elevation: 565, timezone: 'Asia/Kolkata' };
 test.beforeEach(async ({ page }) => {
-  await page.route('**/api/v1/geocode?**', route => route.fulfill({ json: { results: [city] } }));
-  await page.route(endpoint, route => route.fulfill({ json: currentWeatherFixture }));
+  await mockGeocode(page, [city]);
+  await mockCurrentWeather(page, currentWeatherFixture);
   await page.goto('/explore.html');
 });
 

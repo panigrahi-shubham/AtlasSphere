@@ -9,6 +9,7 @@
  */
 import { test, expect } from '../../support/uiTest';
 import { currentWeatherFixture } from '../../fixtures/currentWeather.js';
+import { mockGeocode, mockCurrentWeather } from '../../support/mocks';
 import { STORAGE_KEYS } from '../../../src/utils/storage.js';
 
 const weatherEndpoint = '**/api/v1/weather?**';
@@ -19,8 +20,8 @@ const cities = [
   { id: 3, name: 'Paris', country: 'United States', latitude: 33.66, longitude: -95.55 }
 ];
 test.beforeEach(async ({ page }) => {
-  await page.route(geocodingEndpoint, route => route.fulfill({ json: { results: cities } }));
-  await page.route(weatherEndpoint, route => route.fulfill({ json: currentWeatherFixture }));
+  await mockGeocode(page, cities);
+  await mockCurrentWeather(page, currentWeatherFixture);
   await page.goto('/explore.html');
 });
 
