@@ -1,3 +1,12 @@
+/**
+ * Feature: Current weather and city changes
+ * Layer: UI regression — Playwright, Chromium (Firefox/WebKit on scheduled runs)
+ * Real: Browser rendering, interaction and local storage
+ * Mocked: Geographic and weather API responses from local fixture data
+ * Guards: Incorrect request units, stale responses, incomplete data and unreadable mobile weather
+ * Run: npx playwright test tests/ui/explorer/current-weather.spec.ts --project=ui
+ * Needs: Vite and Chromium; the test config starts the local server.
+ */
 import { test, expect, mockOpenMeteoDown } from '../../support/uiTest';
 import { currentWeatherFixture } from '../../fixtures/currentWeather.js';
 
@@ -12,6 +21,8 @@ test.beforeEach(async ({ page }) => {
   await page.goto('/explore.html');
 });
 
+// Risk: The selected place could show another location’s measurements.
+// Given a fixture city, When it is selected, Then one request uses its coordinates and displays the exact values and units.
 test('selected city requests and displays current weather with explicit units', async ({ page, explorer }) => {
   let calls = 0;
   await page.route(endpoint, route => {
@@ -37,6 +48,8 @@ test('selected city requests and displays current weather with explicit units', 
   expect(calls).toBe(1);
 });
 
+// Risk: A place’s clock could show the visitor’s local time.
+// Given a fixed UTC instant, When one minute passes, Then the displayed Kolkata time advances in its own timezone.
 test('local clock uses the selected timezone and advances without refetching weather', async ({ page, explorer }) => {
   await page.clock.install({ time: new Date('2026-10-26T10:00:00Z') });
   await explorer.selectCity();
@@ -45,6 +58,8 @@ test('local clock uses the selected timezone and advances without refetching wea
   await expect(page.getByTestId('local-time')).toHaveText('26 Oct 2026, 15:31 (Asia/Kolkata)');
 });
 
+// Risk: Missing optional metrics could hide otherwise valid weather.
+// Given missing humidity and apparent temperature, When weather loads, Then temperature remains visible and gaps are labelled.
 test('missing secondary values are unavailable while valid weather remains visible', async ({ page, explorer }) => {
   const data = structuredClone(currentWeatherFixture);
   Object.assign(data.current, { relative_humidity_2m: null, apparent_temperature: null });
@@ -56,6 +71,8 @@ test('missing secondary values are unavailable while valid weather remains visib
   await expect(page.getByTestId('weather-note')).toContainText('Some weather details are unavailable');
 });
 
+// Risk: A provider outage could leave the user unable to recover.
+// Given a 503 response, When the provider recovers and retry is pressed, Then the existing city loads without another search.
 test('weather API failure offers a retry without repeating city search', async ({ page, explorer }) => {
   await mockOpenMeteoDown(page);
   await page.route(endpoint, route => route.fulfill({ status: 503, json: {} }));
@@ -68,6 +85,8 @@ test('weather API failure offers a retry without repeating city search', async (
   await expect(page.getByTestId('weather-error')).toBeEmpty();
 });
 
+// Risk: Invalid core data could be presented as a real temperature.
+// Given a missing temperature, When weather loads, Then the page shows an error instead of weather values.
 test('invalid core data gives an error instead of NaN or a misleading temperature', async ({ page, explorer }) => {
   const data = structuredClone(currentWeatherFixture);
   Object.assign(data.current, { temperature_2m: null });
@@ -77,6 +96,8 @@ test('invalid core data gives an error instead of NaN or a misleading temperatur
   await expect(page.getByTestId('weather-values')).toBeHidden();
 });
 
+// Risk: An unexpected condition code could show a misleading icon.
+// Given an unknown code, When weather loads, Then the description and icon show unavailable states.
 test('unknown weather code has a safe description and icon', async ({ page, explorer }) => {
   const data = structuredClone(currentWeatherFixture); data.current.weather_code = 1234;
   await page.route(endpoint, route => route.fulfill({ json: data }));
@@ -85,6 +106,8 @@ test('unknown weather code has a safe description and icon', async ({ page, expl
   await expect(page.getByTestId('weather-icon')).toHaveText('?');
 });
 
+// Risk: A slow response could overwrite a new search.
+// Given a pending weather request, When the query changes before it finishes, Then the old selection stays hidden.
 test('pending weather is discarded when the user starts editing a new location', async ({ page, explorer }) => {
   let release: () => void = () => {};
   const gate = new Promise<void>(resolve => { release = resolve; });
@@ -97,6 +120,8 @@ test('pending weather is discarded when the user starts editing a new location',
   await expect(page.getByTestId('weather-error')).toBeEmpty();
 });
 
+// Risk: A new city could retain the prior city’s data.
+// Given Nashik weather, When Tokyo is selected, Then its temperature and timezone replace the old values.
 test('changing cities hides old weather and renders only the newly selected city', async ({ page, explorer }) => {
   await explorer.selectCity(); await expect(page.getByTestId('current-temperature')).toHaveText('24°C');
   const data = structuredClone(currentWeatherFixture);
@@ -108,6 +133,8 @@ test('changing cities hides old weather and renders only the newly selected city
   await expect(page.getByTestId('local-time')).toContainText('Asia/Tokyo');
 });
 
+// Risk: A hung request could leave the controls blocked indefinitely.
+// Given a pending response, When the simulated timeout passes, Then an actionable error and retry control appear.
 test('weather timeout restores controls with an actionable error', async ({ page, explorer }) => {
   await page.clock.install();
   let release: () => void = () => {};
@@ -121,6 +148,8 @@ test('weather timeout restores controls with an actionable error', async ({ page
   release();
 });
 
+// Risk: Weather controls could overflow a small screen.
+// Given a narrow viewport, When weather loads, Then key readings remain visible without horizontal page overflow.
 test('current weather is usable on a narrow phone', async ({ page, explorer }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await explorer.selectCity();
