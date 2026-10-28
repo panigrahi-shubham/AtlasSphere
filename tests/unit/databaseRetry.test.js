@@ -11,6 +11,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { retryDatabase } from '../../api/database.ts';
 
+// Risk: A sleeping database could remain unavailable after the first failure.
+// Given a sequence of warm-up failures, When retries run, Then backoff remains bounded and the final attempt is made.
 test('database warmup retries with bounded exponential delays', async () => {
   let attempts = 0;
   const waits = [];

@@ -11,6 +11,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mulberry32, shuffle, haversine, landmarkPoints, outlinePoints, displayDistance, leaderboardInsert, cleanBoard } from '../../src/geoguess/core.ts';
 
+// Risk: A seed could produce different or duplicate rounds.
+// Given a fixed seed, When shuffling repeats, Then the order is identical and selections are unique.
 test('seeded shuffle repeats exactly and selects without duplicates', () => {
   const source = Array.from({ length: 16 }, (_, i) => i);
   const a = shuffle(source, mulberry32(42));
@@ -18,6 +20,8 @@ test('seeded shuffle repeats exactly and selects without duplicates', () => {
   assert.notDeepEqual(a, shuffle(source, mulberry32(43)));
   assert.equal(new Set(a.slice(0, 5)).size, 5);
 });
+// Risk: Display units could change score mathematics.
+// Given known distances and unit choices, When distance and scoring functions run, Then the published rules hold.
 test('haversine, scoring and units match the published rules', () => {
   assert.equal(haversine(28.6139, 77.209, 28.6139, 77.209), 0);
   assert.ok(Math.abs(haversine(28.6139, 77.209, 19.076, 72.8777) - 1150) < 10);
@@ -26,6 +30,8 @@ test('haversine, scoring and units match the published rules', () => {
   assert.equal(displayDistance(100, 'fahrenheit'), '62 miles');
   assert.equal(displayDistance(100, 'celsius'), '100 km');
 });
+// Risk: Leaderboard ordering could drop the wrong score or mishandle ties.
+// Given scores and equal-score dates, When inserted, Then the best ten remain and earlier ties win.
 test('leaderboard caps at ten, scores descend and earlier tie wins', () => {
   const entries = Array.from({ length: 12 }, (_, i) => ({ name: String(i), score: 12 - i, seed: i, date: '2026-10-26T00:00:00Z' }));
   const board = entries.reduce(leaderboardInsert, []);

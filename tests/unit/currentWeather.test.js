@@ -16,6 +16,8 @@ import { weatherCondition } from '../../src/utils/weatherCodes.js';
 
 const fixture = () => structuredClone(currentWeatherFixture);
 
+// Risk: Implicit provider defaults could change displayed units.
+// Given city coordinates, When the weather URL is built, Then requested variables, units and timestamp format are explicit.
 test('weather requests explicit current variables, metric units and Unix time', () => {
   const url = new URL(weatherURL({ latitude: 19.99, longitude: 73.78 }));
   assert.equal(url.searchParams.get('latitude'), '19.99');
@@ -28,6 +30,8 @@ test('weather requests explicit current variables, metric units and Unix time', 
   assert.throws(() => weatherURL({ latitude: 91, longitude: 0 }), /invalid coordinates/);
 });
 
+// Risk: Falsy checks could discard valid zero or negative readings.
+// Given zero and negative fixture values, When data is normalized, Then those measurements remain valid.
 test('preserves zero values and negative temperatures', () => {
   const data = fixture();
   Object.assign(data.current, { temperature_2m: -3.5, apparent_temperature: 0, relative_humidity_2m: 0, wind_speed_10m: 0 });
@@ -38,6 +42,8 @@ test('preserves zero values and negative temperatures', () => {
   assert.equal(result.incomplete, false);
 });
 
+// Risk: Invalid secondary readings could be presented as real measurements.
+// Given absent or out-of-range optional values, When validation runs, Then they remain unavailable.
 test('missing or invalid secondary metrics stay unavailable', () => {
   const data = fixture();
   Object.assign(data.current, { apparent_temperature: null, relative_humidity_2m: 101, wind_speed_10m: -1, precipitation: '0' });
@@ -49,6 +55,8 @@ test('missing or invalid secondary metrics stay unavailable', () => {
   assert.equal(validateCurrentWeather(data).wind, null);
 });
 
+// Risk: Broken core data could pass as usable weather.
+// Given invalid temperature, units, timezone or time, When validation runs, Then the payload is rejected.
 test('rejects missing temperature, wrong temperature units and invalid timezones/times', () => {
   for (const change of [
     data => { data.current.temperature_2m = null; },
@@ -63,6 +71,8 @@ test('rejects missing temperature, wrong temperature units and invalid timezones
   }
 });
 
+// Risk: A generic error could leave users unsure which service failed.
+// Given weather failures, When errors are formatted, Then the message identifies the weather service.
 test('weather failures use weather-specific service messages', async () => {
   const original = globalThis.fetch;
   globalThis.fetch = async () => ({ ok: false, status: 503 });
@@ -70,12 +80,16 @@ test('weather failures use weather-specific service messages', async () => {
   finally { globalThis.fetch = original; }
 });
 
+// Risk: Whole-hour assumptions could show the wrong local time.
+// Given fractional offsets and DST transitions, When time is formatted, Then the selected timezone determines the display.
 test('local clock respects fractional offsets and daylight saving time', () => {
   assert.equal(localTime('Asia/Kolkata', new Date('2026-10-26T10:00:00Z')), '26 Oct 2026, 15:30');
   assert.equal(localTime('America/New_York', new Date('2026-11-01T05:30:00Z')), '1 Nov 2026, 01:30');
   assert.equal(localTime('America/New_York', new Date('2026-11-01T06:30:00Z')), '1 Nov 2026, 01:30');
 });
 
+// Risk: Unknown condition codes could invent a weather description.
+// Given day, night and unknown codes, When presentation is selected, Then documented icons or honest fallback labels appear.
 test('maps WMO conditions, night icons and unknown codes without inventing conditions', () => {
   assert.equal(weatherCondition(0, 0).icon, '☾');
   assert.equal(weatherCondition(0, 1).icon, '☀');
@@ -84,6 +98,8 @@ test('maps WMO conditions, night icons and unknown codes without inventing condi
   assert.deepEqual(weatherCondition(1234, 1), { description: 'Weather conditions unavailable', icon: '?' });
 });
 
+// Risk: An uncancellable slow response could replace a newer city.
+// Given overlapping requests whose fetch ignores abort, When the older response finishes last, Then it cannot overwrite the new selection.
 test('an obsolete weather response cannot overwrite a newer city even if fetch ignores abort', async () => {
   const original = globalThis.document;
   const elements = new Map();

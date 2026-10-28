@@ -48,6 +48,8 @@ function forecast() {
   };
 }
 
+// Risk: An empty new search could leave old choices selectable.
+// Given earlier city options, When a no-match lookup completes, Then those options are cleared.
 test('a no-match search clears earlier city choices immediately', async () => {
   const s = setup();
   const first = s.context.searchCity('Paris');
@@ -60,6 +62,8 @@ test('a no-match search clears earlier city choices immediately', async () => {
   assert.match(s.elements.status.textContent, /City not found/);
 });
 
+// Risk: A delayed response could overwrite a newer search or re-enable its button.
+// Given overlapping searches, When responses finish out of order, Then only the latest search controls the view.
 test('older responses cannot overwrite the newest search or unlock its button', async () => {
   const s = setup();
   const a = s.context.searchCity('Alpha');
@@ -74,6 +78,8 @@ test('older responses cannot overwrite the newest search or unlock its button', 
   assert.equal(s.elements.submit.disabled, false);
 });
 
+// Risk: An incomplete payload could partially replace valid weather.
+// Given invalid core weather data, When rendering is attempted, Then rejection happens before displayed fields change.
 test('incomplete weather is rejected before any weather fields change', async () => {
   const s = setup();
   const pending = s.context.loadWeather(city('Broken'));
@@ -84,6 +90,8 @@ test('incomplete weather is rejected before any weather fields change', async ()
   assert.equal(s.elements.temp, undefined);
 });
 
+// Risk: A valid zero-rain forecast could lose rows or replace zero with unavailable.
+// Given a complete fixture, When forecast rows render, Then all 24 rows and zero probability remain.
 test('valid forecast renders 24 rows and preserves zero rain probability', async () => {
   const s = setup();
   const pending = s.context.loadWeather(city('Nashik')); s.respond(forecast()); await pending;
@@ -93,6 +101,8 @@ test('valid forecast renders 24 rows and preserves zero rain probability', async
   assert.equal(s.elements.hourly.children[0].children[2].textContent, '☂ 0%');
 });
 
+// Risk: An unsuccessful new lookup could leave old weather looking current.
+// Given an earlier selection, When a new search begins and fails, Then the earlier weather remains hidden.
 test('starting another search hides earlier weather even if the search fails', async () => {
   const s = setup();
   const weather = s.context.loadWeather(city('Nashik')); s.respond(forecast()); await weather;
@@ -103,6 +113,8 @@ test('starting another search hides earlier weather even if the search fails', a
   assert.equal(s.elements.submit.disabled, false);
 });
 
+// Risk: A hung search could leave controls permanently disabled.
+// Given a delayed request, When its timeout expires, Then controls recover and a retry message appears.
 test('timeout restores search controls with a retry message', async () => {
   const s = setup();
   const pending = s.context.searchCity('Nashik');
