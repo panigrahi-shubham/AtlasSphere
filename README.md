@@ -19,11 +19,12 @@ React and TypeScript power the discovery homepage; the existing Vite multi-page 
 
 ## Test framework
 
-The following counts describe the recorded local baseline; some scenarios are represented in more than one suite. The production-only homepage scenarios are skipped in the development run and exercised against a production build.
+The following counts describe verified local runs; some scenarios are represented in more than one suite. The production-only homepage scenarios are skipped in the development run and exercised against a production build. [Validation evidence](docs/archive/FRAMEWORK_VALIDATION.md) includes the original baseline failures and before/after counts.
 
-| Layer | Command | Baseline |
+| Layer | Command | Verified result |
 | --- | --- | --- |
 | Node unit and integration | `npm test` | 70 passed |
+| Homepage unit | `npm run test:home:unit` | 5 passed |
 | API with isolated PostgreSQL | `npm run test:accounts:local` | 25 passed |
 | Browser regression | `npm run test:ui` | 100 passed, one production-only skip in a normal-path checkout |
 | Built explorer and geography | `npm run test:v2` | 39 passed |

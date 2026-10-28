@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Refactor the test framework into feature folders with page objects, shared API/database helpers, documented risks and report steps. Add strict test lint/typechecking, JUnit CI summaries, assertion-preservation audits and portfolio documentation without changing application behavior or existing assertions.
+
 - Use AtlasSphere for visible product branding, page titles, review author fallback and GeoGuess share UI while preserving compatibility identifiers and service URLs.
 
 - Retry city lookup and forecasts once against public Open-Meteo after HTTP 502/503/504, preserving the original error and avoiding retries on rate limits, aborts or client timeouts. Add sanitized upstream diagnostics.

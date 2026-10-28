@@ -1,6 +1,6 @@
 # Test quick start
 
-Install Node.js 24, then run `npm ci`, `npm run prisma:generate` and `npx playwright install chromium`.
+Install Node.js 24, then run `npm ci`, `npm run prisma:generate`, `npx playwright install chromium` and `npm run build`. The local API suite also verifies production HTML routes, so it needs the built pages.
 
 ```sh
 npm test
