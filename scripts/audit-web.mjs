@@ -27,16 +27,18 @@ async function untilReady() {
 try {
   await untilReady();
   const rows = [];
+  let settings;
   for (let run = 1; run <= 3; run++) {
     const result = await lighthouse(`http://127.0.0.1:${sitePort}/`, { port: chromePort, output: 'json', logLevel: 'error', onlyCategories: ['performance','accessibility'], formFactor: 'mobile', throttlingMethod: 'simulate' });
     if (!result) throw new Error('Lighthouse returned no result.');
     const { lhr } = result;
+    settings = { screen: lhr.configSettings.screenEmulation, throttling: lhr.configSettings.throttling };
     const row = { run, performance: Math.round((lhr.categories.performance.score ?? 0) * 100), accessibility: Math.round((lhr.categories.accessibility.score ?? 0) * 100), cls: lhr.audits['cumulative-layout-shift'].numericValue ?? null };
     rows.push(row); console.log(row);
     await writeFile(resolve(report, `run-${run}.json`), JSON.stringify(lhr), 'utf8');
   }
   const good = rows.every(row => row.performance >= 80 && row.accessibility >= 90 && row.cls !== null && row.cls < 0.1);
-  await writeFile(resolve(report, 'summary.json'), JSON.stringify({ conditions: 'Lighthouse mobile simulation; production homepage at 390×844, no city selected', target: { performance: 80, accessibility: 90, clsUnder: 0.1 }, runs: rows, meetsTargets: good }, null, 2));
+  await writeFile(resolve(report, 'summary.json'), JSON.stringify({ conditions: 'Lighthouse mobile simulation; local Express production homepage, no city selected', settings, target: { performance: 80, accessibility: 90, clsUnder: 0.1 }, runs: rows, meetsTargets: good }, null, 2));
   if (!good) process.exitCode = 1;
 } finally {
   chrome.kill();

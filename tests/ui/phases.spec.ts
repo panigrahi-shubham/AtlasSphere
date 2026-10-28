@@ -3,8 +3,8 @@ import AxeBuilder from '@axe-core/playwright';
 // The legacy raw-file harness cannot transpile the new Journeys TypeScript.
 test.skip(process.env.EARTHSCOPE_UI_SOURCE === 'memory', 'Journeys requires Vite module transforms.');
 
-test('@smoke homepage, journeys and account controls are reachable', async ({ page }) => {
-  await page.goto('/');
+test('@smoke preserved explorer, journeys and account controls are reachable', async ({ page }) => {
+  await page.goto('/explore.html');
   await expect(page.getByTestId('account-section')).toBeVisible();
   await expect(page.getByTestId('nav-journeys')).toBeVisible();
   await page.getByTestId('nav-journeys').click();
@@ -23,8 +23,8 @@ test('@smoke isolated lab presents practice controls only in development', async
   await page.getByTestId('lab-run').click();
   await expect(page.getByTestId('lab-result')).toContainText('celsius');
 });
-test('@a11y homepage and journeys have no serious axe issues', async ({ page }) => {
-  for (const path of ['/', '/journeys']) {
+test('@a11y preserved explorer and journeys have no serious axe issues', async ({ page }) => {
+  for (const path of ['/explore.html', '/journeys']) {
     await page.goto(path);
     const results = await new AxeBuilder({ page }).withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa']).analyze();
     expect(results.violations.filter(v => ['critical','serious'].includes(v.impact || '')), `${path}: ${results.violations.map(v => `${v.id}: ${v.nodes.length}`).join(', ')}`).toEqual([]);

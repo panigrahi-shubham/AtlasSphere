@@ -1,4 +1,5 @@
 import express, { type Request, type Response } from 'express';
+import compression from 'compression';
 import { createFeatures } from './features.ts';
 import { createJourneys } from './journeys.ts';
 import { createTestLab } from './testLab.ts';
@@ -179,10 +180,15 @@ export function createApp(options: ApiOptions = {}) {
   app.get('/openapi.json', async (_req, res) => res.type('json').send(await readFile(file('api/openapi.json'))));
   app.use('/docs', swaggerUi.serve, swaggerUi.setup(null, { swaggerOptions: { url: '/openapi.json' } }));
   if (env === 'production') {
+    // Compress public pages/assets when served by Express; API routes above
+    // retain their existing response behavior. Vercel serves static files itself.
+    app.use(compression());
     const dist = file('dist'); app.use(express.static(dist));
-    app.get('/journeys', (_req, res) => res.sendFile(path.join(dist, 'journeys.html')));
-    app.get('/geoguess', (_req, res) => res.sendFile(path.join(dist, 'geoguess.html')));
-    app.get('/{*path}', (_req, res) => res.status(404).sendFile(path.join(dist, '404.html')));
+    app.get('/explore', (_req, res) => res.sendFile('explore.html', { root: dist }));
+    for (const page of ['sources', 'privacy', 'accessibility']) app.get(`/${page}`, (_req, res) => res.sendFile(`${page}.html`, { root: dist }));
+    app.get('/journeys', (_req, res) => res.sendFile('journeys.html', { root: dist }));
+    app.get('/geoguess', (_req, res) => res.sendFile('geoguess.html', { root: dist }));
+    app.get('/{*path}', (_req, res) => res.status(404).sendFile('404.html', { root: dist }));
   }
   return app;
 }

@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => {
   await page.route('**/api/v1/weather?**', route => route.fulfill({ json: currentWeatherFixture }));
 });
 test('built website completes search, weather, forecast, units and favorite reload', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/explore.html');
   await page.getByTestId('city-search-input').fill('Nashik'); await page.getByTestId('city-search-button').click(); await page.getByTestId('city-suggestion').click();
   await expect(page.getByTestId('forecast-hour')).toHaveCount(24);
   await page.getByTestId('unit-fahrenheit').click(); await expect(page.getByTestId('current-temperature')).toHaveText('76°F');
@@ -16,7 +16,7 @@ test('built website completes search, weather, forecast, units and favorite relo
   await expect(page.getByTestId('latitude-value')).toHaveText('19.990°');
 });
 test('production ignores every development defect flag', async ({ page }) => {
-  await page.goto('/?bugMode=1&bugs=TEMP-001,HUM-001,FAV-001,SEARCH-001,TIME-001');
+  await page.goto('/explore.html?bugMode=1&bugs=TEMP-001,HUM-001,FAV-001,SEARCH-001,TIME-001');
   await expect(page.getByTestId('bug-mode-panel')).toHaveCount(0);
   await page.getByTestId('city-search-button').click(); await expect(page.getByTestId('search-error')).toHaveText('Enter a city name.');
   await page.getByTestId('city-search-input').fill('Nashik'); await page.getByTestId('city-search-button').click(); await page.getByTestId('city-suggestion').click();
@@ -28,7 +28,7 @@ test('production ignores every development defect flag', async ({ page }) => {
   await page.getByTestId('favorite-toggle').click(); await expect(page.getByTestId('favorite-item')).toHaveCount(0);
 });
 test('built mobile layout supports favorites confirmation', async ({ page }) => {
-  await page.setViewportSize({ width: 320, height: 812 }); await page.goto('/');
+  await page.setViewportSize({ width: 320, height: 812 }); await page.goto('/explore.html');
   await page.getByTestId('city-search-input').fill('Nashik'); await page.getByTestId('city-search-button').click(); await page.getByTestId('city-suggestion').click();
   await page.getByTestId('favorite-toggle').click(); await page.getByTestId('favorites-clear').click();
   await expect(page.getByTestId('favorites-clear-dialog')).toBeVisible();

@@ -17,7 +17,7 @@ for (const [searchStatus, weatherStatus] of [[502, 503], [503, 502]]) {
       return route.fulfill({ json: { results: [city] } });
     });
     await page.route('https://api.open-meteo.com/**', route => { weatherCalls++; return route.fulfill({ json: currentWeatherFixture }); });
-    await page.goto('/');
+    await page.goto('/explore.html');
     await page.getByTestId('city-search-input').fill('Nashik'); await page.getByTestId('city-search-button').click();
     await page.getByTestId('city-suggestion').click();
     await expect(page.getByTestId('current-temperature')).toHaveText('24°C');
@@ -31,7 +31,7 @@ for (const stage of ['search', 'weather']) {
     await page.route(/^https:\/\/(?:api|geocoding-api)\.open-meteo\.com\//, route => { fallbackCalls++; return route.fulfill({ json: {} }); });
     await page.route('**/api/v1/geocode?**', route => route.fulfill({ status: stage === 'search' ? 429 : 200, json: { results: [city] } }));
     await page.route('**/api/v1/weather?**', route => route.fulfill({ status: 429, json: {} }));
-    await page.goto('/');
+    await page.goto('/explore.html');
     await page.getByTestId('city-search-input').fill('Nashik'); await page.getByTestId('city-search-button').click();
     if (stage === 'weather') await page.getByTestId('city-suggestion').click();
     await expect(page.getByTestId(stage === 'search' ? 'search-error' : 'weather-error')).toContainText('Too many');
@@ -42,7 +42,7 @@ for (const stage of ['search', 'weather']) {
 test('a failed direct lookup keeps the original server error', async ({ page }) => {
   await page.route('**/api/v1/geocode?**', route => route.fulfill({ status: 502, json: {} }));
   await page.route('https://geocoding-api.open-meteo.com/**', route => route.fulfill({ status: 503, json: {} }));
-  await page.goto('/');
+  await page.goto('/explore.html');
   await page.getByTestId('city-search-input').fill('Nashik'); await page.getByTestId('city-search-button').click();
   await expect(page.getByTestId('search-error')).toContainText('Location service unavailable (502)');
 });
@@ -55,7 +55,7 @@ test('capital lookup fallback keeps the country restriction', async ({ page }) =
     return route.fulfill({ json: { results: [{ ...city, name: 'New Delhi' }] } });
   });
   await page.route('**/api/v1/weather?**', route => route.fulfill({ json: currentWeatherFixture }));
-  await page.goto('/'); await page.getByTestId('atlas-load').click();
+  await page.goto('/explore.html'); await page.getByTestId('atlas-load').click();
   await page.getByTestId('country-filter').fill('India');
   await page.getByTestId('country-directory').getByRole('button', { name: 'India', exact: true }).click();
   await page.getByTestId('country-weather').click();
@@ -71,7 +71,7 @@ test('seven-day forecast fallback retains the current weather', async ({ page })
     calls++; expect(new URL(route.request().url()).searchParams.get('forecast_days')).toBe('7');
     return route.fulfill({ json: daily });
   });
-  await page.goto('/');
+  await page.goto('/explore.html');
   await page.getByTestId('city-search-input').fill('Nashik'); await page.getByTestId('city-search-button').click();
   await page.getByTestId('city-suggestion').click(); await page.getByTestId('advanced-load').click();
   await expect(page.getByTestId('daily-row')).toHaveCount(7);

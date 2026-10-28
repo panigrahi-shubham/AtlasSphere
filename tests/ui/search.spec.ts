@@ -10,7 +10,7 @@ const endpoint = '**/api/v1/geocode?**';
 test.beforeEach(async ({ page }) => {
   await page.route(endpoint, route => route.fulfill({ json: { results: cities } }));
   await page.route('**/api/v1/weather?**', route => route.fulfill({ json: currentWeatherFixture }));
-  await page.goto('/');
+  await page.goto('/explore.html');
 });
 
 async function search(page, query = 'Zürich') {

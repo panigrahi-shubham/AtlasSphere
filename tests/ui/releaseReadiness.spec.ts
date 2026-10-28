@@ -10,7 +10,7 @@ const cities = [
 test.beforeEach(async ({ page }) => {
   await page.route('**/api/v1/geocode?**', route => route.fulfill({ json: { results: cities } }));
   await page.route(weatherEndpoint, route => route.fulfill({ json: currentWeatherFixture }));
-  await page.goto('/');
+  await page.goto('/explore.html');
 });
 async function select(page: Page, name = 'Nashik') {
   await page.getByTestId('city-search-input').fill(name); await page.getByTestId('city-search-button').click();

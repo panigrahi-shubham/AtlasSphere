@@ -1,6 +1,8 @@
 # AtlasSphere
 
-**Weather, geography and travel exploration — with a Playwright automation portfolio.**
+**Explore Earth and Beyond — an Earth-and-space discovery experience with a Playwright automation portfolio.**
+
+The Phase 1 redesign adds a React homepage with a lazy interactive Earth, real place search, sourced astronomy and Earth-science previews, accessible navigation and light/dark themes. The full existing weather/atlas/account explorer remains at `/explore.html`; GeoGuess and Journeys are preserved. See [Phase 1 architecture](docs/PHASE1_ARCHITECTURE.md), [feature inventory](docs/FEATURE_INVENTORY.md), [testability](docs/TESTABILITY.md) and [Phase 1 report](docs/PHASE1_REPORT.md).
 
 [Live website](https://atlassphere.vercel.app) · [GitHub](https://github.com/panigrahi-shubham/AtlasSphere) · [API documentation](https://atlassphere.vercel.app/docs/) · [Deployment guide](docs/DEPLOY_VERCEL_NEON.md)
 
@@ -29,11 +31,13 @@ Password-reset endpoints exist, but **production reset emails are unavailable un
 
 ## Technology
 
-- **Frontend:** HTML, CSS, JavaScript and TypeScript modules, built with Vite.
+- **Frontend:** React/TypeScript homepage with Tailwind, React Router, TanStack Query and Lucide, alongside the preserved HTML/CSS/JavaScript/TypeScript explorer; one Vite build.
 - **Maps/globe:** d3-geo, TopoJSON, bundled country data and Three.js.
 - **Backend:** Node.js 24, Express 5 and Prisma 6.
 - **Database:** PostgreSQL in development, CI and production; Neon hosts the published database.
 - **Testing:** Playwright, Node's test runner, axe accessibility checks and GitHub Actions.
+- **New homepage checks:** `npm run typecheck:home`, `npm run lint:home`, `npm run format:home:check`, `npm run test:home:unit` and `npm run test:home`. The latter covers desktop and touch layouts; it uses fixture-based geographic results.
+- **Static page delivery:** `npm run build` prerenders the homepage and information routes to HTML, then React hydrates their controls. After building, set `HOME_PRODUCTION=1` when running `npm run test:home` to verify production hydration and readable content without JavaScript.
 - **Hosting:** Vercel serves the pages and a single Express function. Render is not required for this deployment.
 
 ## Run locally
@@ -110,7 +114,7 @@ Remaining operational setup:
 
 - **Automatic alerts:** create the authenticated cron-job.org POST job every three hours using the [scheduler instructions](docs/DEPLOY_VERCEL_NEON.md#automatic-alert-checks). The endpoint has been verified; the external schedule has not been confirmed. Notifications are in-app, not push notifications.
 - **Password-reset emails:** configure `RESET_EMAIL_PROVIDER_URL` and `RESET_EMAIL_PROVIDER_TOKEN` for a compatible email service.
-- **Automatic deployment:** connect/authorize this GitHub repository in Vercel. Use `main` after merging the upgrade; before the merge, use `atlassphere-quick-upgrade`. CLI deployments already work.
+- **Automatic deployment:** GitHub `main` is connected to the existing Vercel project. Reviewed pull requests deploy automatically after merging; verify the Vercel status and live site after each release.
 - **Old hosting:** review and disable unused Render deployments if still connected. No old service or database was deleted during the move.
 
 Follow [DEPLOY_VERCEL_NEON.md](docs/DEPLOY_VERCEL_NEON.md) for configuration and verification. Earlier Cloudflare/Render files remain as historical alternatives and are not required by the live Vercel deployment.

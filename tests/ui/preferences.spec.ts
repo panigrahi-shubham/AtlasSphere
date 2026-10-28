@@ -12,7 +12,7 @@ const cities = [
 test.beforeEach(async ({ page }) => {
   await page.route(geocodingEndpoint, route => route.fulfill({ json: { results: cities } }));
   await page.route(weatherEndpoint, route => route.fulfill({ json: currentWeatherFixture }));
-  await page.goto('/');
+  await page.goto('/explore.html');
 });
 async function select(page: Page, name = 'Nashik, Maharashtra, India') {
   await page.getByTestId('city-search-input').fill(name.split(',')[0]);

@@ -16,3 +16,7 @@
 
 The revised website-first plan is docs/ROADMAP.md; docs/ROADMAP_ORIGINAL.md preserves the earlier plan. The owner has authorized website Phases 3–6 together; implementation is in progress with outstanding gates in docs/PHASES3-6_STATUS.md. Phases 1, 1.5 and 2 remain regression requirements. Android remains deferred.
 
+On 28 October 2026 the owner authorized a separately scoped Earth & Space redesign Phase 1, including React/TypeScript/Tailwind alongside the existing Vite/Express application. This explicit upgrade permits the incremental frontend addition while preserving the stack's existing explorer, APIs and PostgreSQL. Work belongs on `feature/atlassphere-phase1-earth-space`; see `docs/PHASE1_ARCHITECTURE.md` and `docs/PHASE1_REPORT.md`. Stop for owner review after this redesign phase; no redesign Phase 2 or production publication is authorized by that brief. Existing stable test IDs remain on `/explore.html`.
+
+
+The owner subsequently reviewed the Phase 1 preview and explicitly authorized production deployment. The release is prepared from current main in an isolated checkout, excluding unrelated local Gmail reset-email changes. This publication authorization does not start redesign Phase 2.

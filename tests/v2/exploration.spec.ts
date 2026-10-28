@@ -9,7 +9,7 @@ function dailyFixture() {
 test.beforeEach(async ({ page }) => {
   await page.route('**/api/v1/geocode?**', route => route.fulfill({ json: { results: [city] } }));
   await page.route('**/api/v1/weather?**', route => route.fulfill({ json: new URL(route.request().url()).searchParams.get('view') === 'daily' ? dailyFixture() : currentWeatherFixture }));
-  await page.goto('/');
+  await page.goto('/explore.html');
 });
 async function atlas(page: Page) { await page.getByTestId('atlas-load').click(); await expect(page.getByTestId('world-map')).toBeVisible(); }
 async function selectCity(page: Page) { await page.getByTestId('city-search-input').fill('Nashik'); await page.getByTestId('city-search-button').click(); await page.getByTestId('city-suggestions').getByRole('button').click(); await expect(page.getByTestId('current-temperature')).toHaveText('24°C'); }

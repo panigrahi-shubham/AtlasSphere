@@ -1,6 +1,6 @@
 import { test, expect } from '../support/uiTest';
 import { currentWeatherFixture } from '../fixtures/currentWeather.js';
-test.beforeEach(async ({ page }) => { await page.goto('/'); });
+test.beforeEach(async ({ page }) => { await page.goto('/explore.html'); });
 test('theme toggles and persists after reload', async ({ page }) => {
   const root = page.locator('html'); const initial = await root.getAttribute('data-theme');
   await page.getByTestId('theme-toggle').click(); const next = initial === 'dark' ? 'light' : 'dark';

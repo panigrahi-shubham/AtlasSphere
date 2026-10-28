@@ -36,8 +36,16 @@ jobs:
       - run: npm run prisma:generate
       - run: npm run prisma:migrate
       - run: npm run check:syntax && npm run typecheck:api && npm run build && npm test
+      - name: React homepage static and unit verification
+        run: npm run typecheck:home && npm run lint:home && npm run format:home:check && npm run test:home:unit
       - run: npx playwright install --with-deps chromium
       - run: npm run test:api:local
+      - name: React homepage desktop, touch and accessibility
+        run: npm run test:home
+      - name: Production homepage hydration and static content
+        run: npm run test:home
+        env:
+          HOME_PRODUCTION: '1'
       - name: Persistence smoke against the test database
         run: npm run test:smoke:prod
         env:
@@ -50,6 +58,7 @@ jobs:
       - run: npm run test:a11y
       - run: npm run test:bugs
       - run: npm run test:release
+      - run: npm run test:v2
       - name: Upload Playwright artifacts
         if: always()
         uses: actions/upload-artifact@v4

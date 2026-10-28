@@ -1,9 +1,9 @@
 import { test, expect } from '../support/uiTest';
 import { currentWeatherFixture } from '../fixtures/currentWeather.js';
-test.beforeEach(async ({ page }) => { await page.goto('/'); });
+test.beforeEach(async ({ page }) => { await page.goto('/explore.html'); });
 test('saved theme is applied before the main app module executes', async ({ page }) => {
   await page.evaluate(() => localStorage.setItem('earthscope:theme:v1', JSON.stringify('dark')));
-  await page.route('**/assets/main-*.js', route => route.abort()); await page.reload();
+  await page.route('**/assets/explore-*.js', route => route.abort()); await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 });
 test('header remains sticky, units stay in navigation and search is prominent in the hero', async ({ page }) => {
@@ -48,7 +48,11 @@ test('allowed browser location loads weather from real provided coordinates', as
 });
 test('About and missing-page routes have titles, credits and a home link', async ({ page }) => {
   await page.goto('/about.html'); await expect(page).toHaveTitle('About AtlasSphere'); await expect(page.getByTestId('about-title')).toBeVisible();
-  const response = await page.goto('/no-such-place'); expect(response?.status()).toBe(404); await expect(page.getByTestId('not-found-title')).toBeVisible(); await page.getByTestId('page-home').click(); await expect(page.getByTestId('city-search-input')).toBeVisible();
+  const response = await page.goto('/no-such-place'); expect(response?.status()).toBe(404); await expect(page.getByTestId('not-found-title')).toBeVisible();
+  await page.getByTestId('page-home').click();
+  await expect(page.getByRole('heading', { name: 'Explore Earth and Beyond.', exact: true })).toBeVisible();
+  await page.getByTestId('home-explore-earth').click();
+  await expect(page.getByTestId('city-search-input')).toBeVisible();
 });
 test('typing a new search discards a late location callback', async ({ page }) => {
   await page.addInitScript(() => Object.defineProperty(navigator, 'geolocation', { configurable: true, value: { getCurrentPosition(success: any) { (window as any).pendingGPS = success; } } })); await page.reload();
