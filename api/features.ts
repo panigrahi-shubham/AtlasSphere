@@ -2,6 +2,8 @@ import express, { type Request, type Response } from 'express';
 import { db } from './database.ts';
 import bcrypt from 'bcryptjs';
 import { createHmac, createHash, randomBytes, randomInt, timingSafeEqual } from 'node:crypto';
+import { isAllowedOrigin } from './origin.ts';
+import { isAccountConfigured } from './accountConfig.ts';
 
 const sha = (value: string) => createHash('sha256').update(value).digest('hex');
 const secret = () => {
@@ -37,17 +39,13 @@ function cookieValue(req: Request) {
   const part = (req.headers.cookie || '').split(';').map(s => s.trim()).find(s => s.startsWith(`${cookieName}=`));
   return part?.slice(cookieName.length + 1) || '';
 }
-function sameOrigin(req: Request) {
-  if (!req.headers.origin) return true;
-  try { return new URL(req.headers.origin).host === req.get('host'); } catch { return false; }
-}
 async function newSession(userId: string, req: Request, res: Response) {
   const value = randomBytes(32).toString('base64url');
   await db.refreshToken.create({ data: { userId, hash: sha(value), expiresAt: new Date(Date.now() + 30 * 86400000) } });
   res.cookie(cookieName, value, cookieOptions(req));
   return tokenFor(userId);
 }
-function safeAccount(user: { id: string; email: string; theme: string }) { return { id: user.id, email: user.email, theme: user.theme }; }
+function safeAccount(user: { id: string; email: string; theme: string; displayName?: string | null }) { return { id: user.id, email: user.email, theme: user.theme, displayName: user.displayName ?? null }; }
 const attempts = new Map<string, { count: number; until: number }>();
 function attemptLimit(key: string, max = 5, windowMs = 600000) {
   const item = attempts.get(key);
@@ -74,8 +72,8 @@ const location = (x: any) => {
 export function createFeatures(env: string) {
   const api = express.Router();
   api.use(['/auth', '/account', '/favorites'], (req, res, next) => {
-    if (!process.env.DATABASE_URL || !process.env.AUTH_SECRET || process.env.AUTH_SECRET.length < 32) return unavailable(res);
-    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method) && !sameOrigin(req)) return reply(res, 403, 'Request origin is not allowed.');
+    if (!isAccountConfigured()) return unavailable(res);
+    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method) && !isAllowedOrigin(req)) return reply(res, 403, 'Request origin is not allowed.');
     next();
   });
   api.post('/auth/register', async (req, res) => {
@@ -161,6 +159,39 @@ export function createFeatures(env: string) {
     const user = await db.user.findUnique({ where: { id } });
     if (!user) return reply(res, 401, 'Session expired.');
     res.json({ user: safeAccount(user) });
+  });
+  api.put('/account/profile', async (req, res) => {
+    const id = protectedUser(req, res); if (!id) return;
+    if (!attemptLimit(`profile:${id}`, 30, 3600000)) return reply(res, 429, 'Please try again later.');
+    const name = req.body?.displayName;
+    if (typeof name !== 'string' || name.trim().length > 40 || /[<>]/.test(name)) return reply(res, 400, 'Enter a display name of up to 40 characters without HTML.');
+    const user = await db.user.update({ where: { id }, data: { displayName: name.trim() || null }, select: { displayName: true } });
+    res.json({ displayName: user.displayName });
+  });
+  api.get('/account/export', async (req, res) => {
+    const id = protectedUser(req, res); if (!id) return;
+    const user = await db.user.findUnique({ where: { id }, select: { email: true, displayName: true, theme: true, createdAt: true } });
+    if (!user) return reply(res, 401, 'Session expired.');
+    const [favorites, trips, alerts, notifications, reviews] = await Promise.all([
+      db.favorite.findMany({ where: { userId: id }, select: { key: true, name: true, country: true, region: true, latitude: true, longitude: true, createdAt: true } }),
+      db.trip.findMany({ where: { userId: id }, select: { name: true, city: true, startDate: true, endDate: true, createdAt: true } }),
+      db.weatherAlert.findMany({ where: { userId: id }, select: { city: true, condition: true, threshold: true, lastSentAt: true, createdAt: true } }),
+      db.notification.findMany({ where: { userId: id }, select: { message: true, createdAt: true } }),
+      db.review.findMany({ where: { userId: id }, select: { id: true, landmarkId: true, rating: true, body: true, imageType: true, createdAt: true } })
+    ]);
+    const exportedReviews = reviews.map(({ id: reviewId, imageType, ...review }) => ({ ...review, imageUrl: imageType ? `/api/v1/journeys/reviews/image/${reviewId}` : null }));
+    res.set('Content-Disposition', `attachment; filename="skyatlas-export-${new Date().toISOString().slice(0, 10)}.json"`);
+    res.json({ account: user, favorites, trips, alerts, notifications, reviews: exportedReviews });
+  });
+  api.delete('/account', async (req, res) => {
+    const id = protectedUser(req, res); if (!id) return;
+    if (!attemptLimit(`delete-account:${id}`, 5, 3600000)) return reply(res, 429, 'Please try again later.');
+    if (typeof req.body?.password !== 'string' || req.body.password.length > 128) return reply(res, 400, 'Enter your current password.');
+    const user = await db.user.findUnique({ where: { id }, select: { passwordHash: true } });
+    if (!user || !await bcrypt.compare(req.body.password, user.passwordHash)) return reply(res, 401, 'Incorrect password or expired session.');
+    await db.user.delete({ where: { id } });
+    res.clearCookie(cookieName, cookieOptions(req));
+    res.status(204).end();
   });
   api.put('/account/theme', async (req, res) => {
     const id = protectedUser(req, res); if (!id) return;

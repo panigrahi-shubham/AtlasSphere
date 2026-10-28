@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "SkyAtlas API Phase 2",
-    "description": "Local fixture mode: APP_ENV=test FIXTURES=1 PORT=3000 npm start. Run the collection against http://127.0.0.1:3000.",
+    "name": "AtlasSphere API Phase 2",
+    "description": "Local fixture mode: APP_ENV=test FIXTURES=1 PORT=3000 npm start. Run the collection against http://127.0.0.1:3000. Pages checks database readiness before forwarding writes. On a proxy 503, retry a write only when X-SkyAtlas-Retry-Safe is 1; a 0 means the write may already have completed. Browser weather/city fallback is limited to HTTP 502/503/504; Postman requests exercise the server directly.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -213,6 +213,194 @@
           }
         }
       ]
+    },
+    {
+      "name": "Historical Time Machine",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/journeys/time-machine?date=1980-01-01&lat=27.175&lon=78.042",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "journeys",
+            "time-machine"
+          ],
+          "query": [
+            {
+              "key": "date",
+              "value": "1980-01-01"
+            },
+            {
+              "key": "lat",
+              "value": "27.175"
+            },
+            {
+              "key": "lon",
+              "value": "78.042"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Database health",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/health/db",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "health",
+            "db"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Internal alert cron",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-cron-secret",
+            "value": "{{cronSecret}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/internal/cron/alerts",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "internal",
+            "cron",
+            "alerts"
+          ]
+        },
+        "description": "One check per city per pass; failed lookups are skipped."
+      }
+    },
+    {
+      "name": "Update display name",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/account/profile",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "account",
+            "profile"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"displayName\": \"AtlasSphere explorer\"}"
+        }
+      }
+    },
+    {
+      "name": "Export my data",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/account/export",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "account",
+            "export"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Delete account",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/account",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "account"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"password\": \"{{password}}\"}"
+        }
+      }
+    },
+    {
+      "name": "Public landmark reviews",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/journeys/reviews/taj-mahal",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "journeys",
+            "reviews",
+            "taj-mahal"
+          ]
+        }
+      }
     }
   ]
 }

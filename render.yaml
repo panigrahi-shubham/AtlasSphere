@@ -6,8 +6,7 @@ services:
   - type: web
     name: skyatlas
     runtime: node
-    buildCommand: npm ci && npm run prisma:generate && npm run build
-    preDeployCommand: npm run prisma:migrate
+    buildCommand: npm ci && npm run prisma:generate && npm run prisma:migrate && npm run build
     startCommand: npm start
     healthCheckPath: /api/v1/health
     envVars:
@@ -16,4 +15,6 @@ services:
       - key: AUTH_SECRET
         generateValue: true
       - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_DATABASE_URL
         sync: false

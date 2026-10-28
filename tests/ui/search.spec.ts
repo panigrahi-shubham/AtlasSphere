@@ -1,4 +1,4 @@
-import { test, expect } from '../support/uiTest';
+import { test, expect, mockOpenMeteoDown } from '../support/uiTest';
 import { currentWeatherFixture } from '../fixtures/currentWeather.js';
 
 const cities = [
@@ -75,6 +75,7 @@ test('no matches clears previous suggestions', async ({ page }) => {
 });
 
 test('reports API errors and allows retry', async ({ page }) => {
+  await mockOpenMeteoDown(page);
   await page.route(endpoint, route => route.fulfill({ status: 503, json: {} }));
   await search(page);
   await expect(page.getByTestId('search-error')).toContainText('503');

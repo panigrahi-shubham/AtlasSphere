@@ -1,9 +1,19 @@
 import { test, expect } from '../support/uiTest';
 
+test('Time Machine reports a generic archive provider failure', async ({ page }) => {
+  await page.route('**/api/v1/auth/refresh', route => route.fulfill({ status: 401, json: { error: { message: 'Sign in' } } }));
+  await page.route('**/api/v1/journeys/reviews/**', route => route.fulfill({ json: { reviews: [] } }));
+  await page.route('**/api/v1/journeys/time-machine?**', route => route.fulfill({ status: 502, json: { error: { message: 'Historical weather is unavailable.' } } }));
+  await page.goto('/journeys');
+  await page.getByTestId('time-year').fill('1980');
+  await page.getByTestId('time-explore').click();
+  await expect(page.getByTestId('time-result')).toHaveText('Historical weather is unavailable.');
+});
+
 test('Time Machine separates historical data, climate context, and fiction', async ({ page }) => {
   await page.route('**/api/v1/auth/refresh', route => route.fulfill({ status: 401, json: { error: { message: 'Sign in' } } }));
   await page.route('**/api/v1/journeys/reviews/**', route => route.fulfill({ json: { reviews: [] } }));
-  await page.route('**/api/v1/journeys/time-machine?**', route => route.fulfill({ status: 503, json: { error: { message: 'Historical weather needs an Open-Meteo Professional or higher API key.' } } }));
+  await page.route('**/api/v1/journeys/time-machine?**', route => route.fulfill({ json: { date: '1980-01-01', label: 'Real data', kind: 'Historical reanalysis', source: 'Open-Meteo ERA5', maximum: 21, minimum: 12, note: 'Modelled historical weather.' } }));
   await page.goto('/journeys');
   const year = page.getByTestId('time-year');
   const setYear = async (value: number) => year.evaluate((input, next) => {
@@ -21,7 +31,7 @@ test('Time Machine separates historical data, climate context, and fiction', asy
   await expect(page.getByTestId('time-result')).toContainText('Not a forecast');
   await setYear(1980);
   await page.getByTestId('time-explore').click();
-  await expect(page.getByTestId('time-result')).toContainText('Professional or higher');
+  await expect(page.getByTestId('time-result')).toContainText('Modelled historical weather');
 });
 
 test('trip, alert, and review controls complete their signed-in UI workflows', async ({ page }) => {
@@ -60,7 +70,7 @@ test('trip, alert, and review controls complete their signed-in UI workflows', a
     const request = route.request(), method = request.method();
     if (method === 'GET') return route.fulfill({ json: { reviews } });
     if (method === 'PUT') {
-      const input = request.postDataJSON(); reviews.splice(0, reviews.length, { id: 'review-1', userId: 'browser-test-user', ...input, createdAt: new Date().toISOString(), imageType: null, imageUrl: null });
+      const input = request.postDataJSON(); reviews.splice(0, reviews.length, { author: 'AtlasSphere explorer', ...input, createdAt: new Date().toISOString(), imageUrl: null });
       return route.fulfill({ json: { review: reviews[0] } });
     }
     reviews.length = 0; return route.fulfill({ status: 204, body: '' });
@@ -104,9 +114,11 @@ test('trip, alert, and review controls complete their signed-in UI workflows', a
   await expect(page.getByTestId('alert-list').locator('li')).toHaveCount(0);
 
   await page.getByLabel('Your review (up to 500 characters)').fill('A wonderful place in the Andes.');
+  await page.locator('#review-image').setInputFiles({ name: 'photo.png', mimeType: 'image/png', buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/aZkAAAAASUVORK5CYII=', 'base64') });
   await page.getByTestId('review-save').click();
   await expect(page.locator('#review-status')).toHaveText('Review saved.');
-  await expect(page.getByTestId('review-list')).toContainText('5/5 — A wonderful place in the Andes.');
+  expect(reviews[0].image).toMatch(/^data:image\/jpeg;base64,/);
+  await expect(page.getByTestId('review-list')).toContainText('5/5 — AtlasSphere explorer: A wonderful place in the Andes.');
   await page.getByRole('button', { name: 'Delete my review' }).click();
   await expect(page.getByTestId('review-list').locator('li')).toHaveCount(0);
 });

@@ -1,5 +1,35 @@
 # Changelog
 
+## Unreleased
+
+- Use AtlasSphere for visible product branding, page titles, review author fallback and GeoGuess share UI while preserving compatibility identifiers and service URLs.
+
+- Retry city lookup and forecasts once against public Open-Meteo after HTTP 502/503/504, preserving the original error and avoiding retries on rate limits, aborts or client timeouts. Add sanitized upstream diagnostics.
+
+- Check database readiness before forwarding Pages mutations, and retry only requests explicitly marked as unforwarded; preserve refresh-token replay protection.
+
+- Retry database warm-up after each configured backoff delay, including the final delay.
+
+- Cache failed city lookups during an alert pass and apply migrations in order on fresh databases.
+
+- Treat the example authentication secret as unconfigured instead of attempting database queries.
+
+- Announce wake-up responses and retry safe account reads; avoid replaying writes after ambiguous failures.
+
+- Add direct Open-Meteo fallback for city search and weather when the proxy reports a wake-up response.
+
+- Authenticate extra proxy hops before accepting forwarded client addresses.
+
+- Add account data export, password-confirmed deletion and review display names; remove public review user IDs and compress uploaded photos.
+
+- Add a preliminary Cloudflare Pages API proxy and configurable allowed origins.
+
+- Add a secret-protected scheduled alert endpoint with overlap protection and rate limiting.
+
+- Add a database health endpoint and support direct migration URLs for hosted PostgreSQL.
+
+- Use the free non-commercial Open-Meteo archive for historical weather when no customer key is configured; cache successful responses.
+
 ## Phase 2 API foundation — 2026-10-27
 
 - Added same-origin Express/TypeScript weather, geocoding, news and health routes with validation, caching, limits, fixture mode and OpenAPI/Swagger docs.

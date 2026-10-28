@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '../support/uiTest';
+import { test, expect, mockOpenMeteoDown, type Page } from '../support/uiTest';
 import { currentWeatherFixture } from '../fixtures/currentWeather.js';
 
 const endpoint = '**/api/v1/weather?**';
@@ -41,6 +41,7 @@ test('geography shows selected coordinates and geocoding elevation, not weather 
 });
 
 test('geography remains usable on weather failure and never invents missing optional details', async ({ page }) => {
+  await mockOpenMeteoDown(page);
   const missing = { id: 1, name: 'Nashik', latitude: 19.99, longitude: 73.78 };
   await page.route('**/api/v1/geocode?**', route => route.fulfill({ json: { results: [missing] } }));
   await page.route(endpoint, route => route.fulfill({ status: 503, json: {} }));

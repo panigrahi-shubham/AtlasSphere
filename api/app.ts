@@ -7,6 +7,9 @@ import swaggerUi from 'swagger-ui-express';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { db, waitForDatabaseWarmup } from './database.ts';
+import { checkAlerts, alertsRunning } from './alertWorker.ts';
+import { timingSafeEqual } from 'node:crypto';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const file = (name: string) => path.join(root, name);
@@ -15,7 +18,7 @@ const hourly = 'temperature_2m,weather_code,precipitation_probability,wind_speed
 const daily = 'temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,wind_speed_10m_max,uv_index_max,sunrise,sunset,weather_code';
 type ErrorCode = 'INVALID_INPUT' | 'NOT_FOUND' | 'RATE_LIMITED' | 'UPSTREAM_ERROR' | 'UPSTREAM_TIMEOUT' | 'INVALID_NEWS';
 type Cached = { data: unknown; expires: number };
-export type ApiOptions = { env?: string; fixtures?: boolean; fetcher?: typeof fetch; now?: () => number; newsPath?: string; rateLimit?: number; timeoutMs?: number; historicalApiKey?: string };
+export type ApiOptions = { env?: string; fixtures?: boolean; fetcher?: typeof fetch; now?: () => number; newsPath?: string; rateLimit?: number; timeoutMs?: number; historicalApiKey?: string; cronCheck?: () => Promise<{ checked: number; created: number }> };
 
 export function createApp(options: ApiOptions = {}) {
   const app = express();
@@ -28,11 +31,27 @@ export function createApp(options: ApiOptions = {}) {
   const limit = options.rateLimit ?? 60;
   const timeoutMs = options.timeoutMs ?? 5000;
   const newsPath = options.newsPath ?? file('api/news.json');
+  let cronRunning = false;
+  let lastCronRun = -Infinity;
   function fail(res: Response, status: number, code: ErrorCode, message: string, field?: string) {
     return res.status(status).json({ error: { code, message, ...(field ? { field } : {}) } });
   }
   app.disable('x-powered-by');
-  app.set('trust proxy', 1);
+  const hops = Number(process.env.TRUST_PROXY_HOPS ?? 1);
+  app.set('trust proxy', Number.isInteger(hops) && hops >= 0 && hops <= 10 ? hops : 1);
+  app.use((req, _res, next) => {
+    if (hops > 1) {
+      const expected = process.env.PROXY_SHARED_SECRET || '';
+      const supplied = Buffer.from(req.get('x-skyatlas-proxy-secret') || ''), required = Buffer.from(expected);
+      const verified = required.length > 0 && supplied.length === required.length && timingSafeEqual(supplied, required);
+      if (!verified && req.headers['x-forwarded-for']) {
+        const forwarded = String(req.headers['x-forwarded-for']).split(',');
+        req.headers['x-forwarded-for'] = forwarded[forwarded.length - 1].trim();
+      }
+    }
+    delete req.headers['x-skyatlas-proxy-secret'];
+    next();
+  });
   app.use('/api/v1', (req, res, next) => {
     const key = req.ip ?? 'unknown';
     const existing = requests.get(key);
@@ -56,6 +75,7 @@ export function createApp(options: ApiOptions = {}) {
     const cached = cache.get(key);
     if (cached && cached.expires > now()) { res.setHeader('X-Cache', 'HIT'); res.json(cached.data); return; }
     res.setHeader('X-Cache', 'MISS');
+    let providerStatus: number | undefined;
     try {
       let data: unknown;
       if (fixtureMode) data = JSON.parse(await readFile(file(`tests/fixtures/${fixture}`), 'utf8'));
@@ -65,6 +85,7 @@ export function createApp(options: ApiOptions = {}) {
         const timer = setTimeout(() => controller.abort(), timeoutMs);
         try {
           const response = await fetcher(url, { signal: controller.signal });
+          providerStatus = response.status;
           if (!response.ok) throw new Error(`Upstream returned ${response.status}`);
           data = await response.json();
         } finally { clearTimeout(timer); }
@@ -83,10 +104,34 @@ export function createApp(options: ApiOptions = {}) {
       cache.set(key, { data, expires: now() + ttl }); res.json(data);
     } catch (error) {
       const timeout = error instanceof Error && error.name === 'AbortError';
+      if (!fixtureMode) console.error('Weather upstream failure', { hostname: url.hostname, status: providerStatus ?? null, message: timeout ? 'Request timed out' : providerStatus !== undefined ? `HTTP ${providerStatus}` : 'Provider connection or response failed' });
       fail(res, timeout ? 504 : 502, timeout ? 'UPSTREAM_TIMEOUT' : 'UPSTREAM_ERROR', timeout ? 'Weather provider timed out.' : 'Weather provider is unavailable.');
     }
   }
   app.get('/api/v1/health', (_req, res) => res.json({ status: 'ok', service: 'skyatlas-api', time: new Date(now()).toISOString() }));
+  app.get('/api/v1/health/db', async (_req, res) => {
+    res.set('Cache-Control', 'no-store');
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      if (!process.env.DATABASE_URL) throw new Error('Database unavailable');
+      await Promise.race([db.$queryRaw`SELECT 1`, new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('Timeout')), 3000); })]);
+      res.json({ status: 'ok', db: 'ok' });
+    } catch { res.json({ status: 'ok', db: 'unavailable' }); }
+    finally { if (timer) clearTimeout(timer); }
+  });
+  app.post('/api/v1/internal/cron/alerts', async (req, res) => {
+    const expected = process.env.CRON_SECRET;
+    if (!expected) return res.status(404).json({ error: { message: 'API route not found.' } });
+    const supplied = Buffer.from(req.get('x-cron-secret') || ''), required = Buffer.from(expected);
+    if (supplied.length !== required.length || !timingSafeEqual(supplied, required)) return res.status(401).json({ error: { message: 'Unauthorized.' } });
+    if (cronRunning || alertsRunning()) return res.status(409).json({ error: { message: 'Alert check already running.' } });
+    if (now() - lastCronRun < 60000) return res.status(429).json({ error: { message: 'Try again later.' } });
+    if (!process.env.DATABASE_URL && !options.cronCheck) return res.status(503).json({ error: { message: 'Account service is not configured.' } });
+    lastCronRun = now(); cronRunning = true;
+    try { return res.json(await (options.cronCheck ?? checkAlerts)()); }
+    catch { return res.status(503).json({ error: { message: 'Alert check unavailable.' } }); }
+    finally { cronRunning = false; }
+  });
   app.get('/api/v1/weather', async (req, res) => {
     const lat = coordinate(req, res, 'lat', 90); if (lat === null) return;
     const lon = coordinate(req, res, 'lon', 180); if (lon === null) return;
@@ -121,6 +166,12 @@ export function createApp(options: ApiOptions = {}) {
     app.use('/api/v1/test-lab', createTestLab(env));
     app.get('/test-lab', (_req, res) => res.sendFile(file('test-lab.html')));
   }
+  app.use('/api/v1', (req, _res, next) => {
+    if (/^\/(auth|account|favorites)(\/|$)/.test(req.path) || (/^\/journeys\//.test(req.path) && req.path !== '/journeys/time-machine')) {
+      void waitForDatabaseWarmup().then(() => next()); return;
+    }
+    next();
+  });
   app.use('/api/v1', express.json({ limit: '3mb' }), createFeatures(env));
   app.use('/api/v1/journeys', createJourneys(env, fetcher, fixtureMode, options.historicalApiKey ?? process.env.OPEN_METEO_API_KEY));
   app.get('/api/v1/{*path}', (_req, res) => { fail(res, 404, 'NOT_FOUND', 'API route not found.'); });

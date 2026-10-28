@@ -14,3 +14,11 @@ test('@live live capital lookup is restricted to the requested country', async (
   expect(response.ok()).toBeTruthy(); const data = await response.json(); expect(data.results.length).toBeGreaterThan(0);
   expect(data.results.every((city: any) => city.country_code === 'IN')).toBe(true);
 });
+
+test('@live free historical archive returns modelled Taj Mahal temperatures', async ({ request }) => {
+  const response = await request.get('https://archive-api.open-meteo.com/v1/archive', { params: { latitude: '27.175', longitude: '78.042', start_date: '1980-01-01', end_date: '1980-01-01', daily: 'temperature_2m_max,temperature_2m_min', timezone: 'auto', models: 'era5' }, timeout: 15000 });
+  expect(response.ok()).toBeTruthy();
+  const data = await response.json();
+  expect(Number.isFinite(data.daily.temperature_2m_max[0])).toBe(true);
+  expect(Number.isFinite(data.daily.temperature_2m_min[0])).toBe(true);
+});

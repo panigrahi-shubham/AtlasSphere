@@ -15,7 +15,7 @@ test('@smoke homepage, journeys and account controls are reachable', async ({ pa
 });
 test('@smoke isolated lab presents practice controls only in development', async ({ page }) => {
   await page.goto('/test-lab');
-  await expect(page.getByRole('heading', { name: 'SkyAtlas Test deployment' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'AtlasSphere Test deployment' })).toBeVisible();
   await page.getByTestId('lab-scenario').selectOption('wrong-units');
   await page.getByTestId('lab-run').click();
   await expect(page.getByTestId('lab-result')).toContainText('fahrenheit');

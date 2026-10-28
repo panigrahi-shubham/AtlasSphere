@@ -4,13 +4,154 @@ import { readFile, writeFile, mkdtemp } from 'node:fs/promises';
 import path from 'node:path';
 import type { Server } from 'node:http';
 import { fetchNews, parseNews } from '../../scripts/fetch-news.ts';
+import { db } from '../../api/database.ts';
 
 async function serve(options: ApiOptions = {}) {
   const app = createApp({ env: 'test', fixtures: true, ...options });
   const server = await new Promise<Server>(resolve => { const server = app.listen(0, '127.0.0.1', () => resolve(server)); });
-  return { base: `http://127.0.0.1:${(server.address() as { port: number }).port}`, close: () => new Promise<void>(resolve => server.close(() => resolve())) };
+  return { app, base: `http://127.0.0.1:${(server.address() as { port: number }).port}`, close: () => new Promise<void>(resolve => server.close(() => resolve())) };
 }
 const weather = '/api/v1/weather?lat=19.99&lon=73.78';
+
+test('public review fixtures expose an author without reviewer IDs or emails', async ({ request }) => {
+  const savedUrl = process.env.DATABASE_URL, savedSecret = process.env.AUTH_SECRET;
+  const original = db.review.findMany;
+  let selection: any;
+  db.review.findMany = (async (query: unknown) => {
+    selection = query;
+    return [{ id: 'fixture-review', rating: 5, body: 'A fixture review', createdAt: new Date('2026-10-01T00:00:00Z'), imageType: null, user: { displayName: 'Fixture explorer' } }];
+  }) as unknown as typeof db.review.findMany;
+  process.env.DATABASE_URL = 'postgresql://fixture.invalid/skyatlas';
+  process.env.AUTH_SECRET = 'fixture-only-secret-with-at-least-32-characters';
+  const server = await serve();
+  try {
+    const response = await request.get(server.base + '/api/v1/journeys/reviews/taj-mahal');
+    expect(response.status()).toBe(200);
+    const review = (await response.json()).reviews[0];
+    expect(review.author).toBe('Fixture explorer');
+    expect(review).not.toHaveProperty('userId'); expect(review).not.toHaveProperty('email'); expect(review).not.toHaveProperty('user');
+    expect(selection.select).not.toHaveProperty('userId'); expect(selection.select).not.toHaveProperty('email');
+    expect(selection.select.user).toEqual({ select: { displayName: true } });
+  } finally {
+    db.review.findMany = original; await server.close();
+    if (savedUrl === undefined) delete process.env.DATABASE_URL; else process.env.DATABASE_URL = savedUrl;
+    if (savedSecret === undefined) delete process.env.AUTH_SECRET; else process.env.AUTH_SECRET = savedSecret;
+  }
+});
+
+test('upstream diagnostics contain the provider host and status without secrets', async ({ request }) => {
+  const previous = console.error, messages: unknown[][] = [];
+  console.error = (...args: unknown[]) => { messages.push(args); };
+  const server = await serve({ env: 'production', fixtures: false, fetcher: async () => new Response('', { status: 429 }) });
+  try {
+    expect((await request.get(server.base + weather)).status()).toBe(502);
+    expect(messages).toHaveLength(1);
+    expect(messages[0][1]).toMatchObject({ hostname: 'api.open-meteo.com', status: 429, message: 'HTTP 429' });
+    expect(JSON.stringify(messages)).not.toContain('latitude');
+  } finally { await server.close(); console.error = previous; }
+  const secretMessages: unknown[][] = [];
+  console.error = (...args: unknown[]) => { secretMessages.push(args); };
+  const failed = await serve({ env: 'production', fixtures: false, fetcher: async () => { throw new Error('private-token-do-not-log'); } });
+  try {
+    expect((await request.get(failed.base + weather)).status()).toBe(502);
+    expect(JSON.stringify(secretMessages)).toContain('api.open-meteo.com');
+    expect(JSON.stringify(secretMessages)).not.toContain('private-token-do-not-log');
+  } finally { await failed.close(); console.error = previous; }
+});
+
+test('example account credentials report unconfigured instead of querying a database', async ({ request }) => {
+  const savedUrl = process.env.DATABASE_URL, savedSecret = process.env.AUTH_SECRET;
+  process.env.DATABASE_URL = 'postgresql://example.invalid/skyatlas';
+  process.env.AUTH_SECRET = 'replace-with-a-random-secret-of-at-least-32-characters';
+  const server = await serve();
+  try {
+    const response = await request.get(server.base + '/api/v1/journeys/reviews/taj-mahal');
+    expect(response.status()).toBe(503);
+    expect((await response.json()).error.message).toBe('Account service is not configured.');
+  } finally {
+    await server.close();
+    if (savedUrl === undefined) delete process.env.DATABASE_URL; else process.env.DATABASE_URL = savedUrl;
+    if (savedSecret === undefined) delete process.env.AUTH_SECRET; else process.env.AUTH_SECRET = savedSecret;
+  }
+});
+
+test('configured Pages origin is accepted and other origins are rejected', async ({ request }) => {
+  const previous = process.env.ALLOWED_ORIGINS;
+  const previousDb = process.env.DATABASE_URL;
+  const previousSecret = process.env.AUTH_SECRET;
+  process.env.ALLOWED_ORIGINS = 'https://sky.pages.dev';
+  process.env.DATABASE_URL = 'test-only';
+  process.env.AUTH_SECRET = 'test-secret-for-origin-checks-at-least-32';
+  const server = await serve();
+  try {
+    for (const path of ['/api/v1/auth/logout', '/api/v1/journeys/alerts']) {
+      expect((await request.post(server.base + path, { headers: { origin: 'https://evil.example' } })).status()).toBe(403);
+    }
+    expect((await request.post(server.base + '/api/v1/journeys/alerts', { headers: { origin: 'https://sky.pages.dev' } })).status()).toBe(401);
+  } finally {
+    await server.close();
+    if (previous === undefined) delete process.env.ALLOWED_ORIGINS; else process.env.ALLOWED_ORIGINS = previous;
+    if (previousDb === undefined) delete process.env.DATABASE_URL; else process.env.DATABASE_URL = previousDb;
+    if (previousSecret === undefined) delete process.env.AUTH_SECRET; else process.env.AUTH_SECRET = previousSecret;
+  }
+});
+
+test('trusted proxy hop count separates client rate limits', async ({ request }) => {
+  const previous = process.env.TRUST_PROXY_HOPS;
+  const previousSecret = process.env.PROXY_SHARED_SECRET;
+  process.env.TRUST_PROXY_HOPS = '2';
+  process.env.PROXY_SHARED_SECRET = 'proxy-test-secret';
+  const server = await serve({ rateLimit: 1 });
+  server.app.get('/client-ip', (req, res) => res.json({ ip: req.ip }));
+  try {
+    const client = await request.get(server.base + '/client-ip', { headers: { 'x-forwarded-for': '203.0.113.10, 192.0.2.10', 'x-skyatlas-proxy-secret': 'proxy-test-secret' } });
+    expect((await client.json()).ip).toBe('203.0.113.10');
+    const path = server.base + '/api/v1/health';
+    expect((await request.get(path, { headers: { 'x-forwarded-for': '203.0.113.10, 192.0.2.10', 'x-skyatlas-proxy-secret': 'proxy-test-secret' } })).status()).toBe(200);
+    expect((await request.get(path, { headers: { 'x-forwarded-for': '203.0.113.11, 192.0.2.10', 'x-skyatlas-proxy-secret': 'proxy-test-secret' } })).status()).toBe(200);
+    expect((await request.get(path, { headers: { 'x-forwarded-for': '203.0.113.10, 192.0.2.10', 'x-skyatlas-proxy-secret': 'proxy-test-secret' } })).status()).toBe(429);
+    expect((await request.get(path, { headers: { 'x-forwarded-for': '203.0.113.12, 192.0.2.20' } })).status()).toBe(200);
+    expect((await request.get(path, { headers: { 'x-forwarded-for': '203.0.113.13, 192.0.2.20' } })).status()).toBe(429);
+  } finally { await server.close(); if (previous === undefined) delete process.env.TRUST_PROXY_HOPS; else process.env.TRUST_PROXY_HOPS = previous; if (previousSecret === undefined) delete process.env.PROXY_SHARED_SECRET; else process.env.PROXY_SHARED_SECRET = previousSecret; }
+});
+
+test('alert cron is hidden, authenticates, prevents overlap and limits calls', async ({ request }) => {
+  const savedSecret = process.env.CRON_SECRET;
+  let started!: () => void, finish!: () => void;
+  const startSignal = new Promise<void>(resolve => { started = resolve; });
+  const finishSignal = new Promise<void>(resolve => { finish = resolve; });
+  delete process.env.CRON_SECRET;
+  const server = await serve({ cronCheck: async () => { started(); await finishSignal; return { checked: 2, created: 1 }; } });
+  try {
+    const url = server.base + '/api/v1/internal/cron/alerts';
+    expect((await request.post(url)).status()).toBe(404);
+    process.env.CRON_SECRET = 'private-test-secret';
+    expect((await request.post(url, { headers: { 'x-cron-secret': 'wrong' } })).status()).toBe(401);
+    const first = request.post(url, { headers: { 'x-cron-secret': 'private-test-secret' } });
+    await startSignal;
+    expect((await request.post(url, { headers: { 'x-cron-secret': 'private-test-secret' } })).status()).toBe(409);
+    finish();
+    expect(await (await first).json()).toEqual({ checked: 2, created: 1 });
+    expect((await request.post(url, { headers: { 'x-cron-secret': 'private-test-secret' } })).status()).toBe(429);
+  } finally {
+    finish(); await server.close();
+    if (savedSecret === undefined) delete process.env.CRON_SECRET; else process.env.CRON_SECRET = savedSecret;
+  }
+});
+
+test('database health reports unavailable without exposing configuration', async ({ request }) => {
+  const savedUrl = process.env.DATABASE_URL;
+  delete process.env.DATABASE_URL;
+  const server = await serve();
+  try {
+    const response = await request.get(server.base + '/api/v1/health/db');
+    expect(await response.json()).toEqual({ status: 'ok', db: 'unavailable' });
+    expect((await request.get(server.base + '/api/v1/health')).status()).toBe(200);
+  } finally {
+    await server.close();
+    if (savedUrl !== undefined) process.env.DATABASE_URL = savedUrl;
+  }
+});
 
 test('fixture endpoints, arrays, health and OpenAPI contract', async ({ request }) => {
   const server = await serve();
@@ -81,7 +222,7 @@ test('news accepts empty and stale snapshots and rejects unsafe links', async ({
 test('production Express serves pages and never enables test fixtures', async ({ request }) => {
   const server = await serve({ env: 'production', fixtures: true, fetcher: async () => new Response('', { status: 503 }) });
   try {
-    const home = await request.get(server.base + '/'); expect(home.status()).toBe(200); expect(await home.text()).toContain('SkyAtlas');
+    const home = await request.get(server.base + '/'); expect(home.status()).toBe(200); expect(await home.text()).toContain('AtlasSphere');
     const game = await request.get(server.base + '/geoguess'); expect(game.status()).toBe(200);
     const missing = await request.get(server.base + '/missing-page'); expect(missing.status()).toBe(404);
     const weatherResponse = await request.get(server.base + weather); expect(weatherResponse.status()).toBe(502);

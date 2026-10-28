@@ -14,7 +14,9 @@
     "resolveJsonModule": true
   },
   "include": [
+    "deployment/**/*.ts",
     "api/**/*.ts",
+    "shared/**/*.ts",
     "scripts/fetch-news.ts"
   ]
 }

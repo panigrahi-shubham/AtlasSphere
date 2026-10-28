@@ -1,5 +1,8 @@
 import { account } from '../services/account.ts';
 import { landmarks } from '../data/landmarks.js';
+import { initSatellitePanel } from './satellitePanel.ts';
+
+initSatellitePanel();
 
 const $ = (selector: string) => document.querySelector(selector) as HTMLElement;
 const show = (selector: string, message: string) => { $(selector).textContent = message; };
@@ -75,10 +78,11 @@ for (const place of landmarks) { const option = document.createElement('option')
 async function reviews() {
   try {
     const response = await fetch(`/api/v1/journeys/reviews/${landmark.value}`); const data = await response.json();
+    if (!response.ok) throw new Error(data.error?.message || 'Reviews are unavailable.');
     const list = $('#review-list'); list.replaceChildren();
     const sorted = data.reviews.sort((a: any, b: any) => ($('#review-sort') as HTMLSelectElement).value === 'rating' ? b.rating - a.rating : Date.parse(b.createdAt) - Date.parse(a.createdAt));
     for (const review of sorted) {
-      item(list, `${review.rating}/5 — ${review.body || 'No written comment'}`);
+      item(list, `${review.rating}/5 — ${review.author || 'AtlasSphere explorer'}: ${review.body || 'No written comment'}`);
       if (review.imageUrl) { const image = document.createElement('img'); image.src = review.imageUrl; image.loading = 'lazy'; image.alt = 'Photo submitted with landmark review'; list.lastElementChild?.append(image); }
     }
   } catch (error: any) { show('#review-status', error.message); }
@@ -87,11 +91,22 @@ landmark.addEventListener('change', reviews); $('#review-sort').addEventListener
 $('#review-form').addEventListener('submit', async event => {
   event.preventDefault();
   let image: string | null = null; const file = ($('#review-image') as HTMLInputElement).files?.[0];
-  if (file) {
-    if (file.size > 2 * 1024 * 1024 || !['image/png', 'image/jpeg'].includes(file.type)) { show('#review-status', 'Choose a JPG or PNG no larger than 2 MB.'); return; }
-    image = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = () => reject(new Error('Photo could not be read.')); reader.readAsDataURL(file); });
-  }
-  try { await account.request(`/journeys/reviews/${landmark.value}`, { method: 'PUT', body: JSON.stringify({ rating: Number(($('#review-rating') as HTMLInputElement).value), body: ($('#review-body') as HTMLTextAreaElement).value, image }) }); show('#review-status', 'Review saved.'); await reviews(); } catch (error: any) { show('#review-status', error.message); }
+  try {
+    if (file) {
+      if (!['image/png', 'image/jpeg'].includes(file.type)) throw new Error('Choose a JPG or PNG photo.');
+      const url = URL.createObjectURL(file), photo = new Image();
+      try {
+        await new Promise<void>((resolve, reject) => { photo.onload = () => resolve(); photo.onerror = () => reject(new Error('Photo could not be read.')); photo.src = url; });
+        const scale = Math.min(1, 1280 / Math.max(photo.naturalWidth, photo.naturalHeight));
+        const canvas = document.createElement('canvas'); canvas.width = Math.max(1, Math.round(photo.naturalWidth * scale)); canvas.height = Math.max(1, Math.round(photo.naturalHeight * scale));
+        const ctx = canvas.getContext('2d'); if (!ctx) throw new Error('Photo could not be processed.');
+        ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.drawImage(photo, 0, 0, canvas.width, canvas.height);
+        image = canvas.toDataURL('image/jpeg', 0.8);
+        if (Math.ceil((image.length - 'data:image/jpeg;base64,'.length) * 3 / 4) > 1024 * 1024) throw new Error('Compressed photo is larger than 1 MB. Choose another photo.');
+      } finally { URL.revokeObjectURL(url); }
+    }
+    await account.request(`/journeys/reviews/${landmark.value}`, { method: 'PUT', body: JSON.stringify({ rating: Number(($('#review-rating') as HTMLInputElement).value), body: ($('#review-body') as HTMLTextAreaElement).value, image }) }); show('#review-status', 'Review saved.'); await reviews();
+  } catch (error: any) { show('#review-status', error.message); }
 });
 $('#review-delete').addEventListener('click', async () => { try { await account.request(`/journeys/reviews/${landmark.value}`, { method: 'DELETE' }); show('#review-status', 'Review deleted.'); await reviews(); } catch (error: any) { show('#review-status', error.message); } });
 void account.refresh().then(user => { show('#journey-account', user ? `Signed in as ${user.email}.` : 'Sign in on the homepage to save trips, rules and reviews.'); void trips(); void alerts(); });

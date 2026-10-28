@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
+    "vercel-build": "node scripts/check-vercel-env.mjs && npm run prisma:generate && npm run build",
     "preview": "vite preview --host 127.0.0.1",
     "start": "node --experimental-strip-types api/server.ts",
     "typecheck:api": "tsc --project tsconfig.api.json --noEmit",
@@ -30,8 +31,9 @@
     "test:v2": "node scripts/test-v2.mjs",
     "report:v2": "playwright show-report playwright-report/v2",
     "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate deploy",
+    "prisma:migrate": "node scripts/prisma-migrate.mjs",
     "test:smoke": "playwright test --project=ui --grep @smoke",
+    "test:smoke:prod": "playwright test --config=playwright.smoke.config.ts",
     "test:a11y": "playwright test --project=ui --grep @a11y",
     "test:cross-browser": "playwright test --project=ui --project=firefox --project=webkit",
     "check:syntax": "node scripts/check-syntax.mjs",

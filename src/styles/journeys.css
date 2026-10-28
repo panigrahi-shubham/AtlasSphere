@@ -3,3 +3,5 @@
 .sky-home #journey-account{background:var(--panel);color:var(--ink);padding:12px 18px;border-radius:8px;margin:18px 0}
 
 .journey-hero .journey-credit{position:absolute;bottom:10px;right:16px;background:#071b2bdc;color:#fff;font-size:12px;padding:5px 8px;border-radius:6px;margin:0}.journey-hero .journey-credit a{color:#fff}
+
+.satellite-panel{margin-top:24px;padding-top:20px;border-top:1px solid var(--line)}.satellite-panel h3{margin-top:0}.satellite-panel figure{margin:18px 0}.satellite-panel figure[hidden]{display:none}.satellite-panel img{display:block;max-width:100%;height:auto;aspect-ratio:4/3;object-fit:contain;background:#071b2b;border:1px solid var(--line);border-radius:12px}.satellite-panel figcaption{font-size:.9rem;line-height:1.6;margin-top:10px}

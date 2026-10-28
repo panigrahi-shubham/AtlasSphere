@@ -12,9 +12,11 @@ export async function fetchJSON(url, { signal, timeoutMs = 15000, service = 'Loc
   try {
     const response = await fetch(url, { signal: controller.signal });
     if (!response.ok) {
-      throw new Error(response.status === 429
+      const error = new Error(response.status === 429
         ? `${action === 'Search' ? 'Too many searches' : 'Too many weather requests'}. Please wait a moment and try again.`
         : `${service} service unavailable (${response.status}). Please try again.`);
+      error.status = response.status;
+      throw error;
     }
     try { return await response.json(); }
     catch (error) {
@@ -29,5 +31,15 @@ export async function fetchJSON(url, { signal, timeoutMs = 15000, service = 'Loc
   } finally {
     clearTimeout(timeout);
     signal?.removeEventListener('abort', cancel);
+  }
+}
+
+/** Retry one provider request only after a known transient HTTP failure. */
+export async function fetchJSONWithFallback(primaryUrl, fallbackUrl, options = {}) {
+  try { return await fetchJSON(primaryUrl, options); }
+  catch (original) {
+    if (options.signal?.aborted || ![502, 503, 504].includes(original?.status)) throw original;
+    try { return await fetchJSON(fallbackUrl, options); }
+    catch { throw original; }
   }
 }

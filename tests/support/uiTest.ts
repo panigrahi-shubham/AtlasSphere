@@ -47,4 +47,7 @@ export const test = base.extend<{ appBoundary: void }>({
 });
 
 export { expect };
+export async function mockOpenMeteoDown(page: import('@playwright/test').Page) {
+  await page.route(/^https:\/\/(?:api|geocoding-api)\.open-meteo\.com\//, route => route.fulfill({ status: 503, json: { error: true, reason: 'Fixture provider outage' } }));
+}
 export type { Page } from '@playwright/test';

@@ -1,16 +1,109 @@
 import { test, expect } from '@playwright/test';
 import { createApp } from '../../api/app.ts';
 import type { Server } from 'node:http';
-const enabled = Boolean(process.env.DATABASE_URL && process.env.AUTH_SECRET && process.env.AUTH_SECRET.length >= 32);
+import { db } from '../../api/database.ts';
+import { checkAlerts } from '../../api/alertWorker.ts';
+import { proxy } from '../../shared/pagesProxy.ts';
+const enabled = Boolean(process.env.DATABASE_URL && process.env.AUTH_SECRET && process.env.AUTH_SECRET.length >= 32 && process.env.AUTH_SECRET !== 'replace-with-a-random-secret-of-at-least-32-characters');
+test('alert worker persists and deduplicates matching notifications in PostgreSQL', async () => {
+  test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
+  const user = await db.user.create({ data: { email: `worker-${crypto.randomUUID()}@example.test`, passwordHash: 'not-a-login' } });
+  try {
+    await db.weatherAlert.create({ data: { userId: user.id, city: 'Delhi', condition: 'temperature-above', threshold: 20 } });
+    const database = { weatherAlert: { findMany: () => db.weatherAlert.findMany({ where: { userId: user.id } }) }, $transaction: (callback: any) => db.$transaction(callback) } as unknown as typeof db;
+    const fetcher: typeof fetch = async input => String(input).includes('geocoding-api')
+      ? Response.json({ results: [{ latitude: 28.6, longitude: 77.2 }] })
+      : Response.json({ current: { temperature_2m: 25 }, hourly: { precipitation_probability: [0] } });
+    const now = () => Date.UTC(2026, 9, 27);
+    expect(await checkAlerts(fetcher, now, () => true, database)).toEqual({ checked: 1, created: 1 });
+    expect(await checkAlerts(fetcher, now, () => true, database)).toEqual({ checked: 1, created: 0 });
+    expect(await db.notification.count({ where: { userId: user.id } })).toBe(1);
+  } finally { await db.user.delete({ where: { id: user.id } }); }
+});
 async function serve() {
   const app = createApp({ env: 'test', fixtures: true });
   const server = await new Promise<Server>(resolve => { const server = app.listen(0, '127.0.0.1', () => resolve(server)); });
   return { origin: `http://127.0.0.1:${(server.address() as any).port}`, close: () => new Promise<void>(resolve => server.close(() => resolve())) };
 }
+test('Pages readiness retries preserve sessions and uncertain saves create one record', async ({ request }) => {
+  test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
+  const previousOrigin = process.env.ALLOWED_ORIGINS;
+  process.env.ALLOWED_ORIGINS = 'https://sky.pages.dev';
+  const app = await serve();
+  let token = '';
+  const password = 'Strong!23';
+  try {
+    const registered = await request.post(app.origin + '/api/v1/auth/register', { data: { email: `proxy-${crypto.randomUUID()}@example.test`, password } });
+    expect(registered.status()).toBe(201);
+    const account = await registered.json(); token = account.accessToken;
+    const cookie = registered.headers()['set-cookie'].split(';')[0];
+    let ready = false, mutations = 0;
+    const fetcher: typeof fetch = async input => {
+      const forwarded = input as Request;
+      if (!ready && new URL(forwarded.url).pathname === '/api/v1/health/db') return Response.json({ status: 'ok', db: 'unavailable' });
+      if (forwarded.method !== 'GET') mutations++;
+      const url = new URL(forwarded.url);
+      return fetch(new Request(app.origin + url.pathname + url.search, forwarded));
+    };
+    const refresh = () => proxy({ request: new Request('https://sky.pages.dev/api/v1/auth/refresh', { method: 'POST', headers: { cookie, origin: 'https://sky.pages.dev' } }), env: { API_ORIGIN: 'https://api.example.test' } }, fetcher);
+    const waking = await refresh();
+    expect(waking.status).toBe(503); expect(waking.headers.get('X-SkyAtlas-Retry-Safe')).toBe('1'); expect(mutations).toBe(0);
+    ready = true;
+    const refreshed = await refresh();
+    expect(refreshed.status).toBe(200); expect(refreshed.headers.get('set-cookie')).toContain('skyatlas_refresh=');
+    token = (await refreshed.json()).accessToken;
+    expect(mutations).toBe(1);
+    const save = await proxy({ request: new Request('https://sky.pages.dev/api/v1/journeys/alerts', { method: 'POST', headers: { authorization: `Bearer ${token}`, origin: 'https://sky.pages.dev', 'content-type': 'application/json' }, body: JSON.stringify({ city: 'Delhi', condition: 'temperature-above', threshold: 30 }) }), env: { API_ORIGIN: 'https://api.example.test' } }, async input => {
+      const response = await fetcher(input);
+      if ((input as Request).method === 'POST') { expect(response.status).toBe(201); throw new Error('Response lost after save'); }
+      return response;
+    });
+    expect(save.status).toBe(503); expect(save.headers.get('X-SkyAtlas-Retry-Safe')).toBe('0');
+    expect(await db.weatherAlert.count({ where: { userId: account.user.id } })).toBe(1);
+  } finally {
+    if (token) await request.delete(app.origin + '/api/v1/account', { headers: { authorization: `Bearer ${token}` }, data: { password } });
+    await app.close();
+    if (previousOrigin === undefined) delete process.env.ALLOWED_ORIGINS; else process.env.ALLOWED_ORIGINS = previousOrigin;
+  }
+});
+test('profile, export and account deletion protect private data', async ({ request }) => {
+  test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
+  const app = await serve();
+  let token = '';
+  const password = 'Strong!23', email = `privacy-${crypto.randomUUID()}@example.test`;
+  try {
+    const registered = await request.post(app.origin + '/api/v1/auth/register', { data: { email, password } });
+    expect(registered.status()).toBe(201); token = (await registered.json()).accessToken;
+    const headers = { authorization: `Bearer ${token}` };
+    expect((await request.put(app.origin + '/api/v1/account/profile', { headers, data: { displayName: '<script>' } })).status()).toBe(400);
+    expect((await request.put(app.origin + '/api/v1/account/profile', { headers, data: { displayName: '  Sky traveller  ' } })).status()).toBe(200);
+    expect((await request.put(app.origin + '/api/v1/journeys/reviews/taj-mahal', { headers, data: { rating: 5, body: 'Wonderful' } })).status()).toBe(200);
+    const oversized = Buffer.alloc(1024 * 1024 + 1); Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]).copy(oversized);
+    expect((await request.put(app.origin + '/api/v1/journeys/reviews/taj-mahal', { headers, data: { rating: 5, body: 'Must not replace the review', image: `data:image/png;base64,${oversized.toString('base64')}` } })).status()).toBe(400);
+    const reviews = (await (await request.get(app.origin + '/api/v1/journeys/reviews/taj-mahal')).json()).reviews;
+    const own = reviews.find((review: any) => review.body === 'Wonderful' && review.author === 'Sky traveller');
+    expect(own).toBeTruthy(); expect(own.userId).toBeUndefined(); expect(own.id).toBeUndefined();
+    const exported = await request.get(app.origin + '/api/v1/account/export', { headers });
+    expect(exported.headers()['content-disposition']).toContain('attachment; filename="skyatlas-export-');
+    const data = await exported.json();
+    expect(data.account.email).toBe(email); expect(data.account.passwordHash).toBeUndefined();
+    expect(data.reviews.some((review: any) => review.body === 'Wonderful' && !('imageData' in review))).toBe(true);
+    expect((await request.delete(app.origin + '/api/v1/account', { headers, data: { password: 'wrong' } })).status()).toBe(401);
+    const deleted = await request.delete(app.origin + '/api/v1/account', { headers, data: { password } });
+    expect(deleted.status()).toBe(204); expect(deleted.headers()['set-cookie']).toContain('skyatlas_refresh='); token = '';
+    expect((await request.post(app.origin + '/api/v1/auth/login', { data: { email, password } })).status()).toBe(401);
+  } finally {
+    if (token) await request.delete(app.origin + '/api/v1/account', { headers: { authorization: `Bearer ${token}` }, data: { password } });
+    await app.close();
+  }
+});
 test('accounts, reset, favorites and trips isolate users', async ({ request }) => {
   test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
   const app = await serve();
   try {
+    const health = await request.get(app.origin + '/api/v1/health/db');
+    expect(health.headers()['cache-control']).toBe('no-store');
+    expect(await health.json()).toEqual({ status: 'ok', db: 'ok' });
     const firstEmail = `skyatlas-${test.info().workerIndex}-${crypto.randomUUID()}@example.test`, secondEmail = `skyatlas-${crypto.randomUUID()}@example.test`;
     const pass = 'Strong!23';
     const register = async (email: string) => request.post(app.origin + '/api/v1/auth/register', { data: { email, password: pass } });

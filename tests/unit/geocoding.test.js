@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { searchCities, validateLocations } from '../../src/services/geocodingService.js';
-import { fetchJSON } from '../../src/services/http.js';
+import { fetchJSON, fetchJSONWithFallback } from '../../src/services/http.js';
 
 const location = { id: 1, name: 'Zürich', latitude: 47.37, longitude: 8.55 };
 test('normalizes location identity and preserves unavailable information', () => {
@@ -41,5 +41,30 @@ test('HTTP errors, unreadable JSON and timeouts give actionable messages', async
     await assert.rejects(fetchJSON('https://example.test'), /unreadable/);
     globalThis.fetch = (_, { signal }) => new Promise((_, reject) => signal.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError'))));
     await assert.rejects(fetchJSON('https://example.test', { timeoutMs: 1 }), /timed out/);
+  } finally { globalThis.fetch = original; }
+});
+test('wake-up response falls back to the explicitly supplied public provider', async () => {
+  const original = globalThis.fetch, calls = [];
+  globalThis.fetch = async url => {
+    calls.push(String(url));
+    if (calls.length === 1) return new Response('', { status: 503 });
+    return Response.json({ results: [location] });
+  };
+  try {
+    const cities = await searchCities('Zürich');
+    assert.equal(cities[0].name, 'Zürich');
+    assert.equal(new URL(calls[1]).hostname, 'geocoding-api.open-meteo.com');
+    assert.equal(new URL(calls[1]).searchParams.get('name'), 'Zürich');
+  } finally { globalThis.fetch = original; }
+});
+test('a timed-out proxy request does not fall back', async () => {
+  const original = globalThis.fetch, calls = [];
+  globalThis.fetch = (url, { signal }) => {
+    calls.push(String(url));
+    return new Promise((_, reject) => signal.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError'))));
+  };
+  try {
+    await assert.rejects(fetchJSONWithFallback('/api/v1/geocode?q=Zurich', 'https://geocoding-api.open-meteo.com/v1/search?name=Zurich', { timeoutMs: 5 }), /timed out/);
+    assert.equal(calls.length, 1);
   } finally { globalThis.fetch = original; }
 });

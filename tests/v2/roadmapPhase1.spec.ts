@@ -47,7 +47,7 @@ test('allowed browser location loads weather from real provided coordinates', as
   await page.getByTestId('use-location').click(); await expect(page.getByTestId('city-name')).toHaveText('Your location'); await expect(page.getByTestId('current-temperature')).toBeVisible(); await expect(page.getByTestId('country-name')).toHaveText('Country unavailable');
 });
 test('About and missing-page routes have titles, credits and a home link', async ({ page }) => {
-  await page.goto('/about.html'); await expect(page).toHaveTitle('About SkyAtlas'); await expect(page.getByTestId('about-title')).toBeVisible();
+  await page.goto('/about.html'); await expect(page).toHaveTitle('About AtlasSphere'); await expect(page.getByTestId('about-title')).toBeVisible();
   const response = await page.goto('/no-such-place'); expect(response?.status()).toBe(404); await expect(page.getByTestId('not-found-title')).toBeVisible(); await page.getByTestId('page-home').click(); await expect(page.getByTestId('city-search-input')).toBeVisible();
 });
 test('typing a new search discards a late location callback', async ({ page }) => {
