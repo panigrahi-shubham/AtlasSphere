@@ -28,6 +28,8 @@ jobs:
       CI: '1'
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -38,6 +40,12 @@ jobs:
       - run: npm run check:syntax && npm run typecheck:api && npm run build && npm test
       - name: React homepage static and unit verification
         run: npm run typecheck:home && npm run lint:home && npm run format:home:check && npm run test:home:unit
+      - name: Framework static verification
+        run: npm run lint:tests && npm run typecheck:tests && npm run check:links
+      - name: Assertion preservation audit
+        run: node scripts/audit-assertions.mjs "$ASSERTION_BASE"
+        env:
+          ASSERTION_BASE: ${{ github.event.pull_request.base.sha || 'origin/main' }}
       - run: npx playwright install --with-deps chromium
       - run: npm run test:api:local
       - name: React homepage desktop, touch and accessibility
@@ -59,6 +67,9 @@ jobs:
       - run: npm run test:bugs
       - run: npm run test:release
       - run: npm run test:v2
+      - name: Summarize test suites
+        if: always()
+        run: node scripts/summarize-tests.mjs
       - name: Upload Playwright artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -81,6 +92,9 @@ jobs:
       - run: npm run test:cross-browser
       - run: npm run test:ui -- --workers=2
       - run: npm run build && npm run audit:web
+      - name: Summarize test suites
+        if: always()
+        run: node scripts/summarize-tests.mjs
       - name: Upload cross-browser artifacts
         if: always()
         uses: actions/upload-artifact@v4
