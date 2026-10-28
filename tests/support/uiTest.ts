@@ -2,10 +2,12 @@ import { test as base, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { ExplorerPage } from './pages/ExplorerPage';
 
 // Every UI test gets a clean browser context. Page-level API mocks take priority
 // over this context-level boundary; an omitted mock must never contact a live API.
-export const test = base.extend<{ appBoundary: void }>({
+export const test = base.extend<{ appBoundary: void; explorer: ExplorerPage }>({
+  explorer: async ({ page }, use) => { await use(new ExplorerPage(page)); },
   appBoundary: [async ({ context, page, baseURL }, use) => {
     const origin = new URL(baseURL ?? 'http://127.0.0.1:5173').origin;
     const root = path.resolve(fileURLToPath(new URL('../../', import.meta.url)));
