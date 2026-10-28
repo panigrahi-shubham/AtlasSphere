@@ -1,10 +1,23 @@
 import { test, expect } from '@playwright/test';
 import { createServer } from 'vite';
+import { fileURLToPath } from 'node:url';
+import { createApp } from '../../api/app.ts';
 
 test('site searches, displays fixture weather and reads news through its own API', async ({ page }) => {
   const oldEnv = process.env.APP_ENV, oldFixtures = process.env.FIXTURES;
   process.env.APP_ENV = 'test'; process.env.FIXTURES = '1';
-  const server = await createServer({ configFile: 'vite.config.js', server: { host: '127.0.0.1', port: 0, strictPort: false } });
+  const server = await createServer({
+    configFile: 'vite.config.js',
+    server: { host: '127.0.0.1', port: 0, strictPort: false },
+    plugins: [{
+      name: 'isolated-news-fixture', enforce: 'pre',
+      configureServer(vite) {
+        // Exercise the real API with fixed news, independently of RSS commits.
+        vite.middlewares.use(createApp({ env: 'test', fixtures: true,
+          newsPath: fileURLToPath(new URL('../../public/fixtures/news.json', import.meta.url)) }));
+      }
+    }]
+  });
   try {
     await server.listen();
     const address = server.httpServer?.address();
