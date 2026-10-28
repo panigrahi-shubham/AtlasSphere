@@ -1,4 +1,4 @@
-import { test, expect, mockOpenMeteoDown, type Page } from '../support/uiTest';
+import { test, expect, mockOpenMeteoDown } from '../support/uiTest';
 import { currentWeatherFixture } from '../fixtures/currentWeather.js';
 
 const endpoint = '**/api/v1/weather?**';
@@ -8,14 +8,9 @@ test.beforeEach(async ({ page }) => {
   await page.route(endpoint, route => route.fulfill({ json: currentWeatherFixture }));
   await page.goto('/explore.html');
 });
-async function select(page: Page) {
-  await page.getByTestId('city-search-input').fill('Nashik');
-  await page.getByTestId('city-search-button').click();
-  await page.getByTestId('city-suggestion').click();
-}
 
-test('shows 24 hourly cards with local dates, icons, temperature, rain chance and wind', async ({ page }) => {
-  await select(page);
+test('shows 24 hourly cards with local dates, icons, temperature, rain chance and wind', async ({ page, explorer }) => {
+  await explorer.selectOnly("Nashik");
   await expect(page.getByTestId('forecast-hour')).toHaveCount(24);
   const first = page.getByTestId('forecast-hour').first();
   await expect(first.getByTestId('forecast-time')).toHaveText('26 Oct, 13:00 GMT+5:30');
@@ -27,10 +22,10 @@ test('shows 24 hourly cards with local dates, icons, temperature, rain chance an
   await expect(page.getByTestId('forecast-note')).toBeEmpty();
 });
 
-test('geography shows selected coordinates and geocoding elevation, not weather grid elevation', async ({ page }) => {
+test('geography shows selected coordinates and geocoding elevation, not weather grid elevation', async ({ page, explorer }) => {
   const data = { ...currentWeatherFixture, elevation: 999 };
   await page.route(endpoint, route => route.fulfill({ json: data }));
-  await select(page);
+  await explorer.selectOnly("Nashik");
   await expect(page.getByTestId('latitude-value')).toHaveText('19.990°');
   await expect(page.getByTestId('longitude-value')).toHaveText('73.780°');
   await expect(page.getByTestId('elevation-value')).toHaveText('565 m');
@@ -40,12 +35,12 @@ test('geography shows selected coordinates and geocoding elevation, not weather 
   await expect(page.getByTestId('geography-local-time')).not.toHaveText('Not available');
 });
 
-test('geography remains usable on weather failure and never invents missing optional details', async ({ page }) => {
+test('geography remains usable on weather failure and never invents missing optional details', async ({ page, explorer }) => {
   await mockOpenMeteoDown(page);
   const missing = { id: 1, name: 'Nashik', latitude: 19.99, longitude: 73.78 };
   await page.route('**/api/v1/geocode?**', route => route.fulfill({ json: { results: [missing] } }));
   await page.route(endpoint, route => route.fulfill({ status: 503, json: {} }));
-  await select(page);
+  await explorer.selectOnly("Nashik");
   await expect(page.getByTestId('weather-error')).toContainText('503');
   await expect(page.getByTestId('geography-details')).toBeVisible();
   for (const id of ['elevation-value', 'geography-country', 'geography-region', 'timezone-value', 'geography-local-time']) {
@@ -53,29 +48,29 @@ test('geography remains usable on weather failure and never invents missing opti
   }
 });
 
-test('missing hourly data leaves current weather and geography visible', async ({ page }) => {
+test('missing hourly data leaves current weather and geography visible', async ({ page, explorer }) => {
   const data = structuredClone(currentWeatherFixture); delete data.hourly;
   await page.route(endpoint, route => route.fulfill({ json: data }));
-  await select(page);
+  await explorer.selectOnly("Nashik");
   await expect(page.getByTestId('current-temperature')).toHaveText('24°C');
   await expect(page.getByTestId('forecast-note')).toContainText('Hourly forecast is unavailable');
   await expect(page.getByTestId('hourly-forecast')).toBeHidden();
   await expect(page.getByTestId('geography-details')).toBeVisible();
 });
 
-test('short forecasts show only available hours with a clear message', async ({ page }) => {
+test('short forecasts show only available hours with a clear message', async ({ page, explorer }) => {
   const data = structuredClone(currentWeatherFixture); data.hourly.time = data.hourly.time.slice(0, 4);
   await page.route(endpoint, route => route.fulfill({ json: data }));
-  await select(page);
+  await explorer.selectOnly("Nashik");
   await expect(page.getByTestId('forecast-hour')).toHaveCount(3);
   await expect(page.getByTestId('forecast-note')).toContainText('Only 3 of 24');
 });
 
-test('partial hourly metrics keep valid rows and show unavailable values', async ({ page }) => {
+test('partial hourly metrics keep valid rows and show unavailable values', async ({ page, explorer }) => {
   const data = structuredClone(currentWeatherFixture);
   Object.assign(data.hourly, { temperature_2m: [], precipitation_probability: [], wind_speed_10m: [] });
   await page.route(endpoint, route => route.fulfill({ json: data }));
-  await select(page);
+  await explorer.selectOnly("Nashik");
   await expect(page.getByTestId('forecast-hour')).toHaveCount(24);
   const first = page.getByTestId('forecast-hour').first();
   await expect(first.getByTestId('forecast-temperature')).toHaveText('Not available');
@@ -84,17 +79,17 @@ test('partial hourly metrics keep valid rows and show unavailable values', async
   await expect(page.getByTestId('forecast-note')).toContainText('Some hourly details are unavailable');
 });
 
-test('editing another search clears forecast and geography along with weather', async ({ page }) => {
-  await select(page); await expect(page.getByTestId('forecast-hour')).toHaveCount(24);
+test('editing another search clears forecast and geography along with weather', async ({ page, explorer }) => {
+  await explorer.selectOnly("Nashik"); await expect(page.getByTestId('forecast-hour')).toHaveCount(24);
   await page.getByTestId('city-search-input').fill('Tokyo');
   await expect(page.getByTestId('forecast-section')).toBeHidden();
   await expect(page.getByTestId('forecast-hour')).toHaveCount(0);
   await expect(page.getByTestId('geography-details')).toBeHidden();
 });
 
-test('mobile forecast scrolls horizontally without widening the page', async ({ page }) => {
+test('mobile forecast scrolls horizontally without widening the page', async ({ page, explorer }) => {
   await page.setViewportSize({ width: 375, height: 812 });
-  await select(page); await expect(page.getByTestId('forecast-hour')).toHaveCount(24);
+  await explorer.selectOnly("Nashik"); await expect(page.getByTestId('forecast-hour')).toHaveCount(24);
   const list = page.getByTestId('hourly-forecast');
   await list.scrollIntoViewIfNeeded();
   expect(await list.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true);
@@ -105,11 +100,11 @@ test('mobile forecast scrolls horizontally without widening the page', async ({ 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
 
-test('weather-resolved timezone updates geography and its local clock', async ({ page }) => {
+test('weather-resolved timezone updates geography and its local clock', async ({ page, explorer }) => {
   await page.clock.install({ time: new Date('2026-10-26T10:00:00Z') });
   const data = { ...currentWeatherFixture, timezone: 'Asia/Tokyo' };
   await page.route(endpoint, route => route.fulfill({ json: data }));
-  await select(page);
+  await explorer.selectOnly("Nashik");
   await expect(page.getByTestId('timezone-value')).toHaveText('Asia/Tokyo');
   await expect(page.getByTestId('geography-local-time')).toHaveText('26 Oct 2026, 19:00');
   await page.clock.fastForward(60000);

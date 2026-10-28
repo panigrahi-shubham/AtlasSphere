@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '../support/uiTest';
+import { test, expect } from '../support/uiTest';
 import { currentWeatherFixture } from '../fixtures/currentWeather.js';
 import { STORAGE_KEYS } from '../../src/utils/storage.js';
 
@@ -14,16 +14,11 @@ test.beforeEach(async ({ page }) => {
   await page.route(weatherEndpoint, route => route.fulfill({ json: currentWeatherFixture }));
   await page.goto('/explore.html');
 });
-async function select(page: Page, name = 'Nashik, Maharashtra, India') {
-  await page.getByTestId('city-search-input').fill(name.split(',')[0]);
-  await page.getByTestId('city-search-button').click();
-  await page.getByTestId('city-suggestions').getByRole('button', { name, exact: true }).click();
-}
 
-test('unit switching updates all temperatures without refetching or losing precision', async ({ page }) => {
+test('unit switching updates all temperatures without refetching or losing precision', async ({ page, explorer }) => {
   let calls = 0;
   await page.route(weatherEndpoint, route => { calls++; return route.fulfill({ json: currentWeatherFixture }); });
-  await select(page);
+  await explorer.selectPlace();
   await expect(page.getByTestId('current-temperature')).toHaveText('24°C');
   await page.getByTestId('unit-fahrenheit').click();
   await expect(page.getByTestId('current-temperature')).toHaveText('76°F');
@@ -39,37 +34,37 @@ test('unit switching updates all temperatures without refetching or losing preci
   expect(calls).toBe(1);
 });
 
-test('unit preference persists on reload and applies to new weather', async ({ page }) => {
+test('unit preference persists on reload and applies to new weather', async ({ page, explorer }) => {
   await page.getByTestId('unit-fahrenheit').click();
   await page.reload();
   await expect(page.getByTestId('unit-fahrenheit')).toHaveAttribute('aria-pressed', 'true');
-  await select(page);
+  await explorer.selectPlace();
   await expect(page.getByTestId('current-temperature')).toHaveText('76°F');
 });
 
-test('unit selected during loading is used when the response arrives', async ({ page }) => {
+test('unit selected during loading is used when the response arrives', async ({ page, explorer }) => {
   let release: () => void = () => {};
   const gate = new Promise<void>(resolve => { release = resolve; });
   await page.route(weatherEndpoint, async route => { await gate; await route.fulfill({ json: currentWeatherFixture }); });
-  await select(page);
+  await explorer.selectPlace();
   await expect(page.getByTestId('weather-loading')).toBeVisible();
   await page.getByTestId('unit-fahrenheit').click(); release();
   await expect(page.getByTestId('current-temperature')).toHaveText('76°F');
   await expect(page.getByTestId('forecast-temperature').first()).toHaveText('68°F');
 });
 
-test('unavailable temperatures are never converted to a number', async ({ page }) => {
+test('unavailable temperatures are never converted to a number', async ({ page, explorer }) => {
   const data = structuredClone(currentWeatherFixture);
   Object.assign(data.current, { apparent_temperature: null });
   data.hourly.temperature_2m = [];
   await page.route(weatherEndpoint, route => route.fulfill({ json: data }));
-  await select(page); await page.getByTestId('unit-fahrenheit').click();
+  await explorer.selectPlace(); await page.getByTestId('unit-fahrenheit').click();
   await expect(page.getByTestId('feels-like-temperature')).toHaveText('Not available');
   await expect(page.getByTestId('forecast-temperature').first()).toHaveText('Not available');
 });
 
-test('favorite can be saved, survives reload, and opens without geocoding', async ({ page }) => {
-  await select(page); await page.getByTestId('favorite-toggle').click();
+test('favorite can be saved, survives reload, and opens without geocoding', async ({ page, explorer }) => {
+  await explorer.selectPlace(); await page.getByTestId('favorite-toggle').click();
   await expect(page.getByTestId('favorite-item')).toHaveCount(1);
   await expect(page.getByTestId('favorite-toggle')).toHaveAttribute('aria-pressed', 'true');
   await page.reload();
@@ -82,18 +77,18 @@ test('favorite can be saved, survives reload, and opens without geocoding', asyn
   expect(lookups).toBe(0);
 });
 
-test('same-name cities remain distinct favorites with no duplicates on reselection', async ({ page }) => {
-  await select(page, 'Paris, France'); await page.getByTestId('favorite-toggle').click();
-  await select(page, 'Paris, United States'); await page.getByTestId('favorite-toggle').click();
+test('same-name cities remain distinct favorites with no duplicates on reselection', async ({ page, explorer }) => {
+  await explorer.selectPlace('Paris, France'); await page.getByTestId('favorite-toggle').click();
+  await explorer.selectPlace('Paris, United States'); await page.getByTestId('favorite-toggle').click();
   await expect(page.getByTestId('favorite-item')).toHaveCount(2);
-  await select(page, 'Paris, France');
+  await explorer.selectPlace('Paris, France');
   await expect(page.getByTestId('favorite-toggle')).toHaveText('Remove favorite');
   await expect(page.getByTestId('favorite-item')).toHaveCount(2);
   await expect(page.getByTestId('favorite-item').first()).toHaveAttribute('data-location-id', 'geonames:2');
 });
 
-test('favorites can be removed by either control and removal persists', async ({ page }) => {
-  await select(page); await page.getByTestId('favorite-toggle').click();
+test('favorites can be removed by either control and removal persists', async ({ page, explorer }) => {
+  await explorer.selectPlace(); await page.getByTestId('favorite-toggle').click();
   await page.getByTestId('favorites-list').getByRole('button', { name: /^Remove / }).click();
   await expect(page.getByTestId('favorite-item')).toHaveCount(0);
   await expect(page.getByTestId('favorites-empty')).toBeVisible();
@@ -103,7 +98,7 @@ test('favorites can be removed by either control and removal persists', async ({
   await page.reload(); await expect(page.getByTestId('favorite-item')).toHaveCount(0);
 });
 
-test('malformed storage falls back safely without overwriting it on load', async ({ page }) => {
+test('malformed storage falls back safely without overwriting it on load', async ({ page, explorer }) => {
   await page.evaluate(keys => {
     localStorage.setItem(keys.unit, '{broken'); localStorage.setItem(keys.favorites, '{broken');
   }, STORAGE_KEYS);
@@ -112,7 +107,7 @@ test('malformed storage falls back safely without overwriting it on load', async
   await expect(page.getByTestId('unit-status')).toContainText('invalid');
   await expect(page.getByTestId('favorites-status')).toContainText('could not be read');
   expect(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEYS.favorites)).toBe('{broken');
-  await select(page); await page.getByTestId('favorite-toggle').click();
+  await explorer.selectPlace(); await page.getByTestId('favorite-toggle').click();
   await expect(page.getByTestId('favorite-item')).toHaveCount(1);
 });
 
@@ -126,11 +121,11 @@ test('restored favorite entries are validated and deduplicated', async ({ page }
   await expect(page.getByTestId('favorites-status')).toContainText('could not be read');
 });
 
-test('blocked browser storage still allows session favorites and unit switching', async ({ page }) => {
+test('blocked browser storage still allows session favorites and unit switching', async ({ page, explorer }) => {
   await page.addInitScript(() => {
     Object.defineProperty(window, 'localStorage', { get() { throw new DOMException('Blocked', 'SecurityError'); } });
   });
-  await page.reload(); await select(page);
+  await page.reload(); await explorer.selectPlace();
   await page.getByTestId('unit-fahrenheit').click();
   await expect(page.getByTestId('current-temperature')).toHaveText('76°F');
   await expect(page.getByTestId('unit-status')).toContainText('could not save');
@@ -139,8 +134,8 @@ test('blocked browser storage still allows session favorites and unit switching'
   await expect(page.getByTestId('favorites-status')).toContainText('could not save');
 });
 
-test('opening a favorite cancels an obsolete city search', async ({ page }) => {
-  await select(page); await page.getByTestId('favorite-toggle').click();
+test('opening a favorite cancels an obsolete city search', async ({ page, explorer }) => {
+  await explorer.selectPlace(); await page.getByTestId('favorite-toggle').click();
   let release: () => void = () => {};
   const gate = new Promise<void>(resolve => { release = resolve; });
   await page.route(geocodingEndpoint, async route => { await gate; await route.fulfill({ json: { results: cities } }).catch(() => {}); });
@@ -151,9 +146,9 @@ test('opening a favorite cancels an obsolete city search', async ({ page }) => {
   await expect(page.getByTestId('city-suggestions')).toBeHidden();
 });
 
-test('unit controls and favorites stay usable on a narrow phone', async ({ page }) => {
+test('unit controls and favorites stay usable on a narrow phone', async ({ page, explorer }) => {
   await page.setViewportSize({ width: 375, height: 812 });
-  await select(page); await page.getByTestId('favorite-toggle').click();
+  await explorer.selectPlace(); await page.getByTestId('favorite-toggle').click();
   await page.getByTestId('unit-fahrenheit').click();
   await expect(page.getByTestId('favorite-item')).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
