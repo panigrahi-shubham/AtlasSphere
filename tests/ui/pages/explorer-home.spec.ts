@@ -1,3 +1,12 @@
+/**
+ * Feature: Explorer discovery entry points
+ * Layer: UI regression — Playwright
+ * Real: Browser rendering, routing and interaction
+ * Mocked: Provider responses and browser failures where supplied by the scenario
+ * Guards: Regressions in explorer discovery entry points; negative cases remain explicit below
+ * Run: npm run test:v2 -- tests/ui/pages/explorer-home.spec.ts
+ * Needs: Installed Chromium and the suite’s local server or production build
+ */
 import { test, expect } from '../../support/uiTest';
 import { currentWeatherFixture } from '../../fixtures/currentWeather.js';
 

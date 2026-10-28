@@ -1,3 +1,12 @@
+/**
+ * Feature: Provider outage and fallback policy
+ * Layer: UI regression — Playwright
+ * Real: Browser rendering, routing and interaction
+ * Mocked: Provider responses and browser failures where supplied by the scenario
+ * Guards: Regressions in provider outage and fallback policy; negative cases remain explicit below
+ * Run: npx playwright test tests/ui/explorer/provider-fallback.spec.ts --project=ui
+ * Needs: Installed Chromium and the suite’s local server or production build
+ */
 import { test, expect } from '../../support/uiTest';
 import { currentWeatherFixture } from '../../fixtures/currentWeather.js';
 import { readFile } from 'node:fs/promises';

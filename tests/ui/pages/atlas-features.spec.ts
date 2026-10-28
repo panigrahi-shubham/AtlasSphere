@@ -1,3 +1,12 @@
+/**
+ * Feature: Atlas, daily forecast and interactive globe
+ * Layer: UI regression — Playwright
+ * Real: Browser rendering, routing and interaction
+ * Mocked: Provider responses and browser failures where supplied by the scenario
+ * Guards: Regressions in atlas, daily forecast and interactive globe; negative cases remain explicit below
+ * Run: npm run test:v2 -- tests/ui/pages/atlas-features.spec.ts
+ * Needs: Installed Chromium and the suite’s local server or production build
+ */
 import { test, expect, mockOpenMeteoDown, type Page } from '../../support/uiTest';
 import { currentWeatherFixture } from '../../fixtures/currentWeather.js';
 
@@ -85,7 +94,7 @@ test('clearing a city discards a pending extended forecast', async ({ page }) =>
   await page.getByTestId('city-search-clear').click(); release(); await expect(page.getByTestId('advanced-section')).toBeHidden(); await expect(page.getByTestId('daily-row')).toHaveCount(0);
 });
 test('WebGL unavailable shows an accessible map fallback', async ({ page }) => {
-  await page.addInitScript(() => { const original = HTMLCanvasElement.prototype.getContext; HTMLCanvasElement.prototype.getContext = function(type: any, ...args: any[]) { return type === 'webgl2' ? null : (original as any).call(this, type, ...args); } as any; });
+  await page.addInitScript(() => { const original = HTMLCanvasElement.prototype.getContext; HTMLCanvasElement.prototype.getContext = function(this: HTMLCanvasElement, type: any, ...args: any[]) { return type === 'webgl2' ? null : (original as any).call(this, type, ...args); } as any; });
   await page.reload(); await atlas(page); await page.getByTestId('globe-load').click(); await expect(page.getByTestId('globe-status')).toContainText('3D is unavailable'); await expect(page.getByTestId('world-map')).toBeVisible();
 });
 test('Three.js renders a globe and selected rain visualization with interactive controls', async ({ page }) => {

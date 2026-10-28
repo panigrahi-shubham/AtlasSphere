@@ -1,3 +1,12 @@
+/**
+ * Feature: Geographic search
+ * Layer: UI regression — Playwright
+ * Real: Browser rendering, routing and interaction
+ * Mocked: Provider responses and browser failures where supplied by the scenario
+ * Guards: Regressions in geographic search; negative cases remain explicit below
+ * Run: npx playwright test tests/ui/explorer/search.spec.ts --project=ui
+ * Needs: Installed Chromium and the suite’s local server or production build
+ */
 import { test, expect, mockOpenMeteoDown } from '../../support/uiTest';
 import { currentWeatherFixture } from '../../fixtures/currentWeather.js';
 
@@ -13,7 +22,7 @@ test.beforeEach(async ({ page }) => {
   await page.goto('/explore.html');
 });
 
-async function search(page, query = 'Zürich') {
+async function search(page: import('@playwright/test').Page, query = 'Zürich') {
   await page.getByTestId('city-search-input').fill(query);
   await page.getByTestId('city-search-button').click();
 }

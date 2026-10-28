@@ -4,7 +4,7 @@
 
 Fast Node tests exercise parsers, conversions, storage and service decisions. Local API tests exercise Express and, when configured, an isolated PostgreSQL database. Browser tests exercise rendered flows, keyboard interaction and accessibility. A smaller production-build suite checks deployed-mode behavior, while separately selected live contracts and production monitoring check real services.
 
-Counts below are the recorded baseline for the current repository; counts describe executions and may overlap between suites. The original hidden-folder Windows checkout had UI and smoke failures; an unchanged checkout in a normal path passed those suites with two workers. Both sets of logs are retained locally for comparison.
+Counts below are the recorded baseline for the current repository; counts describe executions and may overlap between suites. The original hidden-folder Windows checkout had UI and smoke failures; an unchanged checkout in a normal path passed those suites with two workers. The original and diagnostic outcomes are recorded in archive/FRAMEWORK_BASELINE.md.
 
 | Suite | Command | Baseline | Real / mocked | Where it runs |
 | --- | --- | --- | --- | --- |

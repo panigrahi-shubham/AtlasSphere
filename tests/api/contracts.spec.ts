@@ -1,8 +1,17 @@
+/**
+ * Feature: Live provider response contracts
+ * Layer: Live contract — Playwright request client
+ * Real: Public provider endpoints and application validation
+ * Mocked: None; external services can fail independently
+ * Guards: Regressions in live provider response contracts; negative cases remain explicit below
+ * Run: npx playwright test --config=playwright.api.config.ts tests/api/contracts.spec.ts
+ * Needs: Internet access; one worker; respect provider rate limits
+ */
 import { test, expect } from '@playwright/test';
 
 const endpoint = 'https://api.open-meteo.com/v1/forecast';
 for (const [unit, label] of [['celsius', '°C'], ['fahrenheit', '°F']] as const) {
-  test(`@live live temperature unit contract: ${unit}`, async ({ request }) => {
+  test(`live temperature unit contract: ${unit}`, { tag: ['@live'] }, async ({ request }) => {
     const response = await request.get(endpoint, {
       params: { latitude: 47.37, longitude: 8.55, current: 'temperature_2m,apparent_temperature', hourly: 'temperature_2m', temperature_unit: unit, timezone: 'auto', forecast_hours: 2 }, timeout: 15000
     });
@@ -18,7 +27,7 @@ for (const [unit, label] of [['celsius', '°C'], ['fahrenheit', '°F']] as const
 }
 
 for (const timezone of ['Asia/Kolkata', 'America/New_York']) {
-  test(`@live live timezone contract: ${timezone}`, async ({ request }) => {
+  test(`live timezone contract: ${timezone}`, { tag: ['@live'] }, async ({ request }) => {
     const response = await request.get(endpoint, {
       params: { latitude: 40.71, longitude: -74.01, current: 'temperature_2m', hourly: 'temperature_2m', timezone, timeformat: 'unixtime', forecast_hours: 3 }, timeout: 15000
     });
@@ -32,7 +41,7 @@ for (const timezone of ['Asia/Kolkata', 'America/New_York']) {
   });
 }
 
-test('@live live weather rejects unknown variables with a structured error', async ({ request }) => {
+test('live weather rejects unknown variables with a structured error', { tag: ['@live'] }, async ({ request }) => {
   const response = await request.get(endpoint, {
     params: { latitude: 1, longitude: 2, current: 'earthscope_invalid_variable' }, timeout: 15000
   });
@@ -41,7 +50,7 @@ test('@live live weather rejects unknown variables with a structured error', asy
   expect(data.error).toBe(true); expect(typeof data.reason).toBe('string');
 });
 
-test('@live live geocoding supports international names', async ({ request }) => {
+test('live geocoding supports international names', { tag: ['@live'] }, async ({ request }) => {
   const response = await request.get('https://geocoding-api.open-meteo.com/v1/search', {
     params: { name: 'Zürich', count: 5, language: 'en', format: 'json' }, timeout: 15000
   });

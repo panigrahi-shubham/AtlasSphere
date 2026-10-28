@@ -1,3 +1,12 @@
+/**
+ * Feature: Satellite imagery
+ * Layer: UI regression — Playwright
+ * Real: Browser rendering, routing and interaction
+ * Mocked: Provider responses and browser failures where supplied by the scenario
+ * Guards: Regressions in satellite imagery; negative cases remain explicit below
+ * Run: npx playwright test tests/ui/journeys/satellite.spec.ts --project=ui
+ * Needs: Installed Chromium and the suite’s local server or production build
+ */
 import { test, expect } from '../../support/uiTest';
 import { readFile } from 'node:fs/promises';
 import AxeBuilder from '@axe-core/playwright';

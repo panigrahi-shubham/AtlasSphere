@@ -1,3 +1,12 @@
+/**
+ * Feature: Production build workflows
+ * Layer: UI regression — Playwright
+ * Real: Browser rendering, routing and interaction
+ * Mocked: Provider responses and browser failures where supplied by the scenario
+ * Guards: Regressions in production build workflows; negative cases remain explicit below
+ * Run: npm run test:release
+ * Needs: Installed Chromium and the suite’s local server or production build
+ */
 import { test, expect } from '../support/uiTest';
 import { currentWeatherFixture } from '../fixtures/currentWeather.js';
 import { STORAGE_KEYS } from '../../src/utils/storage.js';

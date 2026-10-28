@@ -1,5 +1,19 @@
+/**
+ * Feature: GeoGuess scoring and timer behavior
+ * Layer: UI regression — Playwright
+ * Real: Browser game, bundled data and browser storage
+ * Mocked: Provider responses and browser failures where supplied by the scenario
+ * Guards: Regressions in geoguess scoring and timer behavior; negative cases remain explicit below
+ * Run: npm run test:bugs
+ * Needs: Installed Chromium and the suite’s local server or production build
+ */
 import { test, expect } from '@playwright/test';
-import { haversine, landmarkPoints } from '../../src/geoguess/core.ts';
+// The legacy module is untyped; describe only the functions exercised here.
+const corePath = '../../src/geoguess/core.ts';
+const { haversine, landmarkPoints } = await import(corePath) as {
+  haversine: (lat1: number, lon1: number, lat2: number, lon2: number) => number;
+  landmarkPoints: (km: number) => number;
+};
 test.beforeEach(() => test.skip(process.env.EARTHSCOPE_UI_SOURCE === 'memory', 'GeoGuess requires the Vite multi-page route.'));
 
 test('GG-BUG-1: Fahrenheit changes distance units, never score maths', async ({ page }) => {

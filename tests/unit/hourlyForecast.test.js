@@ -1,3 +1,12 @@
+/**
+ * Feature: hourly Forecast
+ * Layer: Unit — node:test
+ * Real: Imported application modules
+ * Mocked: Fixture inputs and test-supplied dependencies
+ * Guards: Regressions in hourly forecast; negative cases remain explicit below
+ * Run: npm test
+ * Needs: Node.js 24
+ */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { currentWeatherFixture } from '../fixtures/currentWeather.js';

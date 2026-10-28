@@ -1,3 +1,12 @@
+/**
+ * Feature: Development routes and accessibility
+ * Layer: UI regression — Playwright
+ * Real: Browser rendering, routing and interaction
+ * Mocked: Provider responses and browser failures where supplied by the scenario
+ * Guards: Regressions in development routes and accessibility; negative cases remain explicit below
+ * Run: npx playwright test tests/ui/pages/development-routes.spec.ts --project=ui
+ * Needs: Installed Chromium and the suite’s local server or production build
+ */
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 // The legacy raw-file harness cannot transpile the new Journeys TypeScript.
@@ -13,7 +22,7 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
     route.continue({ headers: { ...route.request().headers(), 'x-forwarded-for': address } }));
 });
 
-test('@smoke preserved explorer, journeys and account controls are reachable', async ({ page }) => {
+test('preserved explorer, journeys and account controls are reachable', { tag: ['@smoke'] }, async ({ page }) => {
   await page.goto('/explore.html');
   await expect(page.getByTestId('account-section')).toBeVisible();
   await expect(page.getByTestId('nav-journeys')).toBeVisible();
@@ -23,7 +32,7 @@ test('@smoke preserved explorer, journeys and account controls are reachable', a
   await page.getByTestId('time-explore').click();
   await expect(page.getByTestId('time-result')).toContainText('Fiction');
 });
-test('@smoke isolated lab presents practice controls only in development', async ({ page }) => {
+test('isolated lab presents practice controls only in development', { tag: ['@smoke'] }, async ({ page }) => {
   await page.goto('/test-lab');
   await expect(page.getByRole('heading', { name: 'AtlasSphere Test deployment' })).toBeVisible();
   await page.getByTestId('lab-scenario').selectOption('wrong-units');
@@ -33,7 +42,7 @@ test('@smoke isolated lab presents practice controls only in development', async
   await page.getByTestId('lab-run').click();
   await expect(page.getByTestId('lab-result')).toContainText('celsius');
 });
-test('@a11y preserved explorer and journeys have no serious axe issues', async ({ page }) => {
+test('preserved explorer and journeys have no serious axe issues', { tag: ['@a11y'] }, async ({ page }) => {
   for (const path of ['/explore.html', '/journeys']) {
     await page.goto(path);
     const results = await new AxeBuilder({ page }).withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa']).analyze();

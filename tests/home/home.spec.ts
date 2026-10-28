@@ -1,3 +1,12 @@
+/**
+ * Feature: React discovery homepage
+ * Layer: UI regression — Playwright
+ * Real: Browser rendering, routing and interaction
+ * Mocked: Provider responses and browser failures where supplied by the scenario
+ * Guards: Regressions in react discovery homepage; negative cases remain explicit below
+ * Run: npm run test:home
+ * Needs: Installed Chromium and the suite’s local server or production build
+ */
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 const places = { results: [{ id: 1857910, name: 'Kyoto', admin1: 'Kyoto', country: 'Japan', latitude: 35.021, longitude: 135.754 }] };
@@ -106,7 +115,7 @@ for (const theme of ['dark', 'light']) test(`homepage and menu accessibility in 
 });
 
 test('WebGL failure retains the image and search with an honest retry state', async ({ page }) => {
-  await page.addInitScript(() => { const original = HTMLCanvasElement.prototype.getContext; HTMLCanvasElement.prototype.getContext = function(type, ...args) { if (String(type).startsWith('webgl')) return null; return original.call(this, type, ...args); } as typeof original; });
+  await page.addInitScript(() => { const original = HTMLCanvasElement.prototype.getContext; HTMLCanvasElement.prototype.getContext = function(this: HTMLCanvasElement, type, ...args) { if (String(type).startsWith('webgl')) return null; return original.call(this, type, ...args); } as typeof original; });
   await page.goto('/'); await page.getByTestId('home-globe-activate').click();
   await expect(page.getByTestId('home-globe-status')).toContainText('3D is unavailable');
   await expect(page.getByTestId('home-globe-fallback')).toBeVisible();

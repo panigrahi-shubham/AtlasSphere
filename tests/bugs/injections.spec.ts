@@ -1,3 +1,12 @@
+/**
+ * Feature: Practice defect selection and storage isolation
+ * Layer: UI regression — Playwright
+ * Real: Browser rendering, routing and interaction
+ * Mocked: Provider responses and browser failures where supplied by the scenario
+ * Guards: Regressions in practice defect selection and storage isolation; negative cases remain explicit below
+ * Run: npm run test:bugs
+ * Needs: Installed Chromium and the suite’s local server or production build
+ */
 import { test, expect, type Page } from '../support/uiTest';
 import { currentWeatherFixture } from '../fixtures/currentWeather.js';
 import { STORAGE_KEYS } from '../../src/utils/storage.js';

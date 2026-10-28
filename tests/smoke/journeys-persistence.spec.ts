@@ -1,3 +1,12 @@
+/**
+ * Feature: Persisted alerts and reviews
+ * Layer: API integration — Playwright
+ * Real: Express API and configured PostgreSQL persistence
+ * Mocked: None; unique accounts are created and cleaned up
+ * Guards: Regressions in persisted alerts and reviews; negative cases remain explicit below
+ * Run: npm run test:smoke:prod
+ * Needs: SKYATLAS_URL for a deployed target; or the isolated local wrapper with --smoke
+ */
 import { test, expect } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
 
@@ -28,7 +37,7 @@ test.afterAll(async ({ request }) => {
   expect(failures, 'Smoke account cleanup').toEqual([]);
 });
 
-test('alert persistence, validation and ownership', async ({ request }) => {
+test('alert persistence, validation and ownership', { tag: ['@prod'] }, async ({ request }) => {
   const endpoint = '/api/v1/journeys/alerts';
   expect((await request.get(endpoint)).status()).toBe(401);
   expect((await request.post(endpoint, { headers: headers(0), data: { city: '', condition: 'bad', threshold: 5 } })).status()).toBe(400);
@@ -43,7 +52,7 @@ test('alert persistence, validation and ownership', async ({ request }) => {
   } finally { expect((await request.delete(`${endpoint}/${id}`, { headers: headers(0) })).status()).toBe(204); }
 });
 
-test('review persistence, image, validation and deletion', async ({ request }) => {
+test('review persistence, image, validation and deletion', { tag: ['@prod'] }, async ({ request }) => {
   const endpoint = '/api/v1/journeys/reviews/taj-mahal';
   expect((await request.put(endpoint, { data: { rating: 5, body: 'Smoke' } })).status()).toBe(401);
   expect((await request.put(endpoint, { headers: headers(0), data: { rating: 6, body: 'Smoke' } })).status()).toBe(400);

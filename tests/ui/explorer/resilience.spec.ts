@@ -1,3 +1,12 @@
+/**
+ * Feature: Malformed responses and recovery
+ * Layer: UI regression — Playwright
+ * Real: Browser rendering, routing and interaction
+ * Mocked: Provider responses and browser failures where supplied by the scenario
+ * Guards: Regressions in malformed responses and recovery; negative cases remain explicit below
+ * Run: npx playwright test tests/ui/explorer/resilience.spec.ts --project=ui
+ * Needs: Installed Chromium and the suite’s local server or production build
+ */
 import { test, expect, type Page } from '../../support/uiTest';
 import { currentWeatherFixture } from '../../fixtures/currentWeather.js';
 import { STORAGE_KEYS } from '../../../src/utils/storage.js';

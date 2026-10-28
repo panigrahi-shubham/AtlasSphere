@@ -1,3 +1,12 @@
+/**
+ * Feature: Geographic search
+ * Layer: Unit — Vitest
+ * Real: Imported application modules
+ * Mocked: Fixture inputs and test-supplied dependencies
+ * Guards: Regressions in geographic search; negative cases remain explicit below
+ * Run: npm run test:home:unit
+ * Needs: Node.js 24
+ */
 import { describe, expect, it, vi } from "vitest";
 import { explorerLink, findPlaces, validatePlaces } from "./placeSearch";
 import { readExplorerPlace } from "../utils/explorerEntry";

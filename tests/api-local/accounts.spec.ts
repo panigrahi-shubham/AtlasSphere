@@ -1,3 +1,12 @@
+/**
+ * Feature: Account security and persistence
+ * Layer: API integration — Playwright
+ * Real: Express API and configured PostgreSQL persistence
+ * Mocked: Upstream responses or injected dependencies where supplied by the scenario
+ * Guards: Regressions in account security and persistence; negative cases remain explicit below
+ * Run: npm run test:accounts:local
+ * Needs: Isolated DATABASE_URL and AUTH_SECRET, or the disposable local PostgreSQL wrapper
+ */
 import { test, expect } from '@playwright/test';
 import { startTestServer } from '../support/apiServer';
 import { databaseEnabled, createTestUser, deleteTestUser, testUserEmail } from '../support/database';
@@ -5,7 +14,9 @@ import { db } from '../../api/database.ts';
 import { checkAlerts } from '../../api/alertWorker.ts';
 import { proxy } from '../../shared/pagesProxy.ts';
 const enabled = databaseEnabled;
-test('alert worker persists and deduplicates matching notifications in PostgreSQL', async ({}, testInfo) => {
+// Risk: Alert polling could create duplicate notifications.
+// Given one matching rule, When checks run twice, Then PostgreSQL contains one notification.
+test('alert worker persists and deduplicates matching notifications in PostgreSQL', { tag: ['@db'] }, async ({}, testInfo) => {
   test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
   const user = await createTestUser(testInfo, 'not-a-login');
   try {
@@ -20,7 +31,9 @@ test('alert worker persists and deduplicates matching notifications in PostgreSQ
     expect(await db.notification.count({ where: { userId: user.id } })).toBe(1);
   } finally { await deleteTestUser(user.id); }
 });
-test('Pages readiness retries preserve sessions and uncertain saves create one record', async ({ request }) => {
+// Risk: A waking proxy could replay an uncertain mutation.
+// Given a delayed backend, When readiness and saves recover, Then refresh succeeds and one record is created.
+test('Pages readiness retries preserve sessions and uncertain saves create one record', { tag: ['@db'] }, async ({ request }) => {
   test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
   const previousOrigin = process.env.ALLOWED_ORIGINS;
   process.env.ALLOWED_ORIGINS = 'https://sky.pages.dev';
@@ -61,7 +74,9 @@ test('Pages readiness retries preserve sessions and uncertain saves create one r
     if (previousOrigin === undefined) delete process.env.ALLOWED_ORIGINS; else process.env.ALLOWED_ORIGINS = previousOrigin;
   }
 });
-test('profile, export and account deletion protect private data', async ({ request }) => {
+// Risk: Private account data could survive deletion or leak through public output.
+// Given an authenticated account, When profile, export and deletion are exercised, Then private data remains protected.
+test('profile, export and account deletion protect private data', { tag: ['@db'] }, async ({ request }) => {
   test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
   const app = await startTestServer();
   let token = '';
@@ -92,7 +107,9 @@ test('profile, export and account deletion protect private data', async ({ reque
     await app.close();
   }
 });
-test('accounts, reset, favorites and trips isolate users', async ({ request }) => {
+// Risk: One user could read or change another user’s saved data.
+// Given two accounts, When reset, favorites and trips are exercised, Then ownership boundaries hold.
+test('accounts, reset, favorites and trips isolate users', { tag: ['@db'] }, async ({ request }) => {
   test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
   const app = await startTestServer();
   try {
@@ -124,7 +141,9 @@ test('accounts, reset, favorites and trips isolate users', async ({ request }) =
   } finally { await app.close(); }
 });
 
-test('refresh rotation rejects replay and lockout blocks correct password', async ({ request }) => {
+// Risk: A stolen refresh token could be replayed or lockout bypassed.
+// Given rotated tokens and failed logins, When old credentials are reused, Then replay and locked sign-in are rejected.
+test('refresh rotation rejects replay and lockout blocks correct password', { tag: ['@db'] }, async ({ request }) => {
   test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
   const app = await startTestServer();
   try {
@@ -146,7 +165,9 @@ test('refresh rotation rejects replay and lockout blocks correct password', asyn
   } finally { await app.close(); }
 });
 
-test('favorites cap, alert deduplication and review ownership', async ({ request }) => {
+// Risk: Account-owned data could exceed limits or accept another user’s edits.
+// Given separate users and saved records, When limits and ownership are challenged, Then caps and isolation hold.
+test('favorites cap, alert deduplication and review ownership', { tag: ['@db'] }, async ({ request }) => {
   test.skip(!enabled, 'PostgreSQL and AUTH_SECRET are required for account integration');
   const app = await startTestServer();
   try {

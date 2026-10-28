@@ -1,3 +1,12 @@
+/**
+ * Feature: Navigation, news and geolocation
+ * Layer: UI regression — Playwright
+ * Real: Browser rendering, routing and interaction
+ * Mocked: Provider responses and browser failures where supplied by the scenario
+ * Guards: Regressions in navigation, news and geolocation; negative cases remain explicit below
+ * Run: npm run test:v2 -- tests/ui/pages/explorer-layout.spec.ts
+ * Needs: Installed Chromium and the suite’s local server or production build
+ */
 import { test, expect } from '../../support/uiTest';
 import { currentWeatherFixture } from '../../fixtures/currentWeather.js';
 test.beforeEach(async ({ page }) => { await page.goto('/explore.html'); });

@@ -1,3 +1,12 @@
+/**
+ * Feature: Journeys, alerts and review workflows
+ * Layer: UI regression — Playwright
+ * Real: Browser rendering, routing and interaction
+ * Mocked: Provider responses and browser failures where supplied by the scenario
+ * Guards: Regressions in journeys, alerts and review workflows; negative cases remain explicit below
+ * Run: npx playwright test tests/ui/journeys/trips-alerts-reviews.spec.ts --project=ui
+ * Needs: Installed Chromium and the suite’s local server or production build
+ */
 import { test, expect } from '../../support/uiTest';
 
 test('Time Machine reports a generic archive provider failure', async ({ page }) => {

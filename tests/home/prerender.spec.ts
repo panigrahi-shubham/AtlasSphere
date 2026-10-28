@@ -1,3 +1,12 @@
+/**
+ * Feature: Static HTML and React hydration
+ * Layer: UI regression — Playwright
+ * Real: Browser rendering, routing and interaction
+ * Mocked: Provider responses and browser failures where supplied by the scenario
+ * Guards: Regressions in static html and react hydration; negative cases remain explicit below
+ * Run: npm run test:home
+ * Needs: Installed Chromium and the suite’s local server or production build
+ */
 import { test, expect } from '@playwright/test';
 
 test.skip(process.env.HOME_PRODUCTION !== '1', 'Static HTML and hydration are production-build checks.');

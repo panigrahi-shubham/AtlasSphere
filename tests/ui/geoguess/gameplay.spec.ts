@@ -1,3 +1,12 @@
+/**
+ * Feature: GeoGuess game and leaderboard
+ * Layer: UI regression — Playwright
+ * Real: Browser game, bundled data and browser storage
+ * Mocked: Provider responses and browser failures where supplied by the scenario
+ * Guards: Regressions in geoguess game and leaderboard; negative cases remain explicit below
+ * Run: npx playwright test tests/ui/geoguess/gameplay.spec.ts --project=ui
+ * Needs: Installed Chromium and the suite’s local server or production build
+ */
 import { test, expect } from '@playwright/test';
 test.beforeEach(() => test.skip(process.env.EARTHSCOPE_UI_SOURCE === 'memory', 'GeoGuess uses Vite-transformed package imports and a multi-page route.'));
 

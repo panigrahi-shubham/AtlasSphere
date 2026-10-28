@@ -1,3 +1,12 @@
+/**
+ * Feature: Local API validation and diagnostic contracts
+ * Layer: API integration — Playwright
+ * Real: Express API and configured PostgreSQL persistence
+ * Mocked: Upstream responses or injected dependencies where supplied by the scenario
+ * Guards: Regressions in local api validation and diagnostic contracts; negative cases remain explicit below
+ * Run: npm run test:accounts:local
+ * Needs: Isolated DATABASE_URL and AUTH_SECRET, or the disposable local PostgreSQL wrapper
+ */
 import { test, expect } from '@playwright/test';
 import { startTestServer } from '../support/apiServer';
 import { readFile, writeFile, mkdtemp } from 'node:fs/promises';
@@ -7,6 +16,8 @@ import { db } from '../../api/database.ts';
 
 const weather = '/api/v1/weather?lat=19.99&lon=73.78';
 
+// Risk: Public reviews could disclose account identifiers.
+// Given a stored reviewer, When public reviews are read, Then the author is exposed without IDs or email.
 test('public review fixtures expose an author without reviewer IDs or emails', async ({ request }) => {
   const savedUrl = process.env.DATABASE_URL, savedSecret = process.env.AUTH_SECRET;
   const original = db.review.findMany;
@@ -33,6 +44,8 @@ test('public review fixtures expose an author without reviewer IDs or emails', a
   }
 });
 
+// Risk: Provider failures could expose private connection details.
+// Given upstream failures, When diagnostics are logged, Then only safe host/status information appears.
 test('upstream diagnostics contain the provider host and status without secrets', async ({ request }) => {
   const previous = console.error, messages: unknown[][] = [];
   console.error = (...args: unknown[]) => { messages.push(args); };
@@ -53,6 +66,8 @@ test('upstream diagnostics contain the provider host and status without secrets'
   } finally { await failed.close(); console.error = previous; }
 });
 
+// Risk: Placeholder configuration could accidentally query a real database.
+// Given example credentials, When an account route runs, Then the service reports unconfigured.
 test('example account credentials report unconfigured instead of querying a database', async ({ request }) => {
   const savedUrl = process.env.DATABASE_URL, savedSecret = process.env.AUTH_SECRET;
   process.env.DATABASE_URL = 'postgresql://example.invalid/skyatlas';
@@ -69,6 +84,8 @@ test('example account credentials report unconfigured instead of querying a data
   }
 });
 
+// Risk: A browser on an untrusted origin could send account mutations.
+// Given allowed and disallowed origins, When requests are forwarded, Then only the configured origin is accepted.
 test('configured Pages origin is accepted and other origins are rejected', async ({ request }) => {
   const previous = process.env.ALLOWED_ORIGINS;
   const previousDb = process.env.DATABASE_URL;
@@ -90,6 +107,8 @@ test('configured Pages origin is accepted and other origins are rejected', async
   }
 });
 
+// Risk: Proxy addressing could merge unrelated clients’ rate limits.
+// Given controlled forwarded hops, When different clients call the API, Then their limits remain separate.
 test('trusted proxy hop count separates client rate limits', async ({ request }) => {
   const previous = process.env.TRUST_PROXY_HOPS;
   const previousSecret = process.env.PROXY_SHARED_SECRET;
@@ -109,6 +128,8 @@ test('trusted proxy hop count separates client rate limits', async ({ request })
   } finally { await server.close(); if (previous === undefined) delete process.env.TRUST_PROXY_HOPS; else process.env.TRUST_PROXY_HOPS = previous; if (previousSecret === undefined) delete process.env.PROXY_SHARED_SECRET; else process.env.PROXY_SHARED_SECRET = previousSecret; }
 });
 
+// Risk: A scheduler could run without authorization or overlap another check.
+// Given hidden or protected cron configuration, When calls race or repeat, Then authentication and limits are enforced.
 test('alert cron is hidden, authenticates, prevents overlap and limits calls', async ({ request }) => {
   const savedSecret = process.env.CRON_SECRET;
   let started!: () => void, finish!: () => void;
@@ -133,6 +154,8 @@ test('alert cron is hidden, authenticates, prevents overlap and limits calls', a
   }
 });
 
+// Risk: Database readiness output could leak configuration.
+// Given an unavailable database, When health is checked, Then a safe unavailable response is returned.
 test('database health reports unavailable without exposing configuration', async ({ request }) => {
   const savedUrl = process.env.DATABASE_URL;
   delete process.env.DATABASE_URL;
@@ -147,6 +170,8 @@ test('database health reports unavailable without exposing configuration', async
   }
 });
 
+// Risk: Fixture endpoints could drift from the published API contract.
+// Given test-mode data, When weather, search and documentation are requested, Then shapes and status fields remain valid.
 test('fixture endpoints, arrays, health and OpenAPI contract', async ({ request }) => {
   const server = await startTestServer();
   try {
@@ -175,6 +200,8 @@ test('fixture endpoints, arrays, health and OpenAPI contract', async ({ request 
   } finally { await server.close(); }
 });
 
+// Risk: Clients could receive inconsistent error formats.
+// Given invalid input, a missing route and excess traffic, When requests fail, Then each uses the structured error contract.
 test('validation, 404 and rate limit share the error contract', async ({ request }) => {
   const server = await startTestServer({ rateLimit: 6 });
   try {
@@ -189,18 +216,24 @@ test('validation, 404 and rate limit share the error contract', async ({ request
   } finally { await server.close(); }
 });
 
+// Risk: Upstream outages and timeouts could become indistinguishable.
+// Given a failed or aborted provider request, When the API handles it, Then it returns 502 or 504 respectively.
 test('upstream errors are 502 and aborted requests are 504', async ({ request }) => {
   const bad = await startTestServer({ fixtures: false, fetcher: async () => new Response('', { status: 503 }) });
   try { const response = await request.get(bad.base + weather); expect(response.status()).toBe(502); expect((await response.json()).error.code).toBe('UPSTREAM_ERROR'); } finally { await bad.close(); }
-  const slow = await startTestServer({ fixtures: false, timeoutMs: 15, fetcher: (_url, init) => new Promise((_resolve, reject) => init?.signal?.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError')))) as typeof fetch });
+  const slow = await startTestServer({ fixtures: false, timeoutMs: 15, fetcher: (_url, init) => new Promise<Response>((_resolve, reject) => init?.signal?.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError')))) });
   try { const response = await request.get(slow.base + weather); expect(response.status()).toBe(504); expect((await response.json()).error.code).toBe('UPSTREAM_TIMEOUT'); } finally { await slow.close(); }
 });
 
+// Risk: Misaligned provider arrays could produce a believable but wrong forecast.
+// Given mismatched arrays, When validation runs, Then the API rejects the response with 502.
 test('misaligned upstream arrays return 502 instead of a misleading forecast', async ({ request }) => {
   const server = await startTestServer({ fixtures: false, fetcher: async () => new Response(JSON.stringify({ timezone: 'UTC', current: { temperature_2m: 20 }, current_units: {}, hourly: { time: [1, 2], temperature_2m: [20] } }), { status: 200, headers: { 'content-type': 'application/json' } }) });
   try { const response = await request.get(server.base + weather); expect(response.status()).toBe(502); expect((await response.json()).error.code).toBe('UPSTREAM_ERROR'); } finally { await server.close(); }
 });
 
+// Risk: An unsafe news URL could be exposed as a clickable article.
+// Given empty, stale and unsafe news snapshots, When they are loaded, Then valid states work and unsafe data is rejected.
 test('news accepts empty and stale snapshots and rejects unsafe links', async ({ request }) => {
   const directory = await mkdtemp(path.join(process.cwd(), 'test-results', 'skyatlas-news-'));
   const output = path.join(directory, 'news.json');
@@ -213,6 +246,8 @@ test('news accepts empty and stale snapshots and rejects unsafe links', async ({
   } finally { await server.close(); }
 });
 
+// Risk: A production build could expose fixtures or omit real pages.
+// Given production mode with stray fixture settings, When routes are requested, Then real pages work and providers are not replaced by fixtures.
 test('production Express serves pages and never enables test fixtures', async ({ request }) => {
   const server = await startTestServer({ env: 'production', fixtures: true, fetcher: async () => new Response('', { status: 503 }) });
   try {
@@ -240,6 +275,8 @@ test('production Express serves pages and never enables test fixtures', async ({
   } finally { await server.close(); }
 });
 
+// Risk: A failed feed refresh could destroy the last usable news snapshot.
+// Given filtered RSS and a later feed failure, When refresh runs, Then output is bounded and the saved snapshot survives.
 test('RSS filtering, truncation and feed failure preserve the last saved file', async () => {
   const xml = '<rss><channel><item><title>Monsoon forecast</title><description>' + 'Rain '.repeat(80) + '</description><link>https://www.metoffice.gov.uk/news/one</link><pubDate>Mon, 26 Oct 2026 10:00:00 GMT</pubDate></item><item><title>Sport</title><link>https://www.metoffice.gov.uk/news/two</link><pubDate>Mon, 26 Oct 2026 10:00:00 GMT</pubDate></item></channel></rss>';
   expect(parseNews(xml, 'Met Office')).toHaveLength(1);

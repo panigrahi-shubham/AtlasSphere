@@ -1,3 +1,12 @@
+/**
+ * Feature: GeoGuess scoring and timer behavior
+ * Layer: Unit — node:test
+ * Real: Imported application modules
+ * Mocked: Fixture inputs and test-supplied dependencies
+ * Guards: Regressions in geoguess scoring and timer behavior; negative cases remain explicit below
+ * Run: npm test
+ * Needs: Node.js 24
+ */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mulberry32, shuffle, haversine, landmarkPoints, outlinePoints, displayDistance, leaderboardInsert, cleanBoard } from '../../src/geoguess/core.ts';

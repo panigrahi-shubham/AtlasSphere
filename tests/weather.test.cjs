@@ -1,3 +1,12 @@
+/**
+ * Feature: Weather provider contracts
+ * Layer: Unit — node:test
+ * Real: Imported application modules
+ * Mocked: Fixture inputs and test-supplied dependencies
+ * Guards: Regressions in weather provider contracts; negative cases remain explicit below
+ * Run: npm test
+ * Needs: Node.js 24
+ */
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');

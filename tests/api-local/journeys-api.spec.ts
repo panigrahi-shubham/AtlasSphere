@@ -1,7 +1,18 @@
+/**
+ * Feature: Archive requests and Test Lab API
+ * Layer: API integration — Playwright
+ * Real: Express API and configured PostgreSQL persistence
+ * Mocked: Upstream responses or injected dependencies where supplied by the scenario
+ * Guards: Regressions in archive requests and test lab api; negative cases remain explicit below
+ * Run: npm run test:accounts:local
+ * Needs: Isolated DATABASE_URL and AUTH_SECRET, or the disposable local PostgreSQL wrapper
+ */
 import { test, expect } from '@playwright/test';
 import { createApp } from '../../api/app.ts';
 import { startTestServer } from '../support/apiServer';
 import type { Server } from 'node:http';
+// Risk: Historical requests could accept unsupported dates or invalid locations.
+// Given invalid dates and coordinates, When Time Machine is queried, Then invalid input is rejected and a supported date works.
 test('time-machine validates coordinates and supported historical dates', async ({ request }) => {
   const app = await startTestServer({ env: 'test' });
   try {
@@ -12,6 +23,8 @@ test('time-machine validates coordinates and supported historical dates', async 
     expect(result.status()).toBe(200); expect((await result.json()).label).toBe('Real data');
   } finally { await app.close(); }
 });
+// Risk: Archive routing could use the wrong service or repeat identical calls.
+// Given free and customer configurations, When the same archive is queried, Then routing and caching follow the configuration.
 test('historical weather uses free or customer archive and caches results', async ({ request }) => {
   for (const key of ['', 'server-only-test-key']) {
     const urls: string[] = [];
@@ -33,6 +46,8 @@ test('historical weather uses free or customer archive and caches results', asyn
     } finally { await new Promise<void>(resolve => server.close(() => resolve())); }
   }
 });
+// Risk: One practice defect could contaminate another request.
+// Given independent defect headers, When requests recover, Then only the selected request is affected.
 test('test lab defects are isolated per request and failures recover', async ({ request }) => {
   const app = await startTestServer({ env: 'test' });
   try {
@@ -48,6 +63,8 @@ test('test lab defects are isolated per request and failures recover', async ({ 
     expect((await request.get(endpoint)).status()).toBe(200);
   } finally { await app.close(); }
 });
+// Risk: Test infrastructure could be reachable from production.
+// Given production mode, When lab, fake inbox and development assets are requested, Then those routes are unavailable.
 test('production excludes lab, fake inbox and dev assets', async ({ request }) => {
   const app = await startTestServer({ env: 'production' });
   try {

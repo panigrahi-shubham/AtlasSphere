@@ -1,3 +1,12 @@
+/**
+ * Feature: Browser practice controls
+ * Layer: UI regression — Playwright
+ * Real: Browser rendering, routing and interaction
+ * Mocked: Provider responses and browser failures where supplied by the scenario
+ * Guards: Regressions in browser practice controls; negative cases remain explicit below
+ * Run: npx playwright test tests/ui/pages/test-lab.spec.ts --project=ui
+ * Needs: Installed Chromium and the suite’s local server or production build
+ */
 import { test, expect } from '@playwright/test';
 test.skip(process.env.EARTHSCOPE_UI_SOURCE === 'memory', 'The Test Lab requires the development API and Vite.');
 test('Test Lab practices dialogs, frames, shadow roots, files and dynamic rows', async ({ page }) => {
