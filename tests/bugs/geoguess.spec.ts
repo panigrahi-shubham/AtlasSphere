@@ -1,7 +1,24 @@
+/**
+ * Feature: GeoGuess scoring and timer behavior
+ * Layer: UI regression — Playwright
+ * Real: Browser game, bundled data and browser storage
+ * Mocked: Provider responses and browser failures where supplied by the scenario
+ * Guards: Regressions in geoguess scoring and timer behavior; negative cases remain explicit below
+ * Run: npm run test:bugs
+ * Needs: Installed Chromium and the suite’s local server or production build
+ */
 import { test, expect } from '@playwright/test';
-import { haversine, landmarkPoints } from '../../src/geoguess/core.ts';
+// The legacy module is untyped; describe only the functions exercised here.
+const corePath = '../../src/geoguess/core.ts';
+const { haversine, landmarkPoints } = await import(corePath) as {
+  haversine: (lat1: number, lon1: number, lat2: number, lon2: number) => number;
+  landmarkPoints: (km: number) => number;
+};
 test.beforeEach(() => test.skip(process.env.EARTHSCOPE_UI_SOURCE === 'memory', 'GeoGuess requires the Vite multi-page route.'));
 
+
+// Risk: Changing display units could alter score mathematics.
+// Given the planted miles-scoring defect, When a landmark guess is scored, Then the correct-distance assertion exposes the expected failure.
 test('GG-BUG-1: Fahrenheit changes distance units, never score maths', async ({ page }) => {
   test.fail(true, 'GG-BUG-1 intentionally scores miles as kilometres in practice mode');
   await page.addInitScript(() => localStorage.setItem('earthscope:practice:earthscope:temperature-unit:v1', JSON.stringify('fahrenheit')));
@@ -12,6 +29,9 @@ test('GG-BUG-1: Fahrenheit changes distance units, never score maths', async ({ 
   await expect(page.getByTestId('gg-points')).toHaveText(`${landmarkPoints(haversine(0, 0, answer.lat, answer.lon))} points`);
 });
 
+
+// Risk: A countdown could continue after an answer.
+// Given the planted timer defect, When simulated time advances after answering, Then the stopped-timer assertion exposes the expected failure.
 test('GG-BUG-2: timer stops immediately after the answer', async ({ page }) => {
   test.fail(true, 'GG-BUG-2 intentionally keeps the visible countdown running for three seconds');
   await page.clock.install(); await page.goto('/geoguess?mode=outline&seed=42&start=1&bugMode=1&bugs=GG-BUG-2');

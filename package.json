@@ -1,5 +1,5 @@
 {
-  "name": "skyatlas",
+  "name": "atlassphere",
   "version": "2.0.0-rc.1",
   "private": true,
   "type": "module",
@@ -15,7 +15,7 @@
     "typecheck:api": "tsc --project tsconfig.api.json --noEmit",
     "test:api:local": "playwright test --config=playwright.api-local.config.ts",
     "news:fetch": "node --experimental-strip-types scripts/fetch-news.ts",
-    "test": "node --experimental-strip-types --test tests/*.test.cjs tests/unit/*.test.js",
+    "test": "node scripts/run-unit-tests.mjs",
     "test:ui": "playwright test --project=ui",
     "test:api": "playwright test --config=playwright.api.config.ts",
     "test:ui:memory": "node scripts/test-ui-memory.mjs --project=ui",
@@ -44,7 +44,11 @@
     "format:home": "prettier --write \"src/home/**/*.{ts,tsx,css}\"",
     "format:home:check": "prettier --check \"src/home/**/*.{ts,tsx,css}\"",
     "test:home:unit": "vitest run",
-    "test:home": "playwright test --config=playwright.home.config.ts"
+    "test:home": "playwright test --config=playwright.home.config.ts",
+    "test:flaky": "playwright test --repeat-each=5 --workers=2",
+    "lint:tests": "eslint tests --max-warnings=0",
+    "typecheck:tests": "tsc -p tsconfig.tests.json --noEmit",
+    "check:links": "node scripts/check-markdown-links.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
@@ -67,11 +71,13 @@
     "@vitejs/plugin-react": "^5.2.0",
     "embedded-postgres": "^18.4.0-beta.17",
     "eslint": "^10.13.0",
+    "eslint-plugin-playwright": "^2.12.1",
     "eslint-plugin-react-hooks": "^7.1.1",
     "lighthouse": "^13.5.0",
     "prettier": "^3.9.10",
     "tailwindcss": "^4.3.3",
-    "typescript": "^7.0.2",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.72.1",
     "vite": "^7.1.12",
     "vitest": "^4.1.12"
   },

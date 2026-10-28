@@ -1,11 +1,26 @@
+/**
+ * The UI suite blocks and records unmocked external requests so test results do
+ * not depend on live services. Uncaught page errors fail the test at teardown.
+ */
 import { test as base, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { ExplorerPage } from './pages/ExplorerPage';
+import { JourneysPage } from './pages/JourneysPage';
+import { GeoGuessPage } from './pages/GeoGuessPage';
+import { AccountPanel } from './pages/AccountPanel';
+import { HomePage } from './pages/HomePage';
 
 // Every UI test gets a clean browser context. Page-level API mocks take priority
 // over this context-level boundary; an omitted mock must never contact a live API.
-export const test = base.extend<{ appBoundary: void }>({
+/** Provide test-scoped page objects and enforce the automatic browser network boundary. */
+export const test = base.extend<{ appBoundary: void; explorer: ExplorerPage; journeys: JourneysPage; geoGuess: GeoGuessPage; account: AccountPanel; home: HomePage }>({
+  explorer: async ({ page }, use) => { await use(new ExplorerPage(page)); },
+  journeys: async ({ page }, use) => { await use(new JourneysPage(page)); },
+  geoGuess: async ({ page }, use) => { await use(new GeoGuessPage(page)); },
+  account: async ({ page }, use) => { await use(new AccountPanel(page)); },
+  home: async ({ page }, use) => { await use(new HomePage(page)); },
   appBoundary: [async ({ context, page, baseURL }, use) => {
     const origin = new URL(baseURL ?? 'http://127.0.0.1:5173').origin;
     const root = path.resolve(fileURLToPath(new URL('../../', import.meta.url)));
@@ -47,6 +62,7 @@ export const test = base.extend<{ appBoundary: void }>({
 });
 
 export { expect };
+/** Intercept direct Open-Meteo requests with a deterministic outage response. */
 export async function mockOpenMeteoDown(page: import('@playwright/test').Page) {
   await page.route(/^https:\/\/(?:api|geocoding-api)\.open-meteo\.com\//, route => route.fulfill({ status: 503, json: { error: true, reason: 'Fixture provider outage' } }));
 }

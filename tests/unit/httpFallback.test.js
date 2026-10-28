@@ -1,7 +1,18 @@
+/**
+ * Feature: http Fallback
+ * Layer: Unit — node:test
+ * Real: Imported application modules
+ * Mocked: Fixture inputs and test-supplied dependencies
+ * Guards: Regressions in http fallback; negative cases remain explicit below
+ * Run: npm test
+ * Needs: Node.js 24
+ */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { fetchJSON, fetchJSONWithFallback } from '../../src/services/http.js';
 
+// Risk: Fallback policy could amplify client errors or rate limiting.
+// Given different HTTP statuses, When a request fails, Then fallback runs once only for the permitted outage statuses.
 test('HTTP fallback runs once for 502, 503 and 504 only', async () => {
   const saved = globalThis.fetch;
   try {
@@ -19,6 +30,8 @@ test('HTTP fallback runs once for 502, 503 and 504 only', async () => {
   } finally { globalThis.fetch = saved; }
 });
 
+// Risk: A second failure could hide the original diagnostic.
+// Given a failed fallback, When the error is returned, Then the original HTTP status and message survive.
 test('a failed fallback preserves the original HTTP error and message', async () => {
   const saved = globalThis.fetch;
   const calls = [];
@@ -29,6 +42,8 @@ test('a failed fallback preserves the original HTTP error and message', async ()
   } finally { globalThis.fetch = saved; }
 });
 
+// Risk: Cancellation or bad JSON could trigger unnecessary provider calls.
+// Given those failures, When the request ends, Then no fallback starts.
 test('network errors, malformed JSON and cancellation never start a fallback', async () => {
   const saved = globalThis.fetch;
   try {
@@ -47,6 +62,8 @@ test('network errors, malformed JSON and cancellation never start a fallback', a
   } finally { globalThis.fetch = saved; }
 });
 
+// Risk: An error object could disclose sensitive query details.
+// Given an HTTP failure, When fetchJSON reports it, Then status is exposed without the request URL.
 test('fetchJSON exposes the HTTP status without including the request URL', async () => {
   const saved = globalThis.fetch;
   globalThis.fetch = async () => new Response('', { status: 503 });

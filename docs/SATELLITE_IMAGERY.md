@@ -16,6 +16,6 @@ The visible credit is “Imagery: NASA GIBS / EOSDIS”. This is a daily satelli
 
 ## Checks
 
-`tests/unit/satelliteImagery.test.js` checks URL parameters, asymmetric axis order, boundary clamping, UTC dates, invalid coordinates and layer restrictions. `tests/ui/satellite.spec.ts` uses a tiny generated JPEG fixture rather than external imagery and covers loaded/loading/error/range states, attribution, image alt text and serious/critical accessibility violations in the panel. The fixture is test data, never product imagery.
+`tests/unit/satelliteImagery.test.js` checks URL parameters, asymmetric axis order, boundary clamping, UTC dates, invalid coordinates and layer restrictions. `tests/ui/journeys/satellite.spec.ts` uses a tiny generated JPEG fixture rather than external imagery and covers loaded/loading/error/range states, attribution, image alt text and serious/critical accessibility violations in the panel. The fixture is test data, never product imagery.
 
 `npx playwright test --config=playwright.api.config.ts tests/api/satellite.spec.ts` passed on 27 October 2026: NASA returned HTTP 200, `image/jpeg` and JPEG signature bytes for 2024-01-01. This test is tagged `@live`, uses no API key and is separate from default deterministic UI/unit runs.

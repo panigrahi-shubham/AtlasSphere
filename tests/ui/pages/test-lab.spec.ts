@@ -1,0 +1,34 @@
+/**
+ * Feature: Browser practice controls
+ * Layer: UI regression — Playwright
+ * Real: Browser rendering, routing and interaction
+ * Mocked: Provider responses and browser failures where supplied by the scenario
+ * Guards: Regressions in browser practice controls; negative cases remain explicit below
+ * Run: npx playwright test tests/ui/pages/test-lab.spec.ts --project=ui
+ * Needs: Installed Chromium and the suite’s local server or production build
+ */
+import { test, expect } from '@playwright/test';
+test.skip(process.env.EARTHSCOPE_UI_SOURCE === 'memory', 'The Test Lab requires the development API and Vite.');
+
+// Risk: Practice controls could become unusable across browser interaction types.
+// Given the development lab, When dialogs, frames, shadow roots, files and dynamic rows are exercised, Then their visible results remain correct.
+test('Test Lab practices dialogs, frames, shadow roots, files and dynamic rows', async ({ page }) => {
+  await page.goto('/test-lab');
+  page.once('dialog', dialog => dialog.accept());
+  await page.getByRole('button', { name: 'Confirm' }).click();
+  await expect(page.locator('#dialog-result')).toHaveText('Confirmed');
+  await expect(page.frameLocator('iframe[title="Practice iframe"]').locator('#inside-frame')).toBeVisible();
+  await page.locator('#open-shadow').locator('button').click();
+  await expect(page.locator('#shadow-result')).toHaveText('Open shadow clicked');
+  await page.locator('#closed-shadow').click();
+  await expect(page.locator('#shadow-result')).toHaveText('Closed shadow clicked');
+  await page.locator('#lab-upload').setInputFiles({ name: 'sample.txt', mimeType: 'text/plain', buffer: Buffer.from('sample') });
+  await expect(page.locator('#upload-result')).toContainText('sample.txt');
+  const download = page.waitForEvent('download');
+  await page.locator('#lab-download').click();
+  expect((await download).suggestedFilename()).toBe('skyatlas-lab.txt');
+  await page.locator('#drag-item').dragTo(page.locator('#drop-zone'));
+  await expect(page.locator('#drop-zone')).toHaveText('Card dropped');
+  await page.locator('#add-row').click();
+  await expect(page.locator('#dynamic-rows tr')).toHaveCount(1);
+});

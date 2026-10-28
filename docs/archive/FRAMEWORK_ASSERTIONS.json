@@ -1,0 +1,6512 @@
+{
+  "base": "a9bb599",
+  "before": {
+    "api-local": 178,
+    "api": 66,
+    "bugs": 18,
+    "home": 60,
+    "release": 21,
+    "smoke": 21,
+    "support": 2,
+    "ui": 375,
+    "built-explorer": 135
+  },
+  "after": {
+    "api-local": 178,
+    "api": 66,
+    "bugs": 18,
+    "home": 60,
+    "release": 21,
+    "smoke": 21,
+    "support": 2,
+    "ui": 375,
+    "built-explorer": 135
+  },
+  "removed": [],
+  "relocated": [
+    {
+      "assertion": "expect(await checkAlerts(fetcher, now, () => true, database)).toEqual({ checked: 1, created: 1 })",
+      "before": [
+        "tests/api-local/accounts.spec.ts:18"
+      ],
+      "after": [
+        "tests/api-local/alerts.spec.ts:27"
+      ]
+    },
+    {
+      "assertion": "expect(await checkAlerts(fetcher, now, () => true, database)).toEqual({ checked: 1, created: 0 })",
+      "before": [
+        "tests/api-local/accounts.spec.ts:19"
+      ],
+      "after": [
+        "tests/api-local/alerts.spec.ts:28"
+      ]
+    },
+    {
+      "assertion": "expect(await db.notification.count({ where: { userId: user.id } })).toBe(1)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:20"
+      ],
+      "after": [
+        "tests/api-local/alerts.spec.ts:29"
+      ]
+    },
+    {
+      "assertion": "expect(registered.status()).toBe(201)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:37",
+        "tests/api-local/accounts.spec.ts:76",
+        "tests/api-local/accounts.spec.ts:138"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:24",
+        "tests/api-local/sessions.spec.ts:28",
+        "tests/api-local/sessions.spec.ts:77"
+      ]
+    },
+    {
+      "assertion": "expect(waking.status).toBe(503)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:50"
+      ],
+      "after": [
+        "tests/api-local/sessions.spec.ts:41"
+      ]
+    },
+    {
+      "assertion": "expect(waking.headers.get('X-SkyAtlas-Retry-Safe')).toBe('1')",
+      "before": [
+        "tests/api-local/accounts.spec.ts:50"
+      ],
+      "after": [
+        "tests/api-local/sessions.spec.ts:41"
+      ]
+    },
+    {
+      "assertion": "expect(mutations).toBe(0)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:50"
+      ],
+      "after": [
+        "tests/api-local/sessions.spec.ts:41"
+      ]
+    },
+    {
+      "assertion": "expect(refreshed.status).toBe(200)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:53"
+      ],
+      "after": [
+        "tests/api-local/sessions.spec.ts:44"
+      ]
+    },
+    {
+      "assertion": "expect(refreshed.headers.get('set-cookie')).toContain('skyatlas_refresh=')",
+      "before": [
+        "tests/api-local/accounts.spec.ts:53"
+      ],
+      "after": [
+        "tests/api-local/sessions.spec.ts:44"
+      ]
+    },
+    {
+      "assertion": "expect(mutations).toBe(1)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:55"
+      ],
+      "after": [
+        "tests/api-local/sessions.spec.ts:46"
+      ]
+    },
+    {
+      "assertion": "expect(response.status).toBe(201)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:58"
+      ],
+      "after": [
+        "tests/api-local/sessions.spec.ts:49"
+      ]
+    },
+    {
+      "assertion": "expect(save.status).toBe(503)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:61"
+      ],
+      "after": [
+        "tests/api-local/sessions.spec.ts:52"
+      ]
+    },
+    {
+      "assertion": "expect(save.headers.get('X-SkyAtlas-Retry-Safe')).toBe('0')",
+      "before": [
+        "tests/api-local/accounts.spec.ts:61"
+      ],
+      "after": [
+        "tests/api-local/sessions.spec.ts:52"
+      ]
+    },
+    {
+      "assertion": "expect(await db.weatherAlert.count({ where: { userId: account.user.id } })).toBe(1)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:62"
+      ],
+      "after": [
+        "tests/api-local/sessions.spec.ts:53"
+      ]
+    },
+    {
+      "assertion": "expect((await request.put(app.origin + '/api/v1/account/profile', { headers, data: { displayName: '<script>' } })).status()).toBe(400)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:78"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:26"
+      ]
+    },
+    {
+      "assertion": "expect((await request.put(app.origin + '/api/v1/account/profile', { headers, data: { displayName: ' Sky traveller ' } })).status()).toBe(200)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:79"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:27"
+      ]
+    },
+    {
+      "assertion": "expect((await request.put(app.origin + '/api/v1/journeys/reviews/taj-mahal', { headers, data: { rating: 5, body: 'Wonderful' } })).status()).toBe(200)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:80"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:28"
+      ]
+    },
+    {
+      "assertion": "expect((await request.put(app.origin + '/api/v1/journeys/reviews/taj-mahal', { headers, data: { rating: 5, body: 'Must not replace the review', image: `data:image/png;base64,${oversized.toString('base64')}` } })).status()).toBe(400)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:82"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:30"
+      ]
+    },
+    {
+      "assertion": "expect(own).toBeTruthy()",
+      "before": [
+        "tests/api-local/accounts.spec.ts:85"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:33"
+      ]
+    },
+    {
+      "assertion": "expect(own.userId).toBeUndefined()",
+      "before": [
+        "tests/api-local/accounts.spec.ts:85"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:33"
+      ]
+    },
+    {
+      "assertion": "expect(own.id).toBeUndefined()",
+      "before": [
+        "tests/api-local/accounts.spec.ts:85"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:33"
+      ]
+    },
+    {
+      "assertion": "expect(exported.headers()['content-disposition']).toContain('attachment; filename=\"skyatlas-export-')",
+      "before": [
+        "tests/api-local/accounts.spec.ts:87"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:35"
+      ]
+    },
+    {
+      "assertion": "expect(data.account.email).toBe(email)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:89"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:37"
+      ]
+    },
+    {
+      "assertion": "expect(data.account.passwordHash).toBeUndefined()",
+      "before": [
+        "tests/api-local/accounts.spec.ts:89"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:37"
+      ]
+    },
+    {
+      "assertion": "expect(data.reviews.some((review: any) => review.body === 'Wonderful' && !('imageData' in review))).toBe(true)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:90"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:38"
+      ]
+    },
+    {
+      "assertion": "expect((await request.delete(app.origin + '/api/v1/account', { headers, data: { password: 'wrong' } })).status()).toBe(401)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:91"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:39"
+      ]
+    },
+    {
+      "assertion": "expect(deleted.status()).toBe(204)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:93"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:41"
+      ]
+    },
+    {
+      "assertion": "expect(deleted.headers()['set-cookie']).toContain('skyatlas_refresh=')",
+      "before": [
+        "tests/api-local/accounts.spec.ts:93"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:41"
+      ]
+    },
+    {
+      "assertion": "expect((await request.post(app.origin + '/api/v1/auth/login', { data: { email, password } })).status()).toBe(401)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:94",
+        "tests/api-local/accounts.spec.ts:146"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:42",
+        "tests/api-local/sessions.spec.ts:85"
+      ]
+    },
+    {
+      "assertion": "expect(health.headers()['cache-control']).toBe('no-store')",
+      "before": [
+        "tests/api-local/accounts.spec.ts:105"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:60"
+      ]
+    },
+    {
+      "assertion": "expect(await health.json()).toEqual({ status: 'ok', db: 'ok' })",
+      "before": [
+        "tests/api-local/accounts.spec.ts:106"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:61"
+      ]
+    },
+    {
+      "assertion": "expect(a.status()).toBe(201)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:111"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:66"
+      ]
+    },
+    {
+      "assertion": "expect(b.status()).toBe(201)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:111"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:66"
+      ]
+    },
+    {
+      "assertion": "expect((await register(firstEmail)).status()).toBe(409)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:113"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:68"
+      ]
+    },
+    {
+      "assertion": "expect((await request.post(app.origin + '/api/v1/auth/register', { data: { email: 'bad', password: 'short' } })).status()).toBe(400)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:114"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:69"
+      ]
+    },
+    {
+      "assertion": "expect((await request.post(app.origin + '/api/v1/favorites', { headers, data: { name: 'Tokyo', latitude: 35.68, longitude: 139.69 } })).status()).toBe(201)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:116"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:71"
+      ]
+    },
+    {
+      "assertion": "expect((await (await request.get(app.origin + '/api/v1/favorites', { headers: { authorization: `Bearer ${bt}` } })).json()).favorites).toHaveLength(0)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:117"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:72"
+      ]
+    },
+    {
+      "assertion": "expect((await request.post(app.origin + '/api/v1/journeys/trips', { headers, data: { name: 'Bad', city: 'Tokyo', startDate: '2000-01-01', endDate: '2000-01-02' } })).status()).toBe(400)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:118"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:73"
+      ]
+    },
+    {
+      "assertion": "expect(trip.status()).toBe(201)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:121"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:76"
+      ]
+    },
+    {
+      "assertion": "expect((await request.delete(app.origin + `/api/v1/journeys/trips/${id}`, { headers: { authorization: `Bearer ${bt}` } })).status()).toBe(404)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:123"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:78"
+      ]
+    },
+    {
+      "assertion": "expect((await request.post(app.origin + '/api/v1/auth/reset/request', { data: { email: firstEmail } })).status()).toBe(200)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:124"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:79"
+      ]
+    },
+    {
+      "assertion": "expect(code).toMatch(/^\\d{6}$/)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:126"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:81"
+      ]
+    },
+    {
+      "assertion": "expect((await request.post(app.origin + '/api/v1/auth/reset/confirm', { data: { email: firstEmail, code, password: 'Newpass!23' } })).status()).toBe(204)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:127"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:82"
+      ]
+    },
+    {
+      "assertion": "expect((await request.post(app.origin + '/api/v1/auth/reset/confirm', { data: { email: firstEmail, code, password: 'Newpass!23' } })).status()).toBe(400)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:128"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:83"
+      ]
+    },
+    {
+      "assertion": "expect(refreshed.status()).toBe(200)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:141"
+      ],
+      "after": [
+        "tests/api-local/sessions.spec.ts:80"
+      ]
+    },
+    {
+      "assertion": "expect((await request.post(app.origin + '/api/v1/auth/refresh', { headers: { cookie: oldCookie } })).status()).toBe(401)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:143"
+      ],
+      "after": [
+        "tests/api-local/sessions.spec.ts:82"
+      ]
+    },
+    {
+      "assertion": "expect((await request.post(app.origin + '/api/v1/auth/refresh', { headers: { cookie: newCookie } })).status()).toBe(401)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:144"
+      ],
+      "after": [
+        "tests/api-local/sessions.spec.ts:83"
+      ]
+    },
+    {
+      "assertion": "expect((await request.post(app.origin + '/api/v1/auth/login', { data: { email, password: 'Wrong!23' } })).status()).toBe(401)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:145"
+      ],
+      "after": [
+        "tests/api-local/sessions.spec.ts:84"
+      ]
+    },
+    {
+      "assertion": "expect((await request.post(app.origin + '/api/v1/auth/reset/request', { data: { email } })).status()).toBe(200)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:147"
+      ],
+      "after": [
+        "tests/api-local/sessions.spec.ts:86"
+      ]
+    },
+    {
+      "assertion": "expect((await request.post(app.origin + '/api/v1/auth/reset/confirm', { data: { email, code, password } })).status()).toBe(204)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:149"
+      ],
+      "after": [
+        "tests/api-local/sessions.spec.ts:88"
+      ]
+    },
+    {
+      "assertion": "expect((await request.post(app.origin + '/api/v1/auth/login', { data: { email, password } })).status()).toBe(200)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:150"
+      ],
+      "after": [
+        "tests/api-local/sessions.spec.ts:89"
+      ]
+    },
+    {
+      "assertion": "expect((await request.post(app.origin + '/api/v1/favorites/sync', { headers: first, data: { favorites: places } })).status()).toBe(200)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:161"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:100"
+      ]
+    },
+    {
+      "assertion": "expect((await (await request.get(app.origin + '/api/v1/favorites', { headers: first })).json()).favorites).toHaveLength(20)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:162",
+        "tests/api-local/accounts.spec.ts:165"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:101",
+        "tests/api-local/accounts.spec.ts:104"
+      ]
+    },
+    {
+      "assertion": "expect((await request.post(app.origin + '/api/v1/favorites', { headers: first, data: { name: 'Extra', latitude: -1, longitude: 2 } })).status()).toBe(400)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:163"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:102"
+      ]
+    },
+    {
+      "assertion": "expect((await request.post(app.origin + '/api/v1/favorites/sync', { headers: first, data: { favorites: [{ name: 'Extra', latitude: -1, longitude: 2 }] } })).status()).toBe(200)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:164"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:103"
+      ]
+    },
+    {
+      "assertion": "expect(alert.status()).toBe(201)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:167"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:106"
+      ]
+    },
+    {
+      "assertion": "expect((await (await request.post(app.origin + '/api/v1/journeys/alerts/evaluate', { headers: first, data: { temperature: 25, rainProbability: 0 } })).json()).created).toBe(1)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:168"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:107"
+      ]
+    },
+    {
+      "assertion": "expect((await (await request.post(app.origin + '/api/v1/journeys/alerts/evaluate', { headers: first, data: { temperature: 25, rainProbability: 0 } })).json()).created).toBe(0)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:169"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:108"
+      ]
+    },
+    {
+      "assertion": "expect((await request.put(app.origin + `/api/v1/journeys/reviews/${reviewLandmark}`, { headers: first, data: { rating: 5, body: 'Beautiful', image: 'data:image/png;base64,aW52YWxpZA==' } })).status()).toBe(400)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:171"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:110"
+      ]
+    },
+    {
+      "assertion": "expect((await request.put(app.origin + `/api/v1/journeys/reviews/${reviewLandmark}`, { headers: first, data: { rating: 5, body: 'Beautiful' } })).status()).toBe(200)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:172"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:111"
+      ]
+    },
+    {
+      "assertion": "expect((await request.delete(app.origin + `/api/v1/journeys/reviews/${reviewLandmark}`, { headers: second })).status()).toBe(404)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:173"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:112"
+      ]
+    },
+    {
+      "assertion": "expect((await (await request.get(app.origin + `/api/v1/journeys/reviews/${reviewLandmark}`)).json()).reviews).toHaveLength(1)",
+      "before": [
+        "tests/api-local/accounts.spec.ts:174"
+      ],
+      "after": [
+        "tests/api-local/accounts.spec.ts:113"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('news-item')).toHaveCount(2)",
+      "before": [
+        "tests/api-local/browser.spec.ts:27",
+        "tests/v2/roadmapPhase1.spec.ts:17"
+      ],
+      "after": [
+        "tests/api-local/browser.spec.ts:38",
+        "tests/ui/pages/explorer-layout.spec.ts:35"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('current-temperature')).toContainText('24')",
+      "before": [
+        "tests/api-local/browser.spec.ts:31"
+      ],
+      "after": [
+        "tests/api-local/browser.spec.ts:42"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('daily-table')).toBeVisible()",
+      "before": [
+        "tests/api-local/browser.spec.ts:33"
+      ],
+      "after": [
+        "tests/api-local/browser.spec.ts:44"
+      ]
+    },
+    {
+      "assertion": "expect(response.status()).toBe(200)",
+      "before": [
+        "tests/api-local/browser.spec.ts:35",
+        "tests/api-local/phase2.spec.ts:29",
+        "tests/api-local/phases.spec.ts:30",
+        "tests/api/satellite.spec.ts:7",
+        "tests/home/prerender.spec.ts:15"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:34",
+        "tests/api-local/browser.spec.ts:46",
+        "tests/api-local/journeys-api.spec.ts:39",
+        "tests/api/satellite.spec.ts:19",
+        "tests/home/prerender.spec.ts:27"
+      ]
+    },
+    {
+      "assertion": "expect(review.author).toBe('Fixture explorer')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:31"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:36"
+      ]
+    },
+    {
+      "assertion": "expect(review).not.toHaveProperty('userId')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:32"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:37"
+      ]
+    },
+    {
+      "assertion": "expect(review).not.toHaveProperty('email')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:32"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:37"
+      ]
+    },
+    {
+      "assertion": "expect(review).not.toHaveProperty('user')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:32"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:37"
+      ]
+    },
+    {
+      "assertion": "expect(selection.select).not.toHaveProperty('userId')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:33"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:38"
+      ]
+    },
+    {
+      "assertion": "expect(selection.select).not.toHaveProperty('email')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:33"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:38"
+      ]
+    },
+    {
+      "assertion": "expect(selection.select.user).toEqual({ select: { displayName: true } })",
+      "before": [
+        "tests/api-local/phase2.spec.ts:34"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:39"
+      ]
+    },
+    {
+      "assertion": "expect((await request.get(server.base + weather)).status()).toBe(502)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:47"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:54"
+      ]
+    },
+    {
+      "assertion": "expect(messages).toHaveLength(1)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:48"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:55"
+      ]
+    },
+    {
+      "assertion": "expect(messages[0][1]).toMatchObject({ hostname: 'api.open-meteo.com', status: 429, message: 'HTTP 429' })",
+      "before": [
+        "tests/api-local/phase2.spec.ts:49"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:56"
+      ]
+    },
+    {
+      "assertion": "expect(JSON.stringify(messages)).not.toContain('latitude')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:50"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:57"
+      ]
+    },
+    {
+      "assertion": "expect((await request.get(failed.base + weather)).status()).toBe(502)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:56"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:63"
+      ]
+    },
+    {
+      "assertion": "expect(JSON.stringify(secretMessages)).toContain('api.open-meteo.com')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:57"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:64"
+      ]
+    },
+    {
+      "assertion": "expect(JSON.stringify(secretMessages)).not.toContain('private-token-do-not-log')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:58"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:65"
+      ]
+    },
+    {
+      "assertion": "expect(response.status()).toBe(503)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:69"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:78"
+      ]
+    },
+    {
+      "assertion": "expect((await response.json()).error.message).toBe('Account service is not configured.')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:70"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:79"
+      ]
+    },
+    {
+      "assertion": "expect((await request.post(server.base + path, { headers: { origin: 'https://evil.example' } })).status()).toBe(403)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:88"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:99"
+      ]
+    },
+    {
+      "assertion": "expect((await request.post(server.base + '/api/v1/journeys/alerts', { headers: { origin: 'https://sky.pages.dev' } })).status()).toBe(401)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:90"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:101"
+      ]
+    },
+    {
+      "assertion": "expect((await client.json()).ip).toBe('203.0.113.10')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:108"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:121"
+      ]
+    },
+    {
+      "assertion": "expect((await request.get(path, { headers: { 'x-forwarded-for': '203.0.113.10, 192.0.2.10', 'x-skyatlas-proxy-secret': 'proxy-test-secret' } })).status()).toBe(200)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:110"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:123"
+      ]
+    },
+    {
+      "assertion": "expect((await request.get(path, { headers: { 'x-forwarded-for': '203.0.113.11, 192.0.2.10', 'x-skyatlas-proxy-secret': 'proxy-test-secret' } })).status()).toBe(200)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:111"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:124"
+      ]
+    },
+    {
+      "assertion": "expect((await request.get(path, { headers: { 'x-forwarded-for': '203.0.113.10, 192.0.2.10', 'x-skyatlas-proxy-secret': 'proxy-test-secret' } })).status()).toBe(429)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:112"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:125"
+      ]
+    },
+    {
+      "assertion": "expect((await request.get(path, { headers: { 'x-forwarded-for': '203.0.113.12, 192.0.2.20' } })).status()).toBe(200)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:113"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:126"
+      ]
+    },
+    {
+      "assertion": "expect((await request.get(path, { headers: { 'x-forwarded-for': '203.0.113.13, 192.0.2.20' } })).status()).toBe(429)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:114"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:127"
+      ]
+    },
+    {
+      "assertion": "expect((await request.post(url)).status()).toBe(404)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:127"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:142"
+      ]
+    },
+    {
+      "assertion": "expect((await request.post(url, { headers: { 'x-cron-secret': 'wrong' } })).status()).toBe(401)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:129"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:144"
+      ]
+    },
+    {
+      "assertion": "expect((await request.post(url, { headers: { 'x-cron-secret': 'private-test-secret' } })).status()).toBe(409)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:132"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:147"
+      ]
+    },
+    {
+      "assertion": "expect(await (await first).json()).toEqual({ checked: 2, created: 1 })",
+      "before": [
+        "tests/api-local/phase2.spec.ts:134"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:149"
+      ]
+    },
+    {
+      "assertion": "expect((await request.post(url, { headers: { 'x-cron-secret': 'private-test-secret' } })).status()).toBe(429)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:135"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:150"
+      ]
+    },
+    {
+      "assertion": "expect(await response.json()).toEqual({ status: 'ok', db: 'unavailable' })",
+      "before": [
+        "tests/api-local/phase2.spec.ts:148"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:165"
+      ]
+    },
+    {
+      "assertion": "expect((await request.get(server.base + '/api/v1/health')).status()).toBe(200)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:149"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:166"
+      ]
+    },
+    {
+      "assertion": "expect(health.status()).toBe(200)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:160"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:179"
+      ]
+    },
+    {
+      "assertion": "expect((await health.json()).status).toBe('ok')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:160"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:179"
+      ]
+    },
+    {
+      "assertion": "expect(performance.now() - started).toBeLessThan(1000)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:163"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:182"
+      ]
+    },
+    {
+      "assertion": "expect(first.status()).toBe(200)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:164"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:183"
+      ]
+    },
+    {
+      "assertion": "expect(first.headers()['x-cache']).toBe('MISS')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:164"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:183"
+      ]
+    },
+    {
+      "assertion": "expect(typeof body.timezone).toBe('string')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:166"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:185"
+      ]
+    },
+    {
+      "assertion": "expect(Number.isFinite(body.current.temperature_2m)).toBe(true)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:167"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:186"
+      ]
+    },
+    {
+      "assertion": "expect(body.hourly[key].length).toBe(body.hourly.time.length)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:168"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:187"
+      ]
+    },
+    {
+      "assertion": "expect((await request.get(server.base + weather)).headers()['x-cache']).toBe('HIT')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:169"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:188"
+      ]
+    },
+    {
+      "assertion": "expect(daily.daily[key].length).toBe(daily.daily.time.length)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:171"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:190"
+      ]
+    },
+    {
+      "assertion": "expect(geo.headers()['x-cache']).toBe('MISS')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:173"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:192"
+      ]
+    },
+    {
+      "assertion": "expect((await geo.json()).results[0].name).toBe('Nashik')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:173"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:192"
+      ]
+    },
+    {
+      "assertion": "expect((await request.get(server.base + '/api/v1/geocode?q=Nashik')).headers()['x-cache']).toBe('HIT')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:174"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:193"
+      ]
+    },
+    {
+      "assertion": "expect(Array.isArray(news.items)).toBe(true)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:176"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:195"
+      ]
+    },
+    {
+      "assertion": "expect(Number.isFinite(Date.parse(news.lastUpdated))).toBe(true)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:176"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:195"
+      ]
+    },
+    {
+      "assertion": "expect(spec.openapi).toBe('3.0.3')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:178"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:197"
+      ]
+    },
+    {
+      "assertion": "expect(spec.paths[route].get.responses['200']).toBeDefined()",
+      "before": [
+        "tests/api-local/phase2.spec.ts:179"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:198"
+      ]
+    },
+    {
+      "assertion": "expect(docs.status()).toBe(200)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:180"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:199"
+      ]
+    },
+    {
+      "assertion": "expect(await docs.text()).toContain('swagger-ui')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:180"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:199"
+      ]
+    },
+    {
+      "assertion": "expect(response.status()).toBe(400)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:188",
+        "tests/api/contracts.spec.ts:39",
+        "tests/api/weather.spec.ts:33"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:209",
+        "tests/api/contracts.spec.ts:57",
+        "tests/api/weather.spec.ts:48"
+      ]
+    },
+    {
+      "assertion": "expect(await response.json()).toMatchObject({ error: { code: 'INVALID_INPUT', field, message: expect.any(String) } })",
+      "before": [
+        "tests/api-local/phase2.spec.ts:189"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:210"
+      ]
+    },
+    {
+      "assertion": "expect(missing.status()).toBe(404)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:191",
+        "tests/api-local/phase2.spec.ts:244"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:212",
+        "tests/api-local/api-contracts.spec.ts:273"
+      ]
+    },
+    {
+      "assertion": "expect((await missing.json()).error.code).toBe('NOT_FOUND')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:191"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:212"
+      ]
+    },
+    {
+      "assertion": "expect(rate.status()).toBe(429)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:193"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:214"
+      ]
+    },
+    {
+      "assertion": "expect(Number(rate.headers()['retry-after'])).toBeGreaterThan(0)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:193"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:214"
+      ]
+    },
+    {
+      "assertion": "expect((await rate.json()).error.code).toBe('RATE_LIMITED')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:194"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:215"
+      ]
+    },
+    {
+      "assertion": "expect(response.status()).toBe(502)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:200",
+        "tests/api-local/phase2.spec.ts:207"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:223",
+        "tests/api-local/api-contracts.spec.ts:232"
+      ]
+    },
+    {
+      "assertion": "expect((await response.json()).error.code).toBe('UPSTREAM_ERROR')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:200",
+        "tests/api-local/phase2.spec.ts:207"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:223",
+        "tests/api-local/api-contracts.spec.ts:232"
+      ]
+    },
+    {
+      "assertion": "expect(response.status()).toBe(504)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:202"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:225"
+      ]
+    },
+    {
+      "assertion": "expect((await response.json()).error.code).toBe('UPSTREAM_TIMEOUT')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:202"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:225"
+      ]
+    },
+    {
+      "assertion": "expect(empty.items).toEqual([])",
+      "before": [
+        "tests/api-local/phase2.spec.ts:216"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:243"
+      ]
+    },
+    {
+      "assertion": "expect(empty.lastUpdated).toBe('2000-01-01T00:00:00Z')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:216"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:243"
+      ]
+    },
+    {
+      "assertion": "expect(bad.status()).toBe(502)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:218"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:245"
+      ]
+    },
+    {
+      "assertion": "expect((await bad.json()).error.code).toBe('INVALID_NEWS')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:218"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:245"
+      ]
+    },
+    {
+      "assertion": "expect(home.status()).toBe(200)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:226",
+        "tests/api-local/phase2.spec.ts:240"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:255",
+        "tests/api-local/api-contracts.spec.ts:269"
+      ]
+    },
+    {
+      "assertion": "expect(home.headers()['content-encoding']).toBe('gzip')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:227"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:256"
+      ]
+    },
+    {
+      "assertion": "expect(home.headers()['vary']).toContain('Accept-Encoding')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:228"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:257"
+      ]
+    },
+    {
+      "assertion": "expect(await home.text()).toContain('AtlasSphere')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:229"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:258"
+      ]
+    },
+    {
+      "assertion": "expect(plain.headers()['content-encoding']).toBeUndefined()",
+      "before": [
+        "tests/api-local/phase2.spec.ts:231"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:260"
+      ]
+    },
+    {
+      "assertion": "expect(await plain.text()).toContain('id=\"home-title\"')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:232"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:261"
+      ]
+    },
+    {
+      "assertion": "expect(explorer.status()).toBe(200)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:235"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:264"
+      ]
+    },
+    {
+      "assertion": "expect(await explorer.text()).toContain('data-testid=\"city-search-input\"')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:236"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:265"
+      ]
+    },
+    {
+      "assertion": "expect(await home.text()).toContain('id=\"root\"')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:241"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:270"
+      ]
+    },
+    {
+      "assertion": "expect(game.status()).toBe(200)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:243"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:272"
+      ]
+    },
+    {
+      "assertion": "expect(weatherResponse.status()).toBe(502)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:245"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:274"
+      ]
+    },
+    {
+      "assertion": "expect(parseNews(xml, 'Met Office')).toHaveLength(1)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:251"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:282"
+      ]
+    },
+    {
+      "assertion": "expect(data.items[0].snippet.length).toBeLessThanOrEqual(200)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:254"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:285"
+      ]
+    },
+    {
+      "assertion": "expect(data.items[0].source).toBe('www.metoffice.gov.uk')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:254"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:285"
+      ]
+    },
+    {
+      "assertion": "expect(fetchNews({ feeds: ['https://www.metoffice.gov.uk/feed.xml'], fetcher: async () => { throw new Error('offline'); }, output })).rejects.toThrow('All weather news feeds failed')",
+      "before": [
+        "tests/api-local/phase2.spec.ts:256"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:287"
+      ]
+    },
+    {
+      "assertion": "expect(await readFile(output, 'utf8')).toBe(prior)",
+      "before": [
+        "tests/api-local/phase2.spec.ts:257"
+      ],
+      "after": [
+        "tests/api-local/api-contracts.spec.ts:288"
+      ]
+    },
+    {
+      "assertion": "expect((await request.get(`${endpoint}?date=1900-01-01&lat=2&lon=3`)).status()).toBe(400)",
+      "before": [
+        "tests/api-local/phases.spec.ts:13"
+      ],
+      "after": [
+        "tests/api-local/journeys-api.spec.ts:20"
+      ]
+    },
+    {
+      "assertion": "expect((await request.get(`${endpoint}?date=2020-01-01&lat=999&lon=3`)).status()).toBe(400)",
+      "before": [
+        "tests/api-local/phases.spec.ts:14"
+      ],
+      "after": [
+        "tests/api-local/journeys-api.spec.ts:21"
+      ]
+    },
+    {
+      "assertion": "expect(result.status()).toBe(200)",
+      "before": [
+        "tests/api-local/phases.spec.ts:16"
+      ],
+      "after": [
+        "tests/api-local/journeys-api.spec.ts:23"
+      ]
+    },
+    {
+      "assertion": "expect((await result.json()).label).toBe('Real data')",
+      "before": [
+        "tests/api-local/phases.spec.ts:16"
+      ],
+      "after": [
+        "tests/api-local/journeys-api.spec.ts:23"
+      ]
+    },
+    {
+      "assertion": "expect(response.headers()['cache-control']).toBe('public, max-age=86400')",
+      "before": [
+        "tests/api-local/phases.spec.ts:31"
+      ],
+      "after": [
+        "tests/api-local/journeys-api.spec.ts:40"
+      ]
+    },
+    {
+      "assertion": "expect(JSON.stringify(await response.json())).not.toContain('server-only-test-key')",
+      "before": [
+        "tests/api-local/phases.spec.ts:32"
+      ],
+      "after": [
+        "tests/api-local/journeys-api.spec.ts:41"
+      ]
+    },
+    {
+      "assertion": "expect(new URL(urls[0]).hostname).toBe(key ? 'customer-archive-api.open-meteo.com' : 'archive-api.open-meteo.com')",
+      "before": [
+        "tests/api-local/phases.spec.ts:33"
+      ],
+      "after": [
+        "tests/api-local/journeys-api.spec.ts:42"
+      ]
+    },
+    {
+      "assertion": "expect(new URL(urls[0]).searchParams.get('apikey')).toBe(key || null)",
+      "before": [
+        "tests/api-local/phases.spec.ts:34"
+      ],
+      "after": [
+        "tests/api-local/journeys-api.spec.ts:43"
+      ]
+    },
+    {
+      "assertion": "expect((await request.get(endpoint)).status()).toBe(200)",
+      "before": [
+        "tests/api-local/phases.spec.ts:35",
+        "tests/api-local/phases.spec.ts:52"
+      ],
+      "after": [
+        "tests/api-local/journeys-api.spec.ts:44",
+        "tests/api-local/journeys-api.spec.ts:63"
+      ]
+    },
+    {
+      "assertion": "expect(urls).toHaveLength(1)",
+      "before": [
+        "tests/api-local/phases.spec.ts:36"
+      ],
+      "after": [
+        "tests/api-local/journeys-api.spec.ts:45"
+      ]
+    },
+    {
+      "assertion": "expect((await bad.json()).units).toBe('fahrenheit')",
+      "before": [
+        "tests/api-local/phases.spec.ts:45"
+      ],
+      "after": [
+        "tests/api-local/journeys-api.spec.ts:56"
+      ]
+    },
+    {
+      "assertion": "expect(normal).toMatchObject({ units: 'celsius', news: ['Sample headline'], forecastDay: 1, favorites: ['Tokyo'] })",
+      "before": [
+        "tests/api-local/phases.spec.ts:47"
+      ],
+      "after": [
+        "tests/api-local/journeys-api.spec.ts:58"
+      ]
+    },
+    {
+      "assertion": "expect((await request.get(endpoint + '?failure=upstream-500')).status()).toBe(502)",
+      "before": [
+        "tests/api-local/phases.spec.ts:48"
+      ],
+      "after": [
+        "tests/api-local/journeys-api.spec.ts:59"
+      ]
+    },
+    {
+      "assertion": "expect((await request.get(endpoint + '?failure=offline')).status()).toBe(503)",
+      "before": [
+        "tests/api-local/phases.spec.ts:49"
+      ],
+      "after": [
+        "tests/api-local/journeys-api.spec.ts:60"
+      ]
+    },
+    {
+      "assertion": "expect((await request.get(endpoint + '?failure=malformed-json')).body()).toBeTruthy()",
+      "before": [
+        "tests/api-local/phases.spec.ts:50"
+      ],
+      "after": [
+        "tests/api-local/journeys-api.spec.ts:61"
+      ]
+    },
+    {
+      "assertion": "expect((await request.get(endpoint + '?failure=delay')).status()).toBe(200)",
+      "before": [
+        "tests/api-local/phases.spec.ts:51"
+      ],
+      "after": [
+        "tests/api-local/journeys-api.spec.ts:62"
+      ]
+    },
+    {
+      "assertion": "expect((await request.get(app.origin + '/api/v1/test-lab/scenario')).status()).toBe(404)",
+      "before": [
+        "tests/api-local/phases.spec.ts:58"
+      ],
+      "after": [
+        "tests/api-local/journeys-api.spec.ts:71"
+      ]
+    },
+    {
+      "assertion": "expect((await request.get(app.origin + '/api/v1/test/inbox/user@example.com')).status()).toBe(404)",
+      "before": [
+        "tests/api-local/phases.spec.ts:59"
+      ],
+      "after": [
+        "tests/api-local/journeys-api.spec.ts:72"
+      ]
+    },
+    {
+      "assertion": "expect((await request.get(app.origin + '/test-lab')).status()).toBe(404)",
+      "before": [
+        "tests/api-local/phases.spec.ts:60"
+      ],
+      "after": [
+        "tests/api-local/journeys-api.spec.ts:73"
+      ]
+    },
+    {
+      "assertion": "expect((await request.get(app.origin + '/test-lab.html')).status()).toBe(404)",
+      "before": [
+        "tests/api-local/phases.spec.ts:61"
+      ],
+      "after": [
+        "tests/api-local/journeys-api.spec.ts:74"
+      ]
+    },
+    {
+      "assertion": "expect(response.ok()).toBeTruthy()",
+      "before": [
+        "tests/api/advanced.spec.ts:6",
+        "tests/api/advanced.spec.ts:14",
+        "tests/api/advanced.spec.ts:20",
+        "tests/api/contracts.spec.ts:9",
+        "tests/api/contracts.spec.ts:25",
+        "tests/api/contracts.spec.ts:48",
+        "tests/api/geocoding.spec.ts:7",
+        "tests/api/weather.spec.ts:6"
+      ],
+      "after": [
+        "tests/api/advanced.spec.ts:18",
+        "tests/api/advanced.spec.ts:29",
+        "tests/api/advanced.spec.ts:38",
+        "tests/api/contracts.spec.ts:21",
+        "tests/api/contracts.spec.ts:40",
+        "tests/api/contracts.spec.ts:69",
+        "tests/api/geocoding.spec.ts:19",
+        "tests/api/weather.spec.ts:18"
+      ]
+    },
+    {
+      "assertion": "expect(data.days).toHaveLength(7)",
+      "before": [
+        "tests/api/advanced.spec.ts:8"
+      ],
+      "after": [
+        "tests/api/advanced.spec.ts:20"
+      ]
+    },
+    {
+      "assertion": "expect(data.timezone).toBe('Asia/Kolkata')",
+      "before": [
+        "tests/api/advanced.spec.ts:8"
+      ],
+      "after": [
+        "tests/api/advanced.spec.ts:20"
+      ]
+    },
+    {
+      "assertion": "expect(raw.daily[key]).toHaveLength(7)",
+      "before": [
+        "tests/api/advanced.spec.ts:9"
+      ],
+      "after": [
+        "tests/api/advanced.spec.ts:21"
+      ]
+    },
+    {
+      "assertion": "expect(Number.isFinite(day.max)).toBe(true)",
+      "before": [
+        "tests/api/advanced.spec.ts:10"
+      ],
+      "after": [
+        "tests/api/advanced.spec.ts:22"
+      ]
+    },
+    {
+      "assertion": "expect(Number.isFinite(day.min)).toBe(true)",
+      "before": [
+        "tests/api/advanced.spec.ts:10"
+      ],
+      "after": [
+        "tests/api/advanced.spec.ts:22"
+      ]
+    },
+    {
+      "assertion": "expect(day.max).toBeGreaterThanOrEqual(day.min!)",
+      "before": [
+        "tests/api/advanced.spec.ts:10"
+      ],
+      "after": [
+        "tests/api/advanced.spec.ts:22"
+      ]
+    },
+    {
+      "assertion": "expect(data.results.length).toBeGreaterThan(0)",
+      "before": [
+        "tests/api/advanced.spec.ts:14",
+        "tests/api/contracts.spec.ts:51",
+        "tests/api/geocoding.spec.ts:10"
+      ],
+      "after": [
+        "tests/api/advanced.spec.ts:29",
+        "tests/api/contracts.spec.ts:72",
+        "tests/api/geocoding.spec.ts:22"
+      ]
+    },
+    {
+      "assertion": "expect(data.results.every((city: any) => city.country_code === 'IN')).toBe(true)",
+      "before": [
+        "tests/api/advanced.spec.ts:15"
+      ],
+      "after": [
+        "tests/api/advanced.spec.ts:30"
+      ]
+    },
+    {
+      "assertion": "expect(Number.isFinite(data.daily.temperature_2m_max[0])).toBe(true)",
+      "before": [
+        "tests/api/advanced.spec.ts:22"
+      ],
+      "after": [
+        "tests/api/advanced.spec.ts:40"
+      ]
+    },
+    {
+      "assertion": "expect(Number.isFinite(data.daily.temperature_2m_min[0])).toBe(true)",
+      "before": [
+        "tests/api/advanced.spec.ts:23"
+      ],
+      "after": [
+        "tests/api/advanced.spec.ts:41"
+      ]
+    },
+    {
+      "assertion": "expect(data.current_units.temperature_2m).toBe(label)",
+      "before": [
+        "tests/api/contracts.spec.ts:11"
+      ],
+      "after": [
+        "tests/api/contracts.spec.ts:23"
+      ]
+    },
+    {
+      "assertion": "expect(data.current_units.apparent_temperature).toBe(label)",
+      "before": [
+        "tests/api/contracts.spec.ts:12"
+      ],
+      "after": [
+        "tests/api/contracts.spec.ts:24"
+      ]
+    },
+    {
+      "assertion": "expect(data.hourly_units.temperature_2m).toBe(label)",
+      "before": [
+        "tests/api/contracts.spec.ts:13"
+      ],
+      "after": [
+        "tests/api/contracts.spec.ts:25"
+      ]
+    },
+    {
+      "assertion": "expect(Number.isFinite(data.current.temperature_2m)).toBe(true)",
+      "before": [
+        "tests/api/contracts.spec.ts:14"
+      ],
+      "after": [
+        "tests/api/contracts.spec.ts:26"
+      ]
+    },
+    {
+      "assertion": "expect(data.hourly.temperature_2m).toHaveLength(data.hourly.time.length)",
+      "before": [
+        "tests/api/contracts.spec.ts:15"
+      ],
+      "after": [
+        "tests/api/contracts.spec.ts:27"
+      ]
+    },
+    {
+      "assertion": "expect(data.hourly.temperature_2m.every(Number.isFinite)).toBe(true)",
+      "before": [
+        "tests/api/contracts.spec.ts:16"
+      ],
+      "after": [
+        "tests/api/contracts.spec.ts:28"
+      ]
+    },
+    {
+      "assertion": "expect(data.timezone).toBe(timezone)",
+      "before": [
+        "tests/api/contracts.spec.ts:27"
+      ],
+      "after": [
+        "tests/api/contracts.spec.ts:42"
+      ]
+    },
+    {
+      "assertion": "expect(Number.isInteger(data.utc_offset_seconds)).toBe(true)",
+      "before": [
+        "tests/api/contracts.spec.ts:28"
+      ],
+      "after": [
+        "tests/api/contracts.spec.ts:43"
+      ]
+    },
+    {
+      "assertion": "expect(data.hourly_units.time).toBe('unixtime')",
+      "before": [
+        "tests/api/contracts.spec.ts:29",
+        "tests/api/weather.spec.ts:16"
+      ],
+      "after": [
+        "tests/api/contracts.spec.ts:44",
+        "tests/api/weather.spec.ts:28"
+      ]
+    },
+    {
+      "assertion": "expect(data.hourly.time).toHaveLength(3)",
+      "before": [
+        "tests/api/contracts.spec.ts:30"
+      ],
+      "after": [
+        "tests/api/contracts.spec.ts:45"
+      ]
+    },
+    {
+      "assertion": "expect(data.hourly.time.every((time: number, i: number, all: number[]) => Number.isFinite(time) && (i === 0 || time - all[i - 1] === 3600))).toBe(true)",
+      "before": [
+        "tests/api/contracts.spec.ts:31"
+      ],
+      "after": [
+        "tests/api/contracts.spec.ts:46"
+      ]
+    },
+    {
+      "assertion": "expect(data.error).toBe(true)",
+      "before": [
+        "tests/api/contracts.spec.ts:41"
+      ],
+      "after": [
+        "tests/api/contracts.spec.ts:59"
+      ]
+    },
+    {
+      "assertion": "expect(typeof data.reason).toBe('string')",
+      "before": [
+        "tests/api/contracts.spec.ts:41"
+      ],
+      "after": [
+        "tests/api/contracts.spec.ts:59"
+      ]
+    },
+    {
+      "assertion": "expect(Array.isArray(data.results)).toBe(true)",
+      "before": [
+        "tests/api/contracts.spec.ts:50",
+        "tests/api/geocoding.spec.ts:9"
+      ],
+      "after": [
+        "tests/api/contracts.spec.ts:71",
+        "tests/api/geocoding.spec.ts:21"
+      ]
+    },
+    {
+      "assertion": "expect(typeof city.name).toBe('string')",
+      "before": [
+        "tests/api/contracts.spec.ts:53",
+        "tests/api/geocoding.spec.ts:12"
+      ],
+      "after": [
+        "tests/api/contracts.spec.ts:74",
+        "tests/api/geocoding.spec.ts:24"
+      ]
+    },
+    {
+      "assertion": "expect(Number.isFinite(city.latitude)).toBe(true)",
+      "before": [
+        "tests/api/contracts.spec.ts:54",
+        "tests/api/geocoding.spec.ts:13"
+      ],
+      "after": [
+        "tests/api/contracts.spec.ts:75",
+        "tests/api/geocoding.spec.ts:25"
+      ]
+    },
+    {
+      "assertion": "expect(Number.isFinite(city.longitude)).toBe(true)",
+      "before": [
+        "tests/api/contracts.spec.ts:55",
+        "tests/api/geocoding.spec.ts:15"
+      ],
+      "after": [
+        "tests/api/contracts.spec.ts:76",
+        "tests/api/geocoding.spec.ts:27"
+      ]
+    },
+    {
+      "assertion": "expect(Math.abs(city.latitude)).toBeLessThanOrEqual(90)",
+      "before": [
+        "tests/api/contracts.spec.ts:56",
+        "tests/api/geocoding.spec.ts:14"
+      ],
+      "after": [
+        "tests/api/contracts.spec.ts:77",
+        "tests/api/geocoding.spec.ts:26"
+      ]
+    },
+    {
+      "assertion": "expect(Math.abs(city.longitude)).toBeLessThanOrEqual(180)",
+      "before": [
+        "tests/api/contracts.spec.ts:57",
+        "tests/api/geocoding.spec.ts:16"
+      ],
+      "after": [
+        "tests/api/contracts.spec.ts:78",
+        "tests/api/geocoding.spec.ts:28"
+      ]
+    },
+    {
+      "assertion": "expect(response.headers()['content-type']).toContain('image/jpeg')",
+      "before": [
+        "tests/api/satellite.spec.ts:8"
+      ],
+      "after": [
+        "tests/api/satellite.spec.ts:20"
+      ]
+    },
+    {
+      "assertion": "expect((await response.body()).subarray(0, 3)).toEqual(Buffer.from([255, 216, 255]))",
+      "before": [
+        "tests/api/satellite.spec.ts:9"
+      ],
+      "after": [
+        "tests/api/satellite.spec.ts:21"
+      ]
+    },
+    {
+      "assertion": "expect(Number.isFinite(weather.temperature)).toBe(true)",
+      "before": [
+        "tests/api/weather.spec.ts:9"
+      ],
+      "after": [
+        "tests/api/weather.spec.ts:21"
+      ]
+    },
+    {
+      "assertion": "expect(data.current_units.apparent_temperature).toBe('°C')",
+      "before": [
+        "tests/api/weather.spec.ts:10"
+      ],
+      "after": [
+        "tests/api/weather.spec.ts:22"
+      ]
+    },
+    {
+      "assertion": "expect(data.current_units.relative_humidity_2m).toBe('%')",
+      "before": [
+        "tests/api/weather.spec.ts:11"
+      ],
+      "after": [
+        "tests/api/weather.spec.ts:23"
+      ]
+    },
+    {
+      "assertion": "expect(data.current_units.wind_speed_10m).toBe('km/h')",
+      "before": [
+        "tests/api/weather.spec.ts:12"
+      ],
+      "after": [
+        "tests/api/weather.spec.ts:24"
+      ]
+    },
+    {
+      "assertion": "expect(data.current_units.precipitation).toBe('mm')",
+      "before": [
+        "tests/api/weather.spec.ts:13"
+      ],
+      "after": [
+        "tests/api/weather.spec.ts:25"
+      ]
+    },
+    {
+      "assertion": "expect(weather.incomplete).toBe(false)",
+      "before": [
+        "tests/api/weather.spec.ts:14"
+      ],
+      "after": [
+        "tests/api/weather.spec.ts:26"
+      ]
+    },
+    {
+      "assertion": "expect(weather.interval).toBeGreaterThan(0)",
+      "before": [
+        "tests/api/weather.spec.ts:15"
+      ],
+      "after": [
+        "tests/api/weather.spec.ts:27"
+      ]
+    },
+    {
+      "assertion": "expect(Array.isArray(data.hourly[field])).toBe(true)",
+      "before": [
+        "tests/api/weather.spec.ts:18"
+      ],
+      "after": [
+        "tests/api/weather.spec.ts:30"
+      ]
+    },
+    {
+      "assertion": "expect(data.hourly[field].length).toBe(data.hourly.time.length)",
+      "before": [
+        "tests/api/weather.spec.ts:19"
+      ],
+      "after": [
+        "tests/api/weather.spec.ts:31"
+      ]
+    },
+    {
+      "assertion": "expect(data.hourly_units.temperature_2m).toBe('°C')",
+      "before": [
+        "tests/api/weather.spec.ts:21"
+      ],
+      "after": [
+        "tests/api/weather.spec.ts:33"
+      ]
+    },
+    {
+      "assertion": "expect(data.hourly_units.precipitation_probability).toBe('%')",
+      "before": [
+        "tests/api/weather.spec.ts:22"
+      ],
+      "after": [
+        "tests/api/weather.spec.ts:34"
+      ]
+    },
+    {
+      "assertion": "expect(data.hourly_units.wind_speed_10m).toBe('km/h')",
+      "before": [
+        "tests/api/weather.spec.ts:23"
+      ],
+      "after": [
+        "tests/api/weather.spec.ts:35"
+      ]
+    },
+    {
+      "assertion": "expect(forecast.hours).toHaveLength(24)",
+      "before": [
+        "tests/api/weather.spec.ts:25"
+      ],
+      "after": [
+        "tests/api/weather.spec.ts:37"
+      ]
+    },
+    {
+      "assertion": "expect(forecast.hours[0].time).toBeGreaterThanOrEqual(weather.time)",
+      "before": [
+        "tests/api/weather.spec.ts:26"
+      ],
+      "after": [
+        "tests/api/weather.spec.ts:38"
+      ]
+    },
+    {
+      "assertion": "expect((await response.json()).error).toBe(true)",
+      "before": [
+        "tests/api/weather.spec.ts:34"
+      ],
+      "after": [
+        "tests/api/weather.spec.ts:49"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('gg-points')).toHaveText(`${landmarkPoints(haversine(0, 0, answer.lat, answer.lon))} points`)",
+      "before": [
+        "tests/bugs/geoguess.spec.ts:12"
+      ],
+      "after": [
+        "tests/bugs/geoguess.spec.ts:29"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('gg-timer')).toHaveText(stopped!)",
+      "before": [
+        "tests/bugs/geoguess.spec.ts:19",
+        "tests/release/production.spec.ts:46"
+      ],
+      "after": [
+        "tests/bugs/geoguess.spec.ts:39",
+        "tests/release/production.spec.ts:69"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('weather-values')).toBeVisible()",
+      "before": [
+        "tests/bugs/injections.spec.ts:10"
+      ],
+      "after": [
+        "tests/bugs/injections.spec.ts:21"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('bug-mode-panel')).toBeVisible()",
+      "before": [
+        "tests/bugs/injections.spec.ts:15"
+      ],
+      "after": [
+        "tests/bugs/injections.spec.ts:29"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId(`bug-${id}`)).toBeChecked()",
+      "before": [
+        "tests/bugs/injections.spec.ts:16"
+      ],
+      "after": [
+        "tests/bugs/injections.spec.ts:30"
+      ]
+    },
+    {
+      "assertion": "expect(new URL((await request).url()).searchParams.get('q')).toBe('')",
+      "before": [
+        "tests/bugs/injections.spec.ts:20"
+      ],
+      "after": [
+        "tests/bugs/injections.spec.ts:34"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('current-temperature')).toHaveText('44°F')",
+      "before": [
+        "tests/bugs/injections.spec.ts:23"
+      ],
+      "after": [
+        "tests/bugs/injections.spec.ts:37"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('humidity-value')).toHaveText('Not available')",
+      "before": [
+        "tests/bugs/injections.spec.ts:24",
+        "tests/ui/weather.spec.ts:58"
+      ],
+      "after": [
+        "tests/bugs/injections.spec.ts:38",
+        "tests/ui/explorer/current-weather.spec.ts:69"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorite-item')).toHaveCount(2)",
+      "before": [
+        "tests/bugs/injections.spec.ts:25",
+        "tests/ui/preferences.spec.ts:88",
+        "tests/ui/preferences.spec.ts:91"
+      ],
+      "after": [
+        "tests/bugs/injections.spec.ts:39",
+        "tests/ui/explorer/units-and-preferences.spec.ts:105",
+        "tests/ui/explorer/units-and-preferences.spec.ts:108"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('forecast-time').first()).toHaveText('26 Oct, 07:30 GMT')",
+      "before": [
+        "tests/bugs/injections.spec.ts:26"
+      ],
+      "after": [
+        "tests/bugs/injections.spec.ts:40"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorite-item')).toHaveCount(0)",
+      "before": [
+        "tests/bugs/injections.spec.ts:34",
+        "tests/release/production.spec.ts:28",
+        "tests/release/production.spec.ts:35",
+        "tests/ui/preferences.spec.ts:98",
+        "tests/ui/preferences.spec.ts:103",
+        "tests/ui/releaseReadiness.spec.ts:123",
+        "tests/ui/releaseReadiness.spec.ts:128",
+        "tests/ui/resilience.spec.ts:127"
+      ],
+      "after": [
+        "tests/bugs/injections.spec.ts:51",
+        "tests/release/production.spec.ts:43",
+        "tests/release/production.spec.ts:53",
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:157",
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:162",
+        "tests/ui/explorer/resilience.spec.ts:162",
+        "tests/ui/explorer/units-and-preferences.spec.ts:117",
+        "tests/ui/explorer/units-and-preferences.spec.ts:122"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('unit-celsius')).toHaveAttribute('aria-pressed', 'true')",
+      "before": [
+        "tests/bugs/injections.spec.ts:35",
+        "tests/ui/preferences.spec.ts:111",
+        "tests/ui/resilience.spec.ts:126",
+        "tests/ui/resilience.spec.ts:142"
+      ],
+      "after": [
+        "tests/bugs/injections.spec.ts:52",
+        "tests/ui/explorer/resilience.spec.ts:161",
+        "tests/ui/explorer/resilience.spec.ts:183",
+        "tests/ui/explorer/units-and-preferences.spec.ts:132"
+      ]
+    },
+    {
+      "assertion": "expect(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEYS.favorites)).toBe(saved)",
+      "before": [
+        "tests/bugs/injections.spec.ts:37"
+      ],
+      "after": [
+        "tests/bugs/injections.spec.ts:54"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('bug-mode-panel')).toHaveCount(0)",
+      "before": [
+        "tests/bugs/injections.spec.ts:39",
+        "tests/release/production.spec.ts:20",
+        "tests/ui/releaseReadiness.spec.ts:143"
+      ],
+      "after": [
+        "tests/bugs/injections.spec.ts:56",
+        "tests/release/production.spec.ts:35",
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:183"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorite-item')).toContainText('Original')",
+      "before": [
+        "tests/bugs/injections.spec.ts:40"
+      ],
+      "after": [
+        "tests/bugs/injections.spec.ts:57"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('unit-fahrenheit')).toHaveAttribute('aria-pressed', 'true')",
+      "before": [
+        "tests/bugs/injections.spec.ts:41",
+        "tests/ui/preferences.spec.ts:35",
+        "tests/ui/preferences.spec.ts:45",
+        "tests/ui/releaseReadiness.spec.ts:129"
+      ],
+      "after": [
+        "tests/bugs/injections.spec.ts:58",
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:163",
+        "tests/ui/explorer/units-and-preferences.spec.ts:42",
+        "tests/ui/explorer/units-and-preferences.spec.ts:54"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('bug-HUM-001')).not.toBeChecked()",
+      "before": [
+        "tests/bugs/injections.spec.ts:46"
+      ],
+      "after": [
+        "tests/bugs/injections.spec.ts:66"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('humidity-value')).toHaveText('64 %')",
+      "before": [
+        "tests/bugs/injections.spec.ts:47",
+        "tests/release/production.spec.ts:24",
+        "tests/ui/weather.spec.ts:34"
+      ],
+      "after": [
+        "tests/bugs/injections.spec.ts:67",
+        "tests/release/production.spec.ts:39",
+        "tests/ui/explorer/current-weather.spec.ts:41"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByRole('heading', { level: 1 })).toHaveText('Explore Earth and Beyond.')",
+      "before": [
+        "tests/home/home.spec.ts:14"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:27"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-globe-fallback')).toBeVisible()",
+      "before": [
+        "tests/home/home.spec.ts:15",
+        "tests/home/home.spec.ts:112",
+        "tests/home/prerender.spec.ts:32"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:28",
+        "tests/home/home.spec.ts:146",
+        "tests/home/prerender.spec.ts:47"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-menu-toggle')).toBeVisible()",
+      "before": [
+        "tests/home/home.spec.ts:16"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:29"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator(`#${id}`)).toHaveCount(1)",
+      "before": [
+        "tests/home/home.spec.ts:17"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:30"
+      ]
+    },
+    {
+      "assertion": "expect(requested.filter(url => /earthRenderer|earth-texture|three\\.module/.test(url))).toEqual([])",
+      "before": [
+        "tests/home/home.spec.ts:18"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:31"
+      ]
+    },
+    {
+      "assertion": "expect(errors).toEqual([])",
+      "before": [
+        "tests/home/home.spec.ts:19",
+        "tests/home/prerender.spec.ts:53",
+        "tests/ui/geoguess.spec.ts:15",
+        "tests/ui/search.spec.ts:30"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:32",
+        "tests/home/prerender.spec.ts:71",
+        "tests/ui/explorer/search.spec.ts:38",
+        "tests/ui/geoguess/gameplay.spec.ts:29"
+      ]
+    },
+    {
+      "assertion": "expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)",
+      "before": [
+        "tests/home/home.spec.ts:20",
+        "tests/ui/forecastGeography.spec.ts:105",
+        "tests/ui/search.spec.ts:105",
+        "tests/ui/weather.spec.ts:134"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:33",
+        "tests/ui/explorer/current-weather.spec.ts:159",
+        "tests/ui/explorer/forecast-geography.spec.ts:126",
+        "tests/ui/explorer/search.spec.ts:137"
+      ]
+    },
+    {
+      "assertion": "expect(menu).toBeVisible()",
+      "before": [
+        "tests/home/home.spec.ts:29"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:45"
+      ]
+    },
+    {
+      "assertion": "expect(toggle).toHaveAttribute('aria-expanded', 'true')",
+      "before": [
+        "tests/home/home.spec.ts:30"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:46"
+      ]
+    },
+    {
+      "assertion": "expect(await page.evaluate(() => document.body.style.overflow)).toBe('hidden')",
+      "before": [
+        "tests/home/home.spec.ts:31"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:47"
+      ]
+    },
+    {
+      "assertion": "expect(menu.getByRole('link', { name: 'Data Sources' })).toBeFocused()",
+      "before": [
+        "tests/home/home.spec.ts:34"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:50"
+      ]
+    },
+    {
+      "assertion": "expect(close).toBeFocused()",
+      "before": [
+        "tests/home/home.spec.ts:35"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:51"
+      ]
+    },
+    {
+      "assertion": "expect(menu).not.toBeVisible()",
+      "before": [
+        "tests/home/home.spec.ts:36"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:52"
+      ]
+    },
+    {
+      "assertion": "expect(toggle).toBeFocused()",
+      "before": [
+        "tests/home/home.spec.ts:36",
+        "tests/home/home.spec.ts:38"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:52",
+        "tests/home/home.spec.ts:54"
+      ]
+    },
+    {
+      "assertion": "expect(await page.evaluate(() => document.body.style.overflow)).toBe('')",
+      "before": [
+        "tests/home/home.spec.ts:37"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:53"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-search-status')).toContainText('at least 2')",
+      "before": [
+        "tests/home/home.spec.ts:44"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:63"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-search-results')).toContainText('Kyoto, Japan')",
+      "before": [
+        "tests/home/home.spec.ts:47"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:66"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-selected-place')).toContainText('35.021')",
+      "before": [
+        "tests/home/home.spec.ts:49"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:68"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-globe-selection')).toContainText('Kyoto')",
+      "before": [
+        "tests/home/home.spec.ts:50"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:69"
+      ]
+    },
+    {
+      "assertion": "expect(href).toContain('/explore.html?')",
+      "before": [
+        "tests/home/home.spec.ts:52"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:71"
+      ]
+    },
+    {
+      "assertion": "expect(href).toContain('lat=35.021')",
+      "before": [
+        "tests/home/home.spec.ts:52"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:71"
+      ]
+    },
+    {
+      "assertion": "expect(href).toContain('lon=135.754')",
+      "before": [
+        "tests/home/home.spec.ts:52"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:71"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-selected-place')).toHaveCount(0)",
+      "before": [
+        "tests/home/home.spec.ts:54"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:73"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-globe-selection')).toHaveCount(0)",
+      "before": [
+        "tests/home/home.spec.ts:55"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:74"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-search-status')).toContainText('try again')",
+      "before": [
+        "tests/home/home.spec.ts:62"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:84"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-search-results')).toContainText('Japan')",
+      "before": [
+        "tests/home/home.spec.ts:64"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:86"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-search-status')).toContainText('No places found')",
+      "before": [
+        "tests/home/home.spec.ts:66"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:88"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-search-status')).toContainText('Finding')",
+      "before": [
+        "tests/home/home.spec.ts:77"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:102"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-search-results')).toContainText('Kyoto')",
+      "before": [
+        "tests/home/home.spec.ts:79"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:104"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-search-results')).not.toContainText('Oldtown')",
+      "before": [
+        "tests/home/home.spec.ts:80"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:105"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('html')).toHaveAttribute('data-theme', 'light')",
+      "before": [
+        "tests/home/home.spec.ts:86",
+        "tests/home/home.spec.ts:87"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:114",
+        "tests/home/home.spec.ts:115"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-space-detail')).toContainText('event horizon')",
+      "before": [
+        "tests/home/home.spec.ts:89"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:117"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-fact-detail')).toContainText('384,400')",
+      "before": [
+        "tests/home/home.spec.ts:91"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:119"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-science-detail')).toContainText('fault')",
+      "before": [
+        "tests/home/home.spec.ts:93"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:121"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('.history-detail')).toContainText('20 July 1969')",
+      "before": [
+        "tests/home/home.spec.ts:95"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:123"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByRole('heading', {level:1})).toBeVisible()",
+      "before": [
+        "tests/home/home.spec.ts:101"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:132"
+      ]
+    },
+    {
+      "assertion": "expect(results.violations).toEqual([])",
+      "before": [
+        "tests/home/home.spec.ts:103"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:134"
+      ]
+    },
+    {
+      "assertion": "expect((await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([])",
+      "before": [
+        "tests/home/home.spec.ts:105"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:136"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-globe-status')).toContainText('3D is unavailable')",
+      "before": [
+        "tests/home/home.spec.ts:111"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:145"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-globe-activate')).toHaveText('Try 3D again ↗')",
+      "before": [
+        "tests/home/home.spec.ts:113"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:147"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-search-input')).toBeVisible()",
+      "before": [
+        "tests/home/home.spec.ts:114"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:148"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByRole('heading', {level:1})).toHaveText(heading)",
+      "before": [
+        "tests/home/home.spec.ts:119"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:156"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByText('NASA, ESA, CSA, STScI; processing:', {exact:false})).toBeVisible()",
+      "before": [
+        "tests/home/home.spec.ts:121"
+      ],
+      "after": [
+        "tests/home/home.spec.ts:158"
+      ]
+    },
+    {
+      "assertion": "expect(html).toContain(`data-prerendered=\"${path}\"`)",
+      "before": [
+        "tests/home/prerender.spec.ts:17"
+      ],
+      "after": [
+        "tests/home/prerender.spec.ts:29"
+      ]
+    },
+    {
+      "assertion": "expect(html).toContain('<main')",
+      "before": [
+        "tests/home/prerender.spec.ts:18"
+      ],
+      "after": [
+        "tests/home/prerender.spec.ts:30"
+      ]
+    },
+    {
+      "assertion": "expect(html).toContain(path === '/' ? 'id=\"home-title\"' : heading)",
+      "before": [
+        "tests/home/prerender.spec.ts:19"
+      ],
+      "after": [
+        "tests/home/prerender.spec.ts:31"
+      ]
+    },
+    {
+      "assertion": "expect(html).not.toContain('<!--$?-->')",
+      "before": [
+        "tests/home/prerender.spec.ts:20"
+      ],
+      "after": [
+        "tests/home/prerender.spec.ts:32"
+      ]
+    },
+    {
+      "assertion": "expect(html).not.toContain('$RC(')",
+      "before": [
+        "tests/home/prerender.spec.ts:21"
+      ],
+      "after": [
+        "tests/home/prerender.spec.ts:33"
+      ]
+    },
+    {
+      "assertion": "expect(html).toContain('/images/earth-space/earth-hero')",
+      "before": [
+        "tests/home/prerender.spec.ts:22"
+      ],
+      "after": [
+        "tests/home/prerender.spec.ts:34"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible()",
+      "before": [
+        "tests/home/prerender.spec.ts:31",
+        "tests/home/prerender.spec.ts:46"
+      ],
+      "after": [
+        "tests/home/prerender.spec.ts:46",
+        "tests/home/prerender.spec.ts:64"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-theme-toggle')).toHaveAttribute('aria-pressed', String(theme === 'light'))",
+      "before": [
+        "tests/home/prerender.spec.ts:47"
+      ],
+      "after": [
+        "tests/home/prerender.spec.ts:65"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-menu')).toBeVisible()",
+      "before": [
+        "tests/home/prerender.spec.ts:49"
+      ],
+      "after": [
+        "tests/home/prerender.spec.ts:67"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-menu-toggle')).toBeFocused()",
+      "before": [
+        "tests/home/prerender.spec.ts:51"
+      ],
+      "after": [
+        "tests/home/prerender.spec.ts:69"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('forecast-hour')).toHaveCount(24)",
+      "before": [
+        "tests/release/production.spec.ts:11",
+        "tests/ui/forecastGeography.spec.ts:19",
+        "tests/ui/forecastGeography.spec.ts:79",
+        "tests/ui/forecastGeography.spec.ts:88",
+        "tests/ui/forecastGeography.spec.ts:97"
+      ],
+      "after": [
+        "tests/release/production.spec.ts:23",
+        "tests/ui/explorer/forecast-geography.spec.ts:26",
+        "tests/ui/explorer/forecast-geography.spec.ts:96",
+        "tests/ui/explorer/forecast-geography.spec.ts:107",
+        "tests/ui/explorer/forecast-geography.spec.ts:118"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('current-temperature')).toHaveText('76°F')",
+      "before": [
+        "tests/release/production.spec.ts:12",
+        "tests/release/production.spec.ts:15",
+        "tests/release/production.spec.ts:23",
+        "tests/ui/preferences.spec.ts:29",
+        "tests/ui/preferences.spec.ts:47",
+        "tests/ui/preferences.spec.ts:57",
+        "tests/ui/preferences.spec.ts:135",
+        "tests/ui/releaseReadiness.spec.ts:125",
+        "tests/ui/resilience.spec.ts:122"
+      ],
+      "after": [
+        "tests/release/production.spec.ts:24",
+        "tests/release/production.spec.ts:27",
+        "tests/release/production.spec.ts:38",
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:159",
+        "tests/ui/explorer/resilience.spec.ts:157",
+        "tests/ui/explorer/units-and-preferences.spec.ts:36",
+        "tests/ui/explorer/units-and-preferences.spec.ts:56",
+        "tests/ui/explorer/units-and-preferences.spec.ts:68",
+        "tests/ui/explorer/units-and-preferences.spec.ts:160"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('latitude-value')).toHaveText('19.990°')",
+      "before": [
+        "tests/release/production.spec.ts:16",
+        "tests/ui/forecastGeography.spec.ts:34"
+      ],
+      "after": [
+        "tests/release/production.spec.ts:28",
+        "tests/ui/explorer/forecast-geography.spec.ts:43"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('search-error')).toHaveText('Enter a city name.')",
+      "before": [
+        "tests/release/production.spec.ts:21",
+        "tests/ui/search.spec.ts:65"
+      ],
+      "after": [
+        "tests/release/production.spec.ts:36",
+        "tests/ui/explorer/search.spec.ts:85"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('forecast-time').first()).toHaveText('26 Oct, 13:00 GMT+5:30')",
+      "before": [
+        "tests/release/production.spec.ts:25"
+      ],
+      "after": [
+        "tests/release/production.spec.ts:40"
+      ]
+    },
+    {
+      "assertion": "expect(await page.evaluate(key => JSON.parse(localStorage.getItem(key)! ).length, STORAGE_KEYS.favorites)).toBe(1)",
+      "before": [
+        "tests/release/production.spec.ts:27"
+      ],
+      "after": [
+        "tests/release/production.spec.ts:42"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorites-clear-dialog')).toBeVisible()",
+      "before": [
+        "tests/release/production.spec.ts:34",
+        "tests/ui/releaseReadiness.spec.ts:106"
+      ],
+      "after": [
+        "tests/release/production.spec.ts:52",
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:137"
+      ]
+    },
+    {
+      "assertion": "expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)",
+      "before": [
+        "tests/release/production.spec.ts:36",
+        "tests/ui/geoguess.spec.ts:87",
+        "tests/ui/preferences.spec.ts:159",
+        "tests/ui/releaseReadiness.spec.ts:135",
+        "tests/v2/design.spec.ts:42",
+        "tests/v2/exploration.spec.ts:103",
+        "tests/v2/roadmapPhase1.spec.ts:65",
+        "tests/v2/skyAtlasHome.spec.ts:34"
+      ],
+      "after": [
+        "tests/release/production.spec.ts:54",
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:172",
+        "tests/ui/explorer/units-and-preferences.spec.ts:188",
+        "tests/ui/geoguess/gameplay.spec.ts:106",
+        "tests/ui/pages/atlas-features.spec.ts:157",
+        "tests/ui/pages/design-system.spec.ts:75",
+        "tests/ui/pages/explorer-home.spec.ts:52",
+        "tests/ui/pages/explorer-layout.spec.ts:107"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('gg-round')).toHaveText('Round 1 / 5')",
+      "before": [
+        "tests/release/production.spec.ts:40",
+        "tests/ui/geoguess.spec.ts:10"
+      ],
+      "after": [
+        "tests/release/production.spec.ts:63",
+        "tests/ui/geoguess/gameplay.spec.ts:24"
+      ]
+    },
+    {
+      "assertion": "expect(await page.evaluate(() => (window as any).__geoguess)).toBeUndefined()",
+      "before": [
+        "tests/release/production.spec.ts:41",
+        "tests/ui/geoguess.spec.ts:94"
+      ],
+      "after": [
+        "tests/release/production.spec.ts:64",
+        "tests/ui/geoguess/gameplay.spec.ts:117"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('gg-feedback')).toBeVisible()",
+      "before": [
+        "tests/release/production.spec.ts:43",
+        "tests/ui/geoguess.spec.ts:46",
+        "tests/ui/geoguess.spec.ts:86"
+      ],
+      "after": [
+        "tests/release/production.spec.ts:66",
+        "tests/ui/geoguess/gameplay.spec.ts:78",
+        "tests/ui/geoguess/gameplay.spec.ts:105"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('time-year')).toBeVisible()",
+      "before": [
+        "tests/release/production.spec.ts:51",
+        "tests/ui/phases.spec.ts:11"
+      ],
+      "after": [
+        "tests/release/production.spec.ts:77",
+        "tests/ui/pages/development-routes.spec.ts:33"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('time-result')).toContainText('Fiction')",
+      "before": [
+        "tests/release/production.spec.ts:54",
+        "tests/ui/journeys.spec.ts:30",
+        "tests/ui/phases.spec.ts:14"
+      ],
+      "after": [
+        "tests/release/production.spec.ts:80",
+        "tests/ui/journeys/time-machine.spec.ts:45",
+        "tests/ui/pages/development-routes.spec.ts:36"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('lab-scenario')).toHaveCount(0)",
+      "before": [
+        "tests/release/production.spec.ts:56"
+      ],
+      "after": [
+        "tests/release/production.spec.ts:82"
+      ]
+    },
+    {
+      "assertion": "expect(response.status()).toBe(201)",
+      "before": [
+        "tests/smoke/journeys-persistence.spec.ts:16"
+      ],
+      "after": [
+        "tests/smoke/journeys-persistence.spec.ts:25"
+      ]
+    },
+    {
+      "assertion": "expect(failures, 'Smoke account cleanup').toEqual([])",
+      "before": [
+        "tests/smoke/journeys-persistence.spec.ts:28"
+      ],
+      "after": [
+        "tests/smoke/journeys-persistence.spec.ts:37"
+      ]
+    },
+    {
+      "assertion": "expect((await request.get(endpoint)).status()).toBe(401)",
+      "before": [
+        "tests/smoke/journeys-persistence.spec.ts:33"
+      ],
+      "after": [
+        "tests/smoke/journeys-persistence.spec.ts:45"
+      ]
+    },
+    {
+      "assertion": "expect((await request.post(endpoint, { headers: headers(0), data: { city: '', condition: 'bad', threshold: 5 } })).status()).toBe(400)",
+      "before": [
+        "tests/smoke/journeys-persistence.spec.ts:34"
+      ],
+      "after": [
+        "tests/smoke/journeys-persistence.spec.ts:46"
+      ]
+    },
+    {
+      "assertion": "expect(created.status()).toBe(201)",
+      "before": [
+        "tests/smoke/journeys-persistence.spec.ts:36"
+      ],
+      "after": [
+        "tests/smoke/journeys-persistence.spec.ts:48"
+      ]
+    },
+    {
+      "assertion": "expect((await (await request.get(endpoint, { headers: headers(0) })).json()).alerts.some((alert: any) => alert.id === id)).toBe(true)",
+      "before": [
+        "tests/smoke/journeys-persistence.spec.ts:39"
+      ],
+      "after": [
+        "tests/smoke/journeys-persistence.spec.ts:51"
+      ]
+    },
+    {
+      "assertion": "expect((await request.put(`${endpoint}/${id}`, { headers: headers(1), data: { city: 'Delhi', condition: 'temperature-above', threshold: 20 } })).status()).toBe(404)",
+      "before": [
+        "tests/smoke/journeys-persistence.spec.ts:40"
+      ],
+      "after": [
+        "tests/smoke/journeys-persistence.spec.ts:52"
+      ]
+    },
+    {
+      "assertion": "expect((await request.put(`${endpoint}/${id}`, { headers: headers(0), data: { city: 'Delhi', condition: 'temperature-below', threshold: 20 } })).status()).toBe(200)",
+      "before": [
+        "tests/smoke/journeys-persistence.spec.ts:41"
+      ],
+      "after": [
+        "tests/smoke/journeys-persistence.spec.ts:53"
+      ]
+    },
+    {
+      "assertion": "expect((await request.delete(`${endpoint}/${id}`, { headers: headers(1) })).status()).toBe(404)",
+      "before": [
+        "tests/smoke/journeys-persistence.spec.ts:42"
+      ],
+      "after": [
+        "tests/smoke/journeys-persistence.spec.ts:54"
+      ]
+    },
+    {
+      "assertion": "expect((await request.delete(`${endpoint}/${id}`, { headers: headers(0) })).status()).toBe(204)",
+      "before": [
+        "tests/smoke/journeys-persistence.spec.ts:43"
+      ],
+      "after": [
+        "tests/smoke/journeys-persistence.spec.ts:55"
+      ]
+    },
+    {
+      "assertion": "expect((await request.put(endpoint, { data: { rating: 5, body: 'Smoke' } })).status()).toBe(401)",
+      "before": [
+        "tests/smoke/journeys-persistence.spec.ts:48"
+      ],
+      "after": [
+        "tests/smoke/journeys-persistence.spec.ts:63"
+      ]
+    },
+    {
+      "assertion": "expect((await request.put(endpoint, { headers: headers(0), data: { rating: 6, body: 'Smoke' } })).status()).toBe(400)",
+      "before": [
+        "tests/smoke/journeys-persistence.spec.ts:49"
+      ],
+      "after": [
+        "tests/smoke/journeys-persistence.spec.ts:64"
+      ]
+    },
+    {
+      "assertion": "expect((await request.put(endpoint, { headers: headers(0), data: { rating: 4, body: unique } })).status()).toBe(200)",
+      "before": [
+        "tests/smoke/journeys-persistence.spec.ts:51"
+      ],
+      "after": [
+        "tests/smoke/journeys-persistence.spec.ts:66"
+      ]
+    },
+    {
+      "assertion": "expect((await (await request.get(endpoint)).json()).reviews.some((review: any) => review.body === unique)).toBe(true)",
+      "before": [
+        "tests/smoke/journeys-persistence.spec.ts:53"
+      ],
+      "after": [
+        "tests/smoke/journeys-persistence.spec.ts:68"
+      ]
+    },
+    {
+      "assertion": "expect((await request.put(endpoint, { headers: headers(0), data: { rating: 5, body: unique, image: png } })).status()).toBe(200)",
+      "before": [
+        "tests/smoke/journeys-persistence.spec.ts:54"
+      ],
+      "after": [
+        "tests/smoke/journeys-persistence.spec.ts:69"
+      ]
+    },
+    {
+      "assertion": "expect(review.imageUrl).toBeTruthy()",
+      "before": [
+        "tests/smoke/journeys-persistence.spec.ts:56"
+      ],
+      "after": [
+        "tests/smoke/journeys-persistence.spec.ts:71"
+      ]
+    },
+    {
+      "assertion": "expect(image.status()).toBe(200)",
+      "before": [
+        "tests/smoke/journeys-persistence.spec.ts:58"
+      ],
+      "after": [
+        "tests/smoke/journeys-persistence.spec.ts:73"
+      ]
+    },
+    {
+      "assertion": "expect(image.headers()['content-type']).toContain('image/png')",
+      "before": [
+        "tests/smoke/journeys-persistence.spec.ts:58"
+      ],
+      "after": [
+        "tests/smoke/journeys-persistence.spec.ts:73"
+      ]
+    },
+    {
+      "assertion": "expect((await image.body()).subarray(0, 8)).toEqual(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]))",
+      "before": [
+        "tests/smoke/journeys-persistence.spec.ts:59"
+      ],
+      "after": [
+        "tests/smoke/journeys-persistence.spec.ts:74"
+      ]
+    },
+    {
+      "assertion": "expect((await request.delete(endpoint, { headers: headers(1) })).status()).toBe(404)",
+      "before": [
+        "tests/smoke/journeys-persistence.spec.ts:60"
+      ],
+      "after": [
+        "tests/smoke/journeys-persistence.spec.ts:75"
+      ]
+    },
+    {
+      "assertion": "expect((await request.delete(endpoint, { headers: headers(0) })).status()).toBe(204)",
+      "before": [
+        "tests/smoke/journeys-persistence.spec.ts:61"
+      ],
+      "after": [
+        "tests/smoke/journeys-persistence.spec.ts:76"
+      ]
+    },
+    {
+      "assertion": "expect(unexpected, 'UI tests must mock every external browser request').toEqual([])",
+      "before": [
+        "tests/support/uiTest.ts:44"
+      ],
+      "after": [
+        "tests/support/uiTest.ts:59"
+      ]
+    },
+    {
+      "assertion": "expect(errors, 'Application must not produce uncaught JavaScript errors').toEqual([])",
+      "before": [
+        "tests/support/uiTest.ts:45"
+      ],
+      "after": [
+        "tests/support/uiTest.ts:60"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('account-email-display')).toHaveText('test@example.test')",
+      "before": [
+        "tests/ui/accountPrivacy.spec.ts:8"
+      ],
+      "after": [
+        "tests/ui/journeys/account-privacy.spec.ts:20"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('delete-account-dialog')).toBeVisible()",
+      "before": [
+        "tests/ui/accountPrivacy.spec.ts:10"
+      ],
+      "after": [
+        "tests/ui/journeys/account-privacy.spec.ts:22"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByLabel('Current password')).toBeVisible()",
+      "before": [
+        "tests/ui/accountPrivacy.spec.ts:11"
+      ],
+      "after": [
+        "tests/ui/journeys/account-privacy.spec.ts:23"
+      ]
+    },
+    {
+      "assertion": "expect(accessibility.violations.filter(item => ['serious', 'critical'].includes(item.impact || ''))).toEqual([])",
+      "before": [
+        "tests/ui/accountPrivacy.spec.ts:13"
+      ],
+      "after": [
+        "tests/ui/journeys/account-privacy.spec.ts:25"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('delete-account-dialog')).not.toBeVisible()",
+      "before": [
+        "tests/ui/accountPrivacy.spec.ts:15"
+      ],
+      "after": [
+        "tests/ui/journeys/account-privacy.spec.ts:27"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('account-delete')).toBeFocused()",
+      "before": [
+        "tests/ui/accountPrivacy.spec.ts:16"
+      ],
+      "after": [
+        "tests/ui/journeys/account-privacy.spec.ts:28"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('server-wake-status')).toBeVisible()",
+      "before": [
+        "tests/ui/accountPrivacy.spec.ts:31",
+        "tests/ui/accountPrivacy.spec.ts:64"
+      ],
+      "after": [
+        "tests/ui/journeys/account-privacy.spec.ts:46",
+        "tests/ui/journeys/account-privacy.spec.ts:85"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('server-wake-status')).toContainText('Waking up the AtlasSphere server')",
+      "before": [
+        "tests/ui/accountPrivacy.spec.ts:32"
+      ],
+      "after": [
+        "tests/ui/journeys/account-privacy.spec.ts:47"
+      ]
+    },
+    {
+      "assertion": "expect((await read).account.email).toBe('test@example.test')",
+      "before": [
+        "tests/ui/accountPrivacy.spec.ts:34"
+      ],
+      "after": [
+        "tests/ui/journeys/account-privacy.spec.ts:49"
+      ]
+    },
+    {
+      "assertion": "expect(calls).toBe(2)",
+      "before": [
+        "tests/ui/accountPrivacy.spec.ts:35",
+        "tests/ui/accountPrivacy.spec.ts:67",
+        "tests/ui/accountPrivacy.spec.ts:81"
+      ],
+      "after": [
+        "tests/ui/journeys/account-privacy.spec.ts:50",
+        "tests/ui/journeys/account-privacy.spec.ts:88",
+        "tests/ui/journeys/account-privacy.spec.ts:105"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('server-wake-status')).toBeHidden()",
+      "before": [
+        "tests/ui/accountPrivacy.spec.ts:36",
+        "tests/ui/accountPrivacy.spec.ts:68",
+        "tests/ui/accountPrivacy.spec.ts:82",
+        "tests/ui/accountPrivacy.spec.ts:99"
+      ],
+      "after": [
+        "tests/ui/journeys/account-privacy.spec.ts:51",
+        "tests/ui/journeys/account-privacy.spec.ts:89",
+        "tests/ui/journeys/account-privacy.spec.ts:106",
+        "tests/ui/journeys/account-privacy.spec.ts:126"
+      ]
+    },
+    {
+      "assertion": "expect(message).toContain('Check whether your change was saved')",
+      "before": [
+        "tests/ui/accountPrivacy.spec.ts:48"
+      ],
+      "after": [
+        "tests/ui/journeys/account-privacy.spec.ts:66"
+      ]
+    },
+    {
+      "assertion": "expect(calls).toBe(1)",
+      "before": [
+        "tests/ui/accountPrivacy.spec.ts:49",
+        "tests/ui/preferences.spec.ts:39",
+        "tests/ui/providerFallback.spec.ts:62",
+        "tests/ui/providerFallback.spec.ts:78",
+        "tests/ui/releaseReadiness.spec.ts:75",
+        "tests/ui/resilience.spec.ts:62",
+        "tests/ui/satellite.spec.ts:37",
+        "tests/ui/weather.spec.ts:42"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:97",
+        "tests/ui/explorer/current-weather.spec.ts:49",
+        "tests/ui/explorer/provider-fallback.spec.ts:83",
+        "tests/ui/explorer/provider-fallback.spec.ts:102",
+        "tests/ui/explorer/resilience.spec.ts:79",
+        "tests/ui/explorer/units-and-preferences.spec.ts:46",
+        "tests/ui/journeys/account-privacy.spec.ts:67",
+        "tests/ui/journeys/satellite.spec.ts:49"
+      ]
+    },
+    {
+      "assertion": "expect(await save).toEqual({ displayName: 'Explorer' })",
+      "before": [
+        "tests/ui/accountPrivacy.spec.ts:66"
+      ],
+      "after": [
+        "tests/ui/journeys/account-privacy.spec.ts:87"
+      ]
+    },
+    {
+      "assertion": "expect(saves).toBe(1)",
+      "before": [
+        "tests/ui/accountPrivacy.spec.ts:67"
+      ],
+      "after": [
+        "tests/ui/journeys/account-privacy.spec.ts:88"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('account-email-display')).toHaveText('refresh@example.test')",
+      "before": [
+        "tests/ui/accountPrivacy.spec.ts:80"
+      ],
+      "after": [
+        "tests/ui/journeys/account-privacy.spec.ts:104"
+      ]
+    },
+    {
+      "assertion": "expect(calls).toBe(4)",
+      "before": [
+        "tests/ui/accountPrivacy.spec.ts:97"
+      ],
+      "after": [
+        "tests/ui/journeys/account-privacy.spec.ts:124"
+      ]
+    },
+    {
+      "assertion": "expect(message).toContain('Waking up')",
+      "before": [
+        "tests/ui/accountPrivacy.spec.ts:98"
+      ],
+      "after": [
+        "tests/ui/journeys/account-privacy.spec.ts:125"
+      ]
+    },
+    {
+      "assertion": "expect(first.getByTestId('forecast-time')).toHaveText('26 Oct, 13:00 GMT+5:30')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:21"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:28"
+      ]
+    },
+    {
+      "assertion": "expect(first.getByTestId('forecast-temperature')).toHaveText('20°C')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:22"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:29"
+      ]
+    },
+    {
+      "assertion": "expect(first.getByRole('img')).toHaveAccessibleName('Partly cloudy')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:23"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:30"
+      ]
+    },
+    {
+      "assertion": "expect(first.getByTestId('forecast-precipitation')).toHaveText('Rain chance: 0%')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:24"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:31"
+      ]
+    },
+    {
+      "assertion": "expect(first.getByTestId('forecast-wind')).toHaveText('Wind: 8.5 km/h')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:25"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:32"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('forecast-timezone')).toContainText('Asia/Kolkata')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:26"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:33"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('forecast-note')).toBeEmpty()",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:27"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:34"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('longitude-value')).toHaveText('73.780°')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:35"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:44"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('elevation-value')).toHaveText('565 m')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:36",
+        "tests/ui/preferences.spec.ts:81"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:45",
+        "tests/ui/explorer/units-and-preferences.spec.ts:96"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('geography-country')).toHaveText('India')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:37"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:46"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('geography-region')).toHaveText('Maharashtra')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:38"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:47"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('timezone-value')).toHaveText('Asia/Kolkata')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:39"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:48"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('geography-local-time')).not.toHaveText('Not available')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:40"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:49"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('weather-error')).toContainText('503')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:49"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:60"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('geography-details')).toBeVisible()",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:50",
+        "tests/ui/forecastGeography.spec.ts:63"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:61",
+        "tests/ui/explorer/forecast-geography.spec.ts:76"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId(id)).toHaveText('Not available')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:52"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:63"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('current-temperature')).toHaveText('24°C')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:60",
+        "tests/ui/preferences.spec.ts:27",
+        "tests/ui/preferences.spec.ts:37",
+        "tests/ui/preferences.spec.ts:80",
+        "tests/ui/preferences.spec.ts:101",
+        "tests/ui/providerFallback.spec.ts:23",
+        "tests/ui/providerFallback.spec.ts:78",
+        "tests/ui/releaseReadiness.spec.ts:44",
+        "tests/ui/releaseReadiness.spec.ts:55",
+        "tests/ui/releaseReadiness.spec.ts:69",
+        "tests/ui/releaseReadiness.spec.ts:72",
+        "tests/ui/resilience.spec.ts:43",
+        "tests/ui/resilience.spec.ts:100",
+        "tests/ui/weather.spec.ts:32",
+        "tests/ui/weather.spec.ts:60",
+        "tests/ui/weather.spec.ts:72",
+        "tests/ui/weather.spec.ts:106",
+        "tests/v2/exploration.spec.ts:15",
+        "tests/v2/exploration.spec.ts:73"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:60",
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:74",
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:91",
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:94",
+        "tests/ui/explorer/current-weather.spec.ts:39",
+        "tests/ui/explorer/current-weather.spec.ts:71",
+        "tests/ui/explorer/current-weather.spec.ts:85",
+        "tests/ui/explorer/current-weather.spec.ts:127",
+        "tests/ui/explorer/forecast-geography.spec.ts:73",
+        "tests/ui/explorer/provider-fallback.spec.ts:35",
+        "tests/ui/explorer/provider-fallback.spec.ts:102",
+        "tests/ui/explorer/resilience.spec.ts:51",
+        "tests/ui/explorer/resilience.spec.ts:129",
+        "tests/ui/explorer/units-and-preferences.spec.ts:34",
+        "tests/ui/explorer/units-and-preferences.spec.ts:44",
+        "tests/ui/explorer/units-and-preferences.spec.ts:95",
+        "tests/ui/explorer/units-and-preferences.spec.ts:120",
+        "tests/ui/pages/atlas-features.spec.ts:24",
+        "tests/ui/pages/atlas-features.spec.ts:112"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('forecast-note')).toContainText('Hourly forecast is unavailable')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:61"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:74"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('hourly-forecast')).toBeHidden()",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:62"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:75"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('forecast-hour')).toHaveCount(3)",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:70"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:85"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('forecast-note')).toContainText('Only 3 of 24')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:71"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:86"
+      ]
+    },
+    {
+      "assertion": "expect(first.getByTestId('forecast-temperature')).toHaveText('Not available')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:81"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:98"
+      ]
+    },
+    {
+      "assertion": "expect(first.getByTestId('forecast-precipitation')).toContainText('Not available')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:82"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:99"
+      ]
+    },
+    {
+      "assertion": "expect(first.getByTestId('forecast-wind')).toContainText('Not available')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:83"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:100"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('forecast-note')).toContainText('Some hourly details are unavailable')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:84"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:101"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('forecast-section')).toBeHidden()",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:90",
+        "tests/ui/releaseReadiness.spec.ts:39"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:52",
+        "tests/ui/explorer/forecast-geography.spec.ts:109"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('forecast-hour')).toHaveCount(0)",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:91",
+        "tests/ui/resilience.spec.ts:102"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:110",
+        "tests/ui/explorer/resilience.spec.ts:131"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('geography-details')).toBeHidden()",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:92"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:111"
+      ]
+    },
+    {
+      "assertion": "expect(await list.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true)",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:100"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:121"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('forecast-hour').last()).toBeInViewport()",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:102"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:123"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('forecast-hour').first()).toBeInViewport()",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:104"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:125"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('timezone-value')).toHaveText('Asia/Tokyo')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:113"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:136"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('geography-local-time')).toHaveText('26 Oct 2026, 19:00')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:114"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:137"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('geography-local-time')).toHaveText('26 Oct 2026, 19:01')",
+      "before": [
+        "tests/ui/forecastGeography.spec.ts:116"
+      ],
+      "after": [
+        "tests/ui/explorer/forecast-geography.spec.ts:139"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('gg-mode-landmark')).toBeVisible()",
+      "before": [
+        "tests/ui/geoguess.spec.ts:8"
+      ],
+      "after": [
+        "tests/ui/geoguess/gameplay.spec.ts:22"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('gg-points')).toContainText('5000')",
+      "before": [
+        "tests/ui/geoguess.spec.ts:13"
+      ],
+      "after": [
+        "tests/ui/geoguess/gameplay.spec.ts:27"
+      ]
+    },
+    {
+      "assertion": "expect(await page.getByTestId('gg-feedback').evaluate(n => getComputedStyle(n).backgroundColor)).not.toBe('rgb(255, 255, 255)')",
+      "before": [
+        "tests/ui/geoguess.spec.ts:14"
+      ],
+      "after": [
+        "tests/ui/geoguess/gameplay.spec.ts:28"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('gg-points')).toContainText('1600')",
+      "before": [
+        "tests/ui/geoguess.spec.ts:24"
+      ],
+      "after": [
+        "tests/ui/geoguess/gameplay.spec.ts:43"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('gg-results')).toBeVisible()",
+      "before": [
+        "tests/ui/geoguess.spec.ts:27"
+      ],
+      "after": [
+        "tests/ui/geoguess/gameplay.spec.ts:46"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('gg-total')).toContainText('8000')",
+      "before": [
+        "tests/ui/geoguess.spec.ts:28"
+      ],
+      "after": [
+        "tests/ui/geoguess/gameplay.spec.ts:47"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('gg-name-error')).toHaveText('Name must be 2-20 characters')",
+      "before": [
+        "tests/ui/geoguess.spec.ts:29"
+      ],
+      "after": [
+        "tests/ui/geoguess/gameplay.spec.ts:50"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('gg-leaderboard')).toContainText('Rupesh')",
+      "before": [
+        "tests/ui/geoguess.spec.ts:30",
+        "tests/ui/geoguess.spec.ts:78",
+        "tests/ui/geoguess.spec.ts:79"
+      ],
+      "after": [
+        "tests/ui/geoguess/gameplay.spec.ts:51",
+        "tests/ui/geoguess/leaderboard.spec.ts:33",
+        "tests/ui/geoguess/leaderboard.spec.ts:34"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('gg-name-error')).toHaveText('Score already saved')",
+      "before": [
+        "tests/ui/geoguess.spec.ts:31"
+      ],
+      "after": [
+        "tests/ui/geoguess/gameplay.spec.ts:52"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('gg-question')).toHaveText(first!)",
+      "before": [
+        "tests/ui/geoguess.spec.ts:32"
+      ],
+      "after": [
+        "tests/ui/geoguess/gameplay.spec.ts:55"
+      ]
+    },
+    {
+      "assertion": "expect(a).toHaveLength(5)",
+      "before": [
+        "tests/ui/geoguess.spec.ts:38"
+      ],
+      "after": [
+        "tests/ui/geoguess/gameplay.spec.ts:66"
+      ]
+    },
+    {
+      "assertion": "expect(new Set(a.map((r: any) => r.id)).size).toBe(5)",
+      "before": [
+        "tests/ui/geoguess.spec.ts:38"
+      ],
+      "after": [
+        "tests/ui/geoguess/gameplay.spec.ts:66"
+      ]
+    },
+    {
+      "assertion": "expect(await page.evaluate(() => (window as any).__geoguess.getRounds())).toEqual(a)",
+      "before": [
+        "tests/ui/geoguess.spec.ts:39"
+      ],
+      "after": [
+        "tests/ui/geoguess/gameplay.spec.ts:67"
+      ]
+    },
+    {
+      "assertion": "expect(await page.evaluate(() => (window as any).__geoguess.getRounds())).not.toEqual(a)",
+      "before": [
+        "tests/ui/geoguess.spec.ts:41"
+      ],
+      "after": [
+        "tests/ui/geoguess/gameplay.spec.ts:69"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('gg-feedback')).toContainText(\"Time's up!\")",
+      "before": [
+        "tests/ui/geoguess.spec.ts:48"
+      ],
+      "after": [
+        "tests/ui/geoguess/gameplay.spec.ts:80"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('gg-points')).toHaveText('0 points')",
+      "before": [
+        "tests/ui/geoguess.spec.ts:48"
+      ],
+      "after": [
+        "tests/ui/geoguess/gameplay.spec.ts:80"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('gg-pin')).toHaveAttribute('visibility', 'visible')",
+      "before": [
+        "tests/ui/geoguess.spec.ts:55"
+      ],
+      "after": [
+        "tests/ui/geoguess/gameplay.spec.ts:91"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('gg-distance')).toContainText('miles')",
+      "before": [
+        "tests/ui/geoguess.spec.ts:56"
+      ],
+      "after": [
+        "tests/ui/geoguess/gameplay.spec.ts:92"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('gg-breakdown').locator('tbody tr')).toHaveCount(5)",
+      "before": [
+        "tests/ui/geoguess.spec.ts:58"
+      ],
+      "after": [
+        "tests/ui/geoguess/gameplay.spec.ts:94"
+      ]
+    },
+    {
+      "assertion": "expect(new URL(page.url()).searchParams.get('seed')).not.toBe(old)",
+      "before": [
+        "tests/ui/geoguess.spec.ts:59"
+      ],
+      "after": [
+        "tests/ui/geoguess/gameplay.spec.ts:95"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('#gg-share-status')).toContainText(/Link copied|Copy this link:/)",
+      "before": [
+        "tests/ui/geoguess.spec.ts:69"
+      ],
+      "after": [
+        "tests/ui/geoguess/leaderboard.spec.ts:24"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('#gg-share-status')).toContainText('AtlasSphere GeoGuess')",
+      "before": [
+        "tests/ui/geoguess.spec.ts:70"
+      ],
+      "after": [
+        "tests/ui/geoguess/leaderboard.spec.ts:25"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('#gg-share-status')).toContainText('Copy this link:')",
+      "before": [
+        "tests/ui/geoguess.spec.ts:72"
+      ],
+      "after": [
+        "tests/ui/geoguess/leaderboard.spec.ts:27"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('#gg-share-status input[aria-label=\"Share link\"]')).toHaveValue(/seed=143/)",
+      "before": [
+        "tests/ui/geoguess.spec.ts:73"
+      ],
+      "after": [
+        "tests/ui/geoguess/leaderboard.spec.ts:28"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('#gg-share-status')).toContainText('Link copied')",
+      "before": [
+        "tests/ui/geoguess.spec.ts:75"
+      ],
+      "after": [
+        "tests/ui/geoguess/leaderboard.spec.ts:30"
+      ]
+    },
+    {
+      "assertion": "expect(await page.evaluate(() => navigator.clipboard.readText())).toContain('seed=143')",
+      "before": [
+        "tests/ui/geoguess.spec.ts:76"
+      ],
+      "after": [
+        "tests/ui/geoguess/leaderboard.spec.ts:31"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('gg-leaderboard')).toContainText('No saved scores yet')",
+      "before": [
+        "tests/ui/geoguess.spec.ts:80"
+      ],
+      "after": [
+        "tests/ui/geoguess/leaderboard.spec.ts:35"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('gg-start')).toBeEnabled()",
+      "before": [
+        "tests/ui/geoguess.spec.ts:85"
+      ],
+      "after": [
+        "tests/ui/geoguess/gameplay.spec.ts:104"
+      ]
+    },
+    {
+      "assertion": "expect(two!.y).toBeGreaterThan(one!.y)",
+      "before": [
+        "tests/ui/geoguess.spec.ts:88"
+      ],
+      "after": [
+        "tests/ui/geoguess/gameplay.spec.ts:107"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('time-result')).toHaveText('Historical weather is unavailable.')",
+      "before": [
+        "tests/ui/journeys.spec.ts:10"
+      ],
+      "after": [
+        "tests/ui/journeys/time-machine.spec.ts:21"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('#time-value')).toHaveText(String(new Date().getUTCFullYear() + 1))",
+      "before": [
+        "tests/ui/journeys.spec.ts:24"
+      ],
+      "after": [
+        "tests/ui/journeys/time-machine.spec.ts:39"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('time-result')).toContainText('Scientific estimate')",
+      "before": [
+        "tests/ui/journeys.spec.ts:26"
+      ],
+      "after": [
+        "tests/ui/journeys/time-machine.spec.ts:41"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('time-result')).toContainText('not a forecast')",
+      "before": [
+        "tests/ui/journeys.spec.ts:27"
+      ],
+      "after": [
+        "tests/ui/journeys/time-machine.spec.ts:42"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('time-result')).toContainText('Not a forecast')",
+      "before": [
+        "tests/ui/journeys.spec.ts:31"
+      ],
+      "after": [
+        "tests/ui/journeys/time-machine.spec.ts:46"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('time-result')).toContainText('Modelled historical weather')",
+      "before": [
+        "tests/ui/journeys.spec.ts:34"
+      ],
+      "after": [
+        "tests/ui/journeys/time-machine.spec.ts:49"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('journey-account')).toContainText('Signed in as journeys@example.test')",
+      "before": [
+        "tests/ui/journeys.spec.ts:81"
+      ],
+      "after": [
+        "tests/ui/journeys/trips-alerts-reviews.spec.ts:59"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('trip-list')).toContainText('Japan weekend: Tokyo')",
+      "before": [
+        "tests/ui/journeys.spec.ts:94"
+      ],
+      "after": [
+        "tests/ui/journeys/trips-alerts-reviews.spec.ts:73"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('#trip-status')).toContainText(`${dates.start}: 23°C high, 15°C low`)",
+      "before": [
+        "tests/ui/journeys.spec.ts:96"
+      ],
+      "after": [
+        "tests/ui/journeys/trips-alerts-reviews.spec.ts:75"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('trip-list')).toContainText('Tokyo visit: Tokyo')",
+      "before": [
+        "tests/ui/journeys.spec.ts:100"
+      ],
+      "after": [
+        "tests/ui/journeys/trips-alerts-reviews.spec.ts:79"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('trip-list').locator('li')).toHaveCount(0)",
+      "before": [
+        "tests/ui/journeys.spec.ts:102"
+      ],
+      "after": [
+        "tests/ui/journeys/trips-alerts-reviews.spec.ts:81"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('alert-list')).toContainText('Tokyo: temperature-above 30')",
+      "before": [
+        "tests/ui/journeys.spec.ts:107"
+      ],
+      "after": [
+        "tests/ui/journeys/trips-alerts-reviews.spec.ts:88"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('notification-list')).toContainText('Tokyo: temperature-above 30')",
+      "before": [
+        "tests/ui/journeys.spec.ts:108"
+      ],
+      "after": [
+        "tests/ui/journeys/trips-alerts-reviews.spec.ts:89"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('alert-list')).toContainText('Tokyo: temperature-above 32')",
+      "before": [
+        "tests/ui/journeys.spec.ts:112"
+      ],
+      "after": [
+        "tests/ui/journeys/trips-alerts-reviews.spec.ts:93"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('alert-list').locator('li')).toHaveCount(0)",
+      "before": [
+        "tests/ui/journeys.spec.ts:114"
+      ],
+      "after": [
+        "tests/ui/journeys/trips-alerts-reviews.spec.ts:95"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('#review-status')).toHaveText('Review saved.')",
+      "before": [
+        "tests/ui/journeys.spec.ts:119"
+      ],
+      "after": [
+        "tests/ui/journeys/trips-alerts-reviews.spec.ts:102"
+      ]
+    },
+    {
+      "assertion": "expect(reviews[0].image).toMatch(/^data:image\\/jpeg;base64,/)",
+      "before": [
+        "tests/ui/journeys.spec.ts:120"
+      ],
+      "after": [
+        "tests/ui/journeys/trips-alerts-reviews.spec.ts:103"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('review-list')).toContainText('5/5 — AtlasSphere explorer: A wonderful place in the Andes.')",
+      "before": [
+        "tests/ui/journeys.spec.ts:121"
+      ],
+      "after": [
+        "tests/ui/journeys/trips-alerts-reviews.spec.ts:104"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('review-list').locator('li')).toHaveCount(0)",
+      "before": [
+        "tests/ui/journeys.spec.ts:123"
+      ],
+      "after": [
+        "tests/ui/journeys/trips-alerts-reviews.spec.ts:106"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('#dialog-result')).toHaveText('Confirmed')",
+      "before": [
+        "tests/ui/lab.spec.ts:7"
+      ],
+      "after": [
+        "tests/ui/pages/test-lab.spec.ts:19"
+      ]
+    },
+    {
+      "assertion": "expect(page.frameLocator('iframe[title=\"Practice iframe\"]').locator('#inside-frame')).toBeVisible()",
+      "before": [
+        "tests/ui/lab.spec.ts:8"
+      ],
+      "after": [
+        "tests/ui/pages/test-lab.spec.ts:20"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('#shadow-result')).toHaveText('Open shadow clicked')",
+      "before": [
+        "tests/ui/lab.spec.ts:10"
+      ],
+      "after": [
+        "tests/ui/pages/test-lab.spec.ts:22"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('#shadow-result')).toHaveText('Closed shadow clicked')",
+      "before": [
+        "tests/ui/lab.spec.ts:12"
+      ],
+      "after": [
+        "tests/ui/pages/test-lab.spec.ts:24"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('#upload-result')).toContainText('sample.txt')",
+      "before": [
+        "tests/ui/lab.spec.ts:14"
+      ],
+      "after": [
+        "tests/ui/pages/test-lab.spec.ts:26"
+      ]
+    },
+    {
+      "assertion": "expect((await download).suggestedFilename()).toBe('skyatlas-lab.txt')",
+      "before": [
+        "tests/ui/lab.spec.ts:17"
+      ],
+      "after": [
+        "tests/ui/pages/test-lab.spec.ts:29"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('#drop-zone')).toHaveText('Card dropped')",
+      "before": [
+        "tests/ui/lab.spec.ts:19"
+      ],
+      "after": [
+        "tests/ui/pages/test-lab.spec.ts:31"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('#dynamic-rows tr')).toHaveCount(1)",
+      "before": [
+        "tests/ui/lab.spec.ts:21"
+      ],
+      "after": [
+        "tests/ui/pages/test-lab.spec.ts:33"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('account-section')).toBeVisible()",
+      "before": [
+        "tests/ui/phases.spec.ts:8"
+      ],
+      "after": [
+        "tests/ui/pages/development-routes.spec.ts:30"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('nav-journeys')).toBeVisible()",
+      "before": [
+        "tests/ui/phases.spec.ts:9"
+      ],
+      "after": [
+        "tests/ui/pages/development-routes.spec.ts:31"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByRole('heading', { name: 'AtlasSphere Test deployment' })).toBeVisible()",
+      "before": [
+        "tests/ui/phases.spec.ts:18"
+      ],
+      "after": [
+        "tests/ui/pages/development-routes.spec.ts:43"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('lab-result')).toContainText('fahrenheit')",
+      "before": [
+        "tests/ui/phases.spec.ts:21"
+      ],
+      "after": [
+        "tests/ui/pages/development-routes.spec.ts:46"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('lab-result')).toContainText('celsius')",
+      "before": [
+        "tests/ui/phases.spec.ts:24"
+      ],
+      "after": [
+        "tests/ui/pages/development-routes.spec.ts:49"
+      ]
+    },
+    {
+      "assertion": "expect(results.violations.filter(v => ['critical','serious'].includes(v.impact || '')), `${path}: ${results.violations.map(v => `${v.id}: ${v.nodes.length}`).join(', ')}`).toEqual([])",
+      "before": [
+        "tests/ui/phases.spec.ts:30"
+      ],
+      "after": [
+        "tests/ui/pages/development-routes.spec.ts:58"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('feels-like-temperature')).toHaveText('79°F')",
+      "before": [
+        "tests/ui/preferences.spec.ts:30"
+      ],
+      "after": [
+        "tests/ui/explorer/units-and-preferences.spec.ts:37"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('forecast-temperature').first()).toHaveText('68°F')",
+      "before": [
+        "tests/ui/preferences.spec.ts:31",
+        "tests/ui/preferences.spec.ts:58"
+      ],
+      "after": [
+        "tests/ui/explorer/units-and-preferences.spec.ts:38",
+        "tests/ui/explorer/units-and-preferences.spec.ts:69"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('forecast-temperature')).toHaveCount(24)",
+      "before": [
+        "tests/ui/preferences.spec.ts:32"
+      ],
+      "after": [
+        "tests/ui/explorer/units-and-preferences.spec.ts:39"
+      ]
+    },
+    {
+      "assertion": "expect(temperature).toMatch(/°F$/)",
+      "before": [
+        "tests/ui/preferences.spec.ts:33"
+      ],
+      "after": [
+        "tests/ui/explorer/units-and-preferences.spec.ts:40"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('temperature-caption')).toContainText('Fahrenheit')",
+      "before": [
+        "tests/ui/preferences.spec.ts:34"
+      ],
+      "after": [
+        "tests/ui/explorer/units-and-preferences.spec.ts:41"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('forecast-temperature').first()).toHaveText('20°C')",
+      "before": [
+        "tests/ui/preferences.spec.ts:38"
+      ],
+      "after": [
+        "tests/ui/explorer/units-and-preferences.spec.ts:45"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('weather-loading')).toBeVisible()",
+      "before": [
+        "tests/ui/preferences.spec.ts:55",
+        "tests/ui/weather.spec.ts:98",
+        "tests/ui/weather.spec.ts:122"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:117",
+        "tests/ui/explorer/current-weather.spec.ts:145",
+        "tests/ui/explorer/units-and-preferences.spec.ts:66"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('feels-like-temperature')).toHaveText('Not available')",
+      "before": [
+        "tests/ui/preferences.spec.ts:67",
+        "tests/ui/weather.spec.ts:59"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:70",
+        "tests/ui/explorer/units-and-preferences.spec.ts:80"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('forecast-temperature').first()).toHaveText('Not available')",
+      "before": [
+        "tests/ui/preferences.spec.ts:68"
+      ],
+      "after": [
+        "tests/ui/explorer/units-and-preferences.spec.ts:81"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorite-item')).toHaveCount(1)",
+      "before": [
+        "tests/ui/preferences.spec.ts:73",
+        "tests/ui/preferences.spec.ts:76",
+        "tests/ui/preferences.spec.ts:116",
+        "tests/ui/preferences.spec.ts:125",
+        "tests/ui/preferences.spec.ts:138",
+        "tests/ui/releaseReadiness.spec.ts:40",
+        "tests/ui/releaseReadiness.spec.ts:81",
+        "tests/ui/releaseReadiness.spec.ts:113",
+        "tests/ui/releaseReadiness.spec.ts:115",
+        "tests/ui/resilience.spec.ts:123"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:53",
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:106",
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:144",
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:146",
+        "tests/ui/explorer/resilience.spec.ts:158",
+        "tests/ui/explorer/units-and-preferences.spec.ts:88",
+        "tests/ui/explorer/units-and-preferences.spec.ts:91",
+        "tests/ui/explorer/units-and-preferences.spec.ts:137",
+        "tests/ui/explorer/units-and-preferences.spec.ts:148",
+        "tests/ui/explorer/units-and-preferences.spec.ts:163"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorite-toggle')).toHaveAttribute('aria-pressed', 'true')",
+      "before": [
+        "tests/ui/preferences.spec.ts:74"
+      ],
+      "after": [
+        "tests/ui/explorer/units-and-preferences.spec.ts:89"
+      ]
+    },
+    {
+      "assertion": "expect(lookups).toBe(0)",
+      "before": [
+        "tests/ui/preferences.spec.ts:82",
+        "tests/ui/releaseReadiness.spec.ts:51"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:67",
+        "tests/ui/explorer/units-and-preferences.spec.ts:97"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorite-toggle')).toHaveText('Remove favorite')",
+      "before": [
+        "tests/ui/preferences.spec.ts:90"
+      ],
+      "after": [
+        "tests/ui/explorer/units-and-preferences.spec.ts:107"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorite-item').first()).toHaveAttribute('data-location-id', 'geonames:2')",
+      "before": [
+        "tests/ui/preferences.spec.ts:92"
+      ],
+      "after": [
+        "tests/ui/explorer/units-and-preferences.spec.ts:109"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorites-empty')).toBeVisible()",
+      "before": [
+        "tests/ui/preferences.spec.ts:99"
+      ],
+      "after": [
+        "tests/ui/explorer/units-and-preferences.spec.ts:118"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorite-toggle')).toHaveText('Save favorite')",
+      "before": [
+        "tests/ui/preferences.spec.ts:100",
+        "tests/ui/releaseReadiness.spec.ts:126"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:160",
+        "tests/ui/explorer/units-and-preferences.spec.ts:119"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('unit-status')).toContainText('invalid')",
+      "before": [
+        "tests/ui/preferences.spec.ts:112",
+        "tests/ui/resilience.spec.ts:143"
+      ],
+      "after": [
+        "tests/ui/explorer/resilience.spec.ts:184",
+        "tests/ui/explorer/units-and-preferences.spec.ts:133"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorites-status')).toContainText('could not be read')",
+      "before": [
+        "tests/ui/preferences.spec.ts:113",
+        "tests/ui/preferences.spec.ts:126"
+      ],
+      "after": [
+        "tests/ui/explorer/units-and-preferences.spec.ts:134",
+        "tests/ui/explorer/units-and-preferences.spec.ts:149"
+      ]
+    },
+    {
+      "assertion": "expect(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEYS.favorites)).toBe('{broken')",
+      "before": [
+        "tests/ui/preferences.spec.ts:114"
+      ],
+      "after": [
+        "tests/ui/explorer/units-and-preferences.spec.ts:135"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('unit-status')).toContainText('could not save')",
+      "before": [
+        "tests/ui/preferences.spec.ts:136"
+      ],
+      "after": [
+        "tests/ui/explorer/units-and-preferences.spec.ts:161"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorites-status')).toContainText('could not save')",
+      "before": [
+        "tests/ui/preferences.spec.ts:139",
+        "tests/ui/resilience.spec.ts:124"
+      ],
+      "after": [
+        "tests/ui/explorer/resilience.spec.ts:159",
+        "tests/ui/explorer/units-and-preferences.spec.ts:164"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('city-search-loading')).toBeVisible()",
+      "before": [
+        "tests/ui/preferences.spec.ts:148",
+        "tests/ui/resilience.spec.ts:71",
+        "tests/ui/search.spec.ts:93"
+      ],
+      "after": [
+        "tests/ui/explorer/resilience.spec.ts:91",
+        "tests/ui/explorer/search.spec.ts:122",
+        "tests/ui/explorer/units-and-preferences.spec.ts:175"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('city-name')).toHaveText('Nashik')",
+      "before": [
+        "tests/ui/preferences.spec.ts:150"
+      ],
+      "after": [
+        "tests/ui/explorer/units-and-preferences.spec.ts:177"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('city-suggestions')).toBeHidden()",
+      "before": [
+        "tests/ui/preferences.spec.ts:151",
+        "tests/ui/resilience.spec.ts:85",
+        "tests/ui/search.spec.ts:39",
+        "tests/ui/search.spec.ts:57",
+        "tests/ui/search.spec.ts:74",
+        "tests/ui/search.spec.ts:97"
+      ],
+      "after": [
+        "tests/ui/explorer/resilience.spec.ts:108",
+        "tests/ui/explorer/search.spec.ts:50",
+        "tests/ui/explorer/search.spec.ts:74",
+        "tests/ui/explorer/search.spec.ts:97",
+        "tests/ui/explorer/search.spec.ts:126",
+        "tests/ui/explorer/units-and-preferences.spec.ts:178"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorite-item')).toBeVisible()",
+      "before": [
+        "tests/ui/preferences.spec.ts:158"
+      ],
+      "after": [
+        "tests/ui/explorer/units-and-preferences.spec.ts:187"
+      ]
+    },
+    {
+      "assertion": "expect(new URL(route.request().url()).searchParams.get('name')).toBe('Nashik')",
+      "before": [
+        "tests/ui/providerFallback.spec.ts:16"
+      ],
+      "after": [
+        "tests/ui/explorer/provider-fallback.spec.ts:28"
+      ]
+    },
+    {
+      "assertion": "expect(geoCalls).toBe(1)",
+      "before": [
+        "tests/ui/providerFallback.spec.ts:24"
+      ],
+      "after": [
+        "tests/ui/explorer/provider-fallback.spec.ts:36"
+      ]
+    },
+    {
+      "assertion": "expect(weatherCalls).toBe(1)",
+      "before": [
+        "tests/ui/providerFallback.spec.ts:24"
+      ],
+      "after": [
+        "tests/ui/explorer/provider-fallback.spec.ts:36"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId(stage === 'search' ? 'search-error' : 'weather-error')).toContainText('Too many')",
+      "before": [
+        "tests/ui/providerFallback.spec.ts:37",
+        "tests/ui/resilience.spec.ts:61"
+      ],
+      "after": [
+        "tests/ui/explorer/provider-fallback.spec.ts:52",
+        "tests/ui/explorer/resilience.spec.ts:78"
+      ]
+    },
+    {
+      "assertion": "expect(fallbackCalls).toBe(0)",
+      "before": [
+        "tests/ui/providerFallback.spec.ts:38"
+      ],
+      "after": [
+        "tests/ui/explorer/provider-fallback.spec.ts:53"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('search-error')).toContainText('Location service unavailable (502)')",
+      "before": [
+        "tests/ui/providerFallback.spec.ts:47"
+      ],
+      "after": [
+        "tests/ui/explorer/provider-fallback.spec.ts:65"
+      ]
+    },
+    {
+      "assertion": "expect(new URL(route.request().url()).searchParams.get('countryCode')).toBe('IN')",
+      "before": [
+        "tests/ui/providerFallback.spec.ts:54"
+      ],
+      "after": [
+        "tests/ui/explorer/provider-fallback.spec.ts:75"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('city-name')).toHaveText('New Delhi')",
+      "before": [
+        "tests/ui/providerFallback.spec.ts:62",
+        "tests/v2/exploration.spec.ts:49"
+      ],
+      "after": [
+        "tests/ui/explorer/provider-fallback.spec.ts:83",
+        "tests/ui/pages/atlas-features.spec.ts:76"
+      ]
+    },
+    {
+      "assertion": "expect(new URL(route.request().url()).searchParams.get('forecast_days')).toBe('7')",
+      "before": [
+        "tests/ui/providerFallback.spec.ts:71"
+      ],
+      "after": [
+        "tests/ui/explorer/provider-fallback.spec.ts:95"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('daily-row')).toHaveCount(7)",
+      "before": [
+        "tests/ui/providerFallback.spec.ts:77",
+        "tests/v2/exploration.spec.ts:58",
+        "tests/v2/exploration.spec.ts:65",
+        "tests/v2/exploration.spec.ts:72",
+        "tests/v2/exploration.spec.ts:79",
+        "tests/v2/exploration.spec.ts:102",
+        "tests/v2/exploration.spec.ts:109"
+      ],
+      "after": [
+        "tests/ui/explorer/provider-fallback.spec.ts:101",
+        "tests/ui/pages/atlas-features.spec.ts:91",
+        "tests/ui/pages/atlas-features.spec.ts:101",
+        "tests/ui/pages/atlas-features.spec.ts:111",
+        "tests/ui/pages/atlas-features.spec.ts:121",
+        "tests/ui/pages/atlas-features.spec.ts:156",
+        "tests/ui/pages/atlas-features.spec.ts:166"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('skip-to-search')).toBeFocused()",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:27"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:37"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('city-search-input')).toBeFocused()",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:29",
+        "tests/ui/releaseReadiness.spec.ts:37",
+        "tests/ui/search.spec.ts:58"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:39",
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:50",
+        "tests/ui/explorer/search.spec.ts:75"
+      ]
+    },
+    {
+      "assertion": "expect(control).toHaveAccessibleName(/\\S/)",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:30",
+        "tests/v2/exploration.spec.ts:110"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:40",
+        "tests/ui/pages/atlas-features.spec.ts:167"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('city-search-input')).toHaveValue('')",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:36"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:49"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('selected-location')).toBeHidden()",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:38",
+        "tests/ui/releaseReadiness.spec.ts:62",
+        "tests/ui/resilience.spec.ts:39",
+        "tests/ui/weather.spec.ts:101",
+        "tests/v2/roadmapPhase1.spec.ts:61"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:51",
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:81",
+        "tests/ui/explorer/current-weather.spec.ts:120",
+        "tests/ui/explorer/resilience.spec.ts:47",
+        "tests/ui/pages/explorer-layout.spec.ts:100"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('current-temperature')).toHaveText('9°C')",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:50"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:66"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('weather-refresh')).toBeDisabled()",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:60"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:79"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('weather-error')).toBeEmpty()",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:63",
+        "tests/ui/weather.spec.ts:73",
+        "tests/ui/weather.spec.ts:102"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:82",
+        "tests/ui/explorer/current-weather.spec.ts:86",
+        "tests/ui/explorer/current-weather.spec.ts:121"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('connection-status')).toContainText('offline')",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:71"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:93"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('connection-status')).toContainText('Connection restored')",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:74"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:96"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorite-item')).toContainText('Zürich')",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:82"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:107"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorite-item')).toContainText('Tokyo')",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:84"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:109"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorites-no-matches')).toBeVisible()",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:86"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:111"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorites-count')).toHaveText('Showing 0 of 2 favorites')",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:87"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:112"
+      ]
+    },
+    {
+      "assertion": "expect(saved).toHaveLength(2)",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:89"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:114"
+      ]
+    },
+    {
+      "assertion": "expect(names).toHaveText(['Nashik, India', 'Tokyo, Japan', 'Zürich, Switzerland'])",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:96"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:124"
+      ]
+    },
+    {
+      "assertion": "expect(names).toHaveText(['Zürich, Switzerland', 'Tokyo, Japan', 'Nashik, India'])",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:98"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:126"
+      ]
+    },
+    {
+      "assertion": "expect(names).toHaveText(['Tokyo, Japan', 'Nashik, India', 'Zürich, Switzerland'])",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:100"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:128"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorites-cancel-clear')).toBeFocused()",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:107"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:138"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorites-confirm-clear')).toBeFocused()",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:109"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:140"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorites-clear-dialog')).not.toBeVisible()",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:111"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:142"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorites-clear')).toBeFocused()",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:112"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:143"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorites-clear')).toBeDisabled()",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:124"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:158"
+      ]
+    },
+    {
+      "assertion": "expect(box!.height).toBeGreaterThanOrEqual(44)",
+      "before": [
+        "tests/ui/releaseReadiness.spec.ts:137"
+      ],
+      "after": [
+        "tests/ui/explorer/accessibility-and-favorites.spec.ts:174"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('search-error')).toContainText('at least 2')",
+      "before": [
+        "tests/ui/resilience.spec.ts:25"
+      ],
+      "after": [
+        "tests/ui/explorer/resilience.spec.ts:30"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('city-search-input')).toHaveAttribute('aria-invalid', 'true')",
+      "before": [
+        "tests/ui/resilience.spec.ts:26"
+      ],
+      "after": [
+        "tests/ui/explorer/resilience.spec.ts:31"
+      ]
+    },
+    {
+      "assertion": "expect(calls).toBe(0)",
+      "before": [
+        "tests/ui/resilience.spec.ts:27",
+        "tests/ui/satellite.spec.ts:27",
+        "tests/ui/satellite.spec.ts:56",
+        "tests/ui/satellite.spec.ts:64",
+        "tests/ui/search.spec.ts:29",
+        "tests/ui/search.spec.ts:66"
+      ],
+      "after": [
+        "tests/ui/explorer/resilience.spec.ts:32",
+        "tests/ui/explorer/search.spec.ts:37",
+        "tests/ui/explorer/search.spec.ts:86",
+        "tests/ui/journeys/satellite.spec.ts:39",
+        "tests/ui/journeys/satellite.spec.ts:74",
+        "tests/ui/journeys/satellite.spec.ts:85"
+      ]
+    },
+    {
+      "assertion": "expect(new URL(route.request().url()).searchParams.get('q')).toBe('東京')",
+      "before": [
+        "tests/ui/resilience.spec.ts:33"
+      ],
+      "after": [
+        "tests/ui/explorer/resilience.spec.ts:41"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('city-suggestion')).toHaveCount(1)",
+      "before": [
+        "tests/ui/resilience.spec.ts:38",
+        "tests/ui/resilience.spec.ts:77",
+        "tests/ui/resilience.spec.ts:81"
+      ],
+      "after": [
+        "tests/ui/explorer/resilience.spec.ts:46",
+        "tests/ui/explorer/resilience.spec.ts:97",
+        "tests/ui/explorer/resilience.spec.ts:104"
+      ]
+    },
+    {
+      "assertion": "expect(weatherCalls).toBe(0)",
+      "before": [
+        "tests/ui/resilience.spec.ts:40"
+      ],
+      "after": [
+        "tests/ui/explorer/resilience.spec.ts:48"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('city-name')).toHaveText('東京')",
+      "before": [
+        "tests/ui/resilience.spec.ts:42"
+      ],
+      "after": [
+        "tests/ui/explorer/resilience.spec.ts:50"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId(stage === 'search' ? 'search-error' : 'weather-error')).toContainText('unreadable data')",
+      "before": [
+        "tests/ui/resilience.spec.ts:50"
+      ],
+      "after": [
+        "tests/ui/explorer/resilience.spec.ts:61"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId(stage === 'search' ? 'search-error' : 'weather-error')).toContainText('Check your internet connection')",
+      "before": [
+        "tests/ui/resilience.spec.ts:55"
+      ],
+      "after": [
+        "tests/ui/explorer/resilience.spec.ts:69"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('search-error')).toContainText('Search timed out')",
+      "before": [
+        "tests/ui/resilience.spec.ts:73"
+      ],
+      "after": [
+        "tests/ui/explorer/resilience.spec.ts:93"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('search-error')).toContainText('Location data is incomplete')",
+      "before": [
+        "tests/ui/resilience.spec.ts:84"
+      ],
+      "after": [
+        "tests/ui/explorer/resilience.spec.ts:107"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('weather-error')).toContainText('incomplete or invalid')",
+      "before": [
+        "tests/ui/resilience.spec.ts:92",
+        "tests/ui/weather.spec.ts:81"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:96",
+        "tests/ui/explorer/resilience.spec.ts:118"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('weather-values')).toBeHidden()",
+      "before": [
+        "tests/ui/resilience.spec.ts:93",
+        "tests/ui/weather.spec.ts:69",
+        "tests/ui/weather.spec.ts:82"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:82",
+        "tests/ui/explorer/current-weather.spec.ts:97",
+        "tests/ui/explorer/resilience.spec.ts:119"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('forecast-note')).toContainText('unavailable')",
+      "before": [
+        "tests/ui/resilience.spec.ts:101"
+      ],
+      "after": [
+        "tests/ui/explorer/resilience.spec.ts:130"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('forecast-time').nth(1)).toHaveText('01 Nov, 01:00 GMT-4')",
+      "before": [
+        "tests/ui/resilience.spec.ts:112"
+      ],
+      "after": [
+        "tests/ui/explorer/resilience.spec.ts:144"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('forecast-time').nth(2)).toHaveText('01 Nov, 01:00 GMT-5')",
+      "before": [
+        "tests/ui/resilience.spec.ts:113"
+      ],
+      "after": [
+        "tests/ui/explorer/resilience.spec.ts:145"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorite-item')).toContainText(name)",
+      "before": [
+        "tests/ui/resilience.spec.ts:134"
+      ],
+      "after": [
+        "tests/ui/explorer/resilience.spec.ts:172"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorites-list').locator('img')).toHaveCount(0)",
+      "before": [
+        "tests/ui/resilience.spec.ts:135"
+      ],
+      "after": [
+        "tests/ui/explorer/resilience.spec.ts:173"
+      ]
+    },
+    {
+      "assertion": "expect(await page.evaluate(() => (window as any).injected)).toBeUndefined()",
+      "before": [
+        "tests/ui/resilience.spec.ts:136"
+      ],
+      "after": [
+        "tests/ui/explorer/resilience.spec.ts:174"
+      ]
+    },
+    {
+      "assertion": "expect(url.searchParams.get('LAYERS')).toBe('MODIS_Terra_CorrectedReflectance_TrueColor')",
+      "before": [
+        "tests/ui/satellite.spec.ts:19"
+      ],
+      "after": [
+        "tests/ui/journeys/satellite.spec.ts:31"
+      ]
+    },
+    {
+      "assertion": "expect(url.searchParams.get('TIME')).toBe('2026-10-20')",
+      "before": [
+        "tests/ui/satellite.spec.ts:20"
+      ],
+      "after": [
+        "tests/ui/journeys/satellite.spec.ts:32"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('sat-date')).toHaveValue('2026-10-20')",
+      "before": [
+        "tests/ui/satellite.spec.ts:24"
+      ],
+      "after": [
+        "tests/ui/journeys/satellite.spec.ts:36"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('sat-date')).toHaveAttribute('min', '2000-02-24')",
+      "before": [
+        "tests/ui/satellite.spec.ts:25"
+      ],
+      "after": [
+        "tests/ui/journeys/satellite.spec.ts:37"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('sat-date')).toHaveAttribute('max', '2026-10-27')",
+      "before": [
+        "tests/ui/satellite.spec.ts:26"
+      ],
+      "after": [
+        "tests/ui/journeys/satellite.spec.ts:38"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('sat-status')).toHaveText('Loading satellite image…')",
+      "before": [
+        "tests/ui/satellite.spec.ts:29"
+      ],
+      "after": [
+        "tests/ui/journeys/satellite.spec.ts:41"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('sat-image')).toBeVisible()",
+      "before": [
+        "tests/ui/satellite.spec.ts:31"
+      ],
+      "after": [
+        "tests/ui/journeys/satellite.spec.ts:43"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('sat-image')).toHaveAttribute('alt', /27\\.175.*78\\.042.*2026-10-20/)",
+      "before": [
+        "tests/ui/satellite.spec.ts:32"
+      ],
+      "after": [
+        "tests/ui/journeys/satellite.spec.ts:44"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('sat-caption')).toHaveText('2026-10-20 — MODIS Terra true colour')",
+      "before": [
+        "tests/ui/satellite.spec.ts:33"
+      ],
+      "after": [
+        "tests/ui/journeys/satellite.spec.ts:45"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('sat-attribution')).toHaveText('Imagery: NASA GIBS / EOSDIS')",
+      "before": [
+        "tests/ui/satellite.spec.ts:34"
+      ],
+      "after": [
+        "tests/ui/journeys/satellite.spec.ts:46"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('sat-limitations')).toContainText('Not street-level imagery.')",
+      "before": [
+        "tests/ui/satellite.spec.ts:35"
+      ],
+      "after": [
+        "tests/ui/journeys/satellite.spec.ts:47"
+      ]
+    },
+    {
+      "assertion": "expect(await page.getByTestId('sat-image').evaluate((image: HTMLImageElement) => image.naturalWidth)).toBe(8)",
+      "before": [
+        "tests/ui/satellite.spec.ts:36"
+      ],
+      "after": [
+        "tests/ui/journeys/satellite.spec.ts:48"
+      ]
+    },
+    {
+      "assertion": "expect(result.violations.filter(item => ['serious', 'critical'].includes(item.impact || ''))).toEqual([])",
+      "before": [
+        "tests/ui/satellite.spec.ts:39"
+      ],
+      "after": [
+        "tests/ui/journeys/satellite.spec.ts:51"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('sat-status')).toHaveText('Satellite image unavailable for this date or place. Try another date.')",
+      "before": [
+        "tests/ui/satellite.spec.ts:45"
+      ],
+      "after": [
+        "tests/ui/journeys/satellite.spec.ts:60"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('sat-image')).toBeHidden()",
+      "before": [
+        "tests/ui/satellite.spec.ts:46"
+      ],
+      "after": [
+        "tests/ui/journeys/satellite.spec.ts:61"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('sat-load')).toBeEnabled()",
+      "before": [
+        "tests/ui/satellite.spec.ts:47"
+      ],
+      "after": [
+        "tests/ui/journeys/satellite.spec.ts:62"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('sat-status')).toHaveText('Satellite imagery for this layer starts on 2000-02-24.')",
+      "before": [
+        "tests/ui/satellite.spec.ts:54"
+      ],
+      "after": [
+        "tests/ui/journeys/satellite.spec.ts:72"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('sat-date')).toHaveAttribute('aria-invalid', 'true')",
+      "before": [
+        "tests/ui/satellite.spec.ts:55"
+      ],
+      "after": [
+        "tests/ui/journeys/satellite.spec.ts:73"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('sat-status')).toContainText('Enter valid latitude and longitude above')",
+      "before": [
+        "tests/ui/satellite.spec.ts:63"
+      ],
+      "after": [
+        "tests/ui/journeys/satellite.spec.ts:84"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByRole('heading', { level: 1 })).toBeVisible()",
+      "before": [
+        "tests/ui/search.spec.ts:27"
+      ],
+      "after": [
+        "tests/ui/explorer/search.spec.ts:35"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('city-search-input')).toBeVisible()",
+      "before": [
+        "tests/ui/search.spec.ts:28",
+        "tests/v2/design.spec.ts:25",
+        "tests/v2/roadmapPhase1.spec.ts:55",
+        "tests/v2/roadmapPhase1.spec.ts:66",
+        "tests/v2/skyAtlasHome.spec.ts:9"
+      ],
+      "after": [
+        "tests/ui/explorer/search.spec.ts:36",
+        "tests/ui/pages/design-system.spec.ts:49",
+        "tests/ui/pages/explorer-home.spec.ts:21",
+        "tests/ui/pages/explorer-layout.spec.ts:91",
+        "tests/ui/pages/explorer-layout.spec.ts:108"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('city-suggestions').getByRole('button')).toHaveCount(2)",
+      "before": [
+        "tests/ui/search.spec.ts:35"
+      ],
+      "after": [
+        "tests/ui/explorer/search.spec.ts:46"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('city-name')).toHaveText('Zürich')",
+      "before": [
+        "tests/ui/search.spec.ts:37"
+      ],
+      "after": [
+        "tests/ui/explorer/search.spec.ts:48"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('country-name')).toHaveText('Switzerland')",
+      "before": [
+        "tests/ui/search.spec.ts:38"
+      ],
+      "after": [
+        "tests/ui/explorer/search.spec.ts:49"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('city-suggestion')).toHaveCount(2)",
+      "before": [
+        "tests/ui/search.spec.ts:45",
+        "tests/ui/search.spec.ts:54",
+        "tests/ui/search.spec.ts:70",
+        "tests/ui/search.spec.ts:85",
+        "tests/ui/search.spec.ts:104"
+      ],
+      "after": [
+        "tests/ui/explorer/search.spec.ts:59",
+        "tests/ui/explorer/search.spec.ts:71",
+        "tests/ui/explorer/search.spec.ts:93",
+        "tests/ui/explorer/search.spec.ts:111",
+        "tests/ui/explorer/search.spec.ts:136"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('city-suggestion').first()).toBeFocused()",
+      "before": [
+        "tests/ui/search.spec.ts:47"
+      ],
+      "after": [
+        "tests/ui/explorer/search.spec.ts:61"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('country-name')).toHaveText('United States')",
+      "before": [
+        "tests/ui/search.spec.ts:49"
+      ],
+      "after": [
+        "tests/ui/explorer/search.spec.ts:63"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('search-error')).toContainText('No cities found')",
+      "before": [
+        "tests/ui/search.spec.ts:73"
+      ],
+      "after": [
+        "tests/ui/explorer/search.spec.ts:96"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('search-error')).toContainText('503')",
+      "before": [
+        "tests/ui/search.spec.ts:81"
+      ],
+      "after": [
+        "tests/ui/explorer/search.spec.ts:107"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('city-search-loading')).toBeHidden()",
+      "before": [
+        "tests/ui/search.spec.ts:82",
+        "tests/ui/search.spec.ts:96"
+      ],
+      "after": [
+        "tests/ui/explorer/search.spec.ts:108",
+        "tests/ui/explorer/search.spec.ts:125"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('search-error')).toBeEmpty()",
+      "before": [
+        "tests/ui/search.spec.ts:98"
+      ],
+      "after": [
+        "tests/ui/explorer/search.spec.ts:127"
+      ]
+    },
+    {
+      "assertion": "expect(params.get('lat')).toBe('19.99')",
+      "before": [
+        "tests/ui/weather.spec.ts:25"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:32"
+      ]
+    },
+    {
+      "assertion": "expect(params.get('units')).toBe('celsius')",
+      "before": [
+        "tests/ui/weather.spec.ts:26"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:33"
+      ]
+    },
+    {
+      "assertion": "expect(params.get('lon')).toBe('73.78')",
+      "before": [
+        "tests/ui/weather.spec.ts:27"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:34"
+      ]
+    },
+    {
+      "assertion": "expect(params.get('view')).toBeNull()",
+      "before": [
+        "tests/ui/weather.spec.ts:28"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:35"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('feels-like-temperature')).toHaveText('26°C')",
+      "before": [
+        "tests/ui/weather.spec.ts:33"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:40"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('wind-speed')).toHaveText('8.5 km/h')",
+      "before": [
+        "tests/ui/weather.spec.ts:35"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:42"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('precipitation-value')).toHaveText('0 mm')",
+      "before": [
+        "tests/ui/weather.spec.ts:36"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:43"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('precipitation-period')).toContainText('15 minutes')",
+      "before": [
+        "tests/ui/weather.spec.ts:37"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:44"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('weather-description')).toHaveText('Partly cloudy')",
+      "before": [
+        "tests/ui/weather.spec.ts:38"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:45"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('weather-icon')).toHaveAccessibleName('Partly cloudy')",
+      "before": [
+        "tests/ui/weather.spec.ts:39"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:46"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('weather-as-of')).toContainText('Asia/Kolkata')",
+      "before": [
+        "tests/ui/weather.spec.ts:40"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:47"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('weather-loading')).toBeHidden()",
+      "before": [
+        "tests/ui/weather.spec.ts:41"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:48"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('local-time')).toHaveText('26 Oct 2026, 15:30 (Asia/Kolkata)')",
+      "before": [
+        "tests/ui/weather.spec.ts:48"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:57"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('local-time')).toHaveText('26 Oct 2026, 15:31 (Asia/Kolkata)')",
+      "before": [
+        "tests/ui/weather.spec.ts:50"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:59"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('weather-note')).toContainText('Some weather details are unavailable')",
+      "before": [
+        "tests/ui/weather.spec.ts:61"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:72"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('weather-error')).toContainText('Weather service unavailable (503)')",
+      "before": [
+        "tests/ui/weather.spec.ts:68"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:81"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('weather-description')).toHaveText('Weather conditions unavailable')",
+      "before": [
+        "tests/ui/weather.spec.ts:89"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:106"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('weather-icon')).toHaveText('?')",
+      "before": [
+        "tests/ui/weather.spec.ts:90"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:107"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('city-name')).toHaveText('Tokyo')",
+      "before": [
+        "tests/ui/weather.spec.ts:111"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:132"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('current-temperature')).toHaveText('12°C')",
+      "before": [
+        "tests/ui/weather.spec.ts:112"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:133"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('local-time')).toContainText('Asia/Tokyo')",
+      "before": [
+        "tests/ui/weather.spec.ts:113"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:134"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('weather-error')).toContainText('Weather request timed out')",
+      "before": [
+        "tests/ui/weather.spec.ts:124"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:147"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('weather-retry')).toBeVisible()",
+      "before": [
+        "tests/ui/weather.spec.ts:125"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:148"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('current-temperature')).toBeVisible()",
+      "before": [
+        "tests/ui/weather.spec.ts:132",
+        "tests/v2/exploration.spec.ts:78",
+        "tests/v2/roadmapPhase1.spec.ts:47"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:157",
+        "tests/ui/pages/atlas-features.spec.ts:120",
+        "tests/ui/pages/explorer-layout.spec.ts:80"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('humidity-value')).toBeVisible()",
+      "before": [
+        "tests/ui/weather.spec.ts:133"
+      ],
+      "after": [
+        "tests/ui/explorer/current-weather.spec.ts:158"
+      ]
+    },
+    {
+      "assertion": "expect(root).toHaveAttribute('data-theme', next)",
+      "before": [
+        "tests/v2/design.spec.ts:7",
+        "tests/v2/design.spec.ts:7"
+      ],
+      "after": [
+        "tests/ui/pages/design-system.spec.ts:19",
+        "tests/ui/pages/design-system.spec.ts:19"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('appearance-status')).toContainText('session')",
+      "before": [
+        "tests/v2/design.spec.ts:11"
+      ],
+      "after": [
+        "tests/ui/pages/design-system.spec.ts:26"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('main-navigation')).toBeHidden()",
+      "before": [
+        "tests/v2/design.spec.ts:15",
+        "tests/v2/design.spec.ts:16",
+        "tests/v2/design.spec.ts:17"
+      ],
+      "after": [
+        "tests/ui/pages/design-system.spec.ts:33",
+        "tests/ui/pages/design-system.spec.ts:34",
+        "tests/ui/pages/design-system.spec.ts:35"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('main-navigation')).toBeVisible()",
+      "before": [
+        "tests/v2/design.spec.ts:15"
+      ],
+      "after": [
+        "tests/ui/pages/design-system.spec.ts:33"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('menu-toggle')).toBeFocused()",
+      "before": [
+        "tests/v2/design.spec.ts:16"
+      ],
+      "after": [
+        "tests/ui/pages/design-system.spec.ts:34"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('hero-photo')).toBeVisible()",
+      "before": [
+        "tests/v2/design.spec.ts:20",
+        "tests/v2/skyAtlasHome.spec.ts:36"
+      ],
+      "after": [
+        "tests/ui/pages/design-system.spec.ts:41",
+        "tests/ui/pages/explorer-home.spec.ts:54"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByRole('link', { name: 'Bri Schneiter / Pexels' })).toBeVisible()",
+      "before": [
+        "tests/v2/design.spec.ts:21"
+      ],
+      "after": [
+        "tests/ui/pages/design-system.spec.ts:42"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('.hero-photo')).toHaveClass(/photo-unavailable/)",
+      "before": [
+        "tests/v2/design.spec.ts:25"
+      ],
+      "after": [
+        "tests/ui/pages/design-system.spec.ts:49"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('landmark-card').first().getByRole('link', { name: 'License', exact: true })).toBeVisible()",
+      "before": [
+        "tests/v2/design.spec.ts:30"
+      ],
+      "after": [
+        "tests/ui/pages/design-system.spec.ts:57"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('body')).toHaveAttribute('data-condition', 'rain')",
+      "before": [
+        "tests/v2/design.spec.ts:36"
+      ],
+      "after": [
+        "tests/ui/pages/design-system.spec.ts:66"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('body')).toHaveAttribute('data-daylight', 'night')",
+      "before": [
+        "tests/v2/design.spec.ts:36"
+      ],
+      "after": [
+        "tests/ui/pages/design-system.spec.ts:66"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('weather-story')).toContainText('current weather report')",
+      "before": [
+        "tests/v2/design.spec.ts:36"
+      ],
+      "after": [
+        "tests/ui/pages/design-system.spec.ts:66"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('body')).not.toHaveAttribute('data-condition')",
+      "before": [
+        "tests/v2/design.spec.ts:37"
+      ],
+      "after": [
+        "tests/ui/pages/design-system.spec.ts:67"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('world-map')).toBeVisible()",
+      "before": [
+        "tests/v2/exploration.spec.ts:14",
+        "tests/v2/exploration.spec.ts:55",
+        "tests/v2/exploration.spec.ts:89"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:23",
+        "tests/ui/pages/atlas-features.spec.ts:85",
+        "tests/ui/pages/atlas-features.spec.ts:137"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('world-map')).toBeHidden()",
+      "before": [
+        "tests/v2/exploration.spec.ts:18"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:30"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('map-country')).toHaveCount(177)",
+      "before": [
+        "tests/v2/exploration.spec.ts:19"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:31"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('country-count')).toContainText('250 of 250')",
+      "before": [
+        "tests/v2/exploration.spec.ts:20"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:32"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('country-title')).toHaveText('India')",
+      "before": [
+        "tests/v2/exploration.spec.ts:24"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:39"
+      ]
+    },
+    {
+      "assertion": "expect(india).toHaveAttribute('aria-pressed', 'true')",
+      "before": [
+        "tests/v2/exploration.spec.ts:25"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:40"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('map-zoom-level')).toHaveText('135%')",
+      "before": [
+        "tests/v2/exploration.spec.ts:26"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:41"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('map-zoom-level')).toHaveText('100%')",
+      "before": [
+        "tests/v2/exploration.spec.ts:27"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:42"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('country-option')).toHaveText(['India'])",
+      "before": [
+        "tests/v2/exploration.spec.ts:30"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:48"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('country-count')).toContainText('0 of')",
+      "before": [
+        "tests/v2/exploration.spec.ts:31"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:49"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('country-option').first()).toBeVisible()",
+      "before": [
+        "tests/v2/exploration.spec.ts:32"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:50"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('country-facts')).toContainText('New Delhi')",
+      "before": [
+        "tests/v2/exploration.spec.ts:36"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:57"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('landmark-card')).toHaveCount(2)",
+      "before": [
+        "tests/v2/exploration.spec.ts:36"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:57"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('landmark-card').first().getByRole('link', { name: 'UNESCO site record', exact: true })).toHaveAttribute('href', 'https://whc.unesco.org/en/list/252/')",
+      "before": [
+        "tests/v2/exploration.spec.ts:37"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:58"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('landmark-card')).toHaveCount(16)",
+      "before": [
+        "tests/v2/exploration.spec.ts:38"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:59"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('city-name')).toHaveText('Taj Mahal')",
+      "before": [
+        "tests/v2/exploration.spec.ts:42"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:66"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('latitude-value')).toContainText('27.175')",
+      "before": [
+        "tests/v2/exploration.spec.ts:42"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:66"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('favorites-list')).toContainText('Taj Mahal')",
+      "before": [
+        "tests/v2/exploration.spec.ts:43"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:67"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('map-location')).toContainText('Taj Mahal')",
+      "before": [
+        "tests/v2/exploration.spec.ts:44"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:68"
+      ]
+    },
+    {
+      "assertion": "expect(url.searchParams.get('countryCode')).toBe('IN')",
+      "before": [
+        "tests/v2/exploration.spec.ts:47"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:74"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('country-status')).toContainText('503')",
+      "before": [
+        "tests/v2/exploration.spec.ts:55"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:85"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('country-weather')).toBeEnabled()",
+      "before": [
+        "tests/v2/exploration.spec.ts:55"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:85"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('chart-caption')).toContainText('Asia/Kolkata')",
+      "before": [
+        "tests/v2/exploration.spec.ts:59"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:92"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('daily-row').first()).toContainText('25°C')",
+      "before": [
+        "tests/v2/exploration.spec.ts:59"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:92"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('daily-row').first()).toContainText('06:00')",
+      "before": [
+        "tests/v2/exploration.spec.ts:60"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:93"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('weather-chart').locator('circle')).toHaveCount(7)",
+      "before": [
+        "tests/v2/exploration.spec.ts:61"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:94"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('daily-row').first()).toContainText('77°F')",
+      "before": [
+        "tests/v2/exploration.spec.ts:66"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:102"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('chart-caption')).toContainText('°F')",
+      "before": [
+        "tests/v2/exploration.spec.ts:66"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:102"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('dashboard-high')).toHaveText('77°F')",
+      "before": [
+        "tests/v2/exploration.spec.ts:66"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:102"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('dashboard-low')).toHaveText('59°F')",
+      "before": [
+        "tests/v2/exploration.spec.ts:66"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:102"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('chart-caption')).toContainText('(%)')",
+      "before": [
+        "tests/v2/exploration.spec.ts:67"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:103"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('chart-caption')).toContainText('km/h')",
+      "before": [
+        "tests/v2/exploration.spec.ts:68"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:104"
+      ]
+    },
+    {
+      "assertion": "expect(requests).toBe(2)",
+      "before": [
+        "tests/v2/exploration.spec.ts:68"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:104"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('weather-chart').locator('circle')).toHaveCount(6)",
+      "before": [
+        "tests/v2/exploration.spec.ts:72"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:111"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('daily-row').nth(2)).toContainText('Not available')",
+      "before": [
+        "tests/v2/exploration.spec.ts:73"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:112"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('advanced-status')).toContainText('503')",
+      "before": [
+        "tests/v2/exploration.spec.ts:78"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:120"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('advanced-status')).toContainText('Loading')",
+      "before": [
+        "tests/v2/exploration.spec.ts:84"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:129"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('advanced-section')).toBeHidden()",
+      "before": [
+        "tests/v2/exploration.spec.ts:85"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:130"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('daily-row')).toHaveCount(0)",
+      "before": [
+        "tests/v2/exploration.spec.ts:85"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:130"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('globe-status')).toContainText('3D is unavailable')",
+      "before": [
+        "tests/v2/exploration.spec.ts:89"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:137"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('globe-status')).toContainText('Globe ready')",
+      "before": [
+        "tests/v2/exploration.spec.ts:95"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:146"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('globe-renderer')).toBeVisible()",
+      "before": [
+        "tests/v2/exploration.spec.ts:95"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:146"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('globe-weather')).toContainText('Rain visualization')",
+      "before": [
+        "tests/v2/exploration.spec.ts:96"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:147"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('globe-rotate')).toHaveAttribute('aria-pressed', 'true')",
+      "before": [
+        "tests/v2/exploration.spec.ts:98"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:149"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('globe-rotate')).toHaveAttribute('aria-pressed', 'false')",
+      "before": [
+        "tests/v2/exploration.spec.ts:98"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:149"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('country-filter')).toBeVisible()",
+      "before": [
+        "tests/v2/exploration.spec.ts:104"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:158"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('map-location')).toContainText('Nashik')",
+      "before": [
+        "tests/v2/exploration.spec.ts:114"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:174"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('map-location')).toHaveText('Select a city or landmark to place a marker.')",
+      "before": [
+        "tests/v2/exploration.spec.ts:115"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:175"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('world-map').locator('.map-pin')).toBeHidden()",
+      "before": [
+        "tests/v2/exploration.spec.ts:116"
+      ],
+      "after": [
+        "tests/ui/pages/atlas-features.spec.ts:176"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:7"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:19"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('.hero-section').getByTestId('city-search-input')).toBeVisible()",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:10"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:25"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('header').getByTestId('unit-celsius')).toBeVisible()",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:11"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:26"
+      ]
+    },
+    {
+      "assertion": "expect(await page.locator('header').evaluate(el => el.getBoundingClientRect().top)).toBeGreaterThanOrEqual(0)",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:13"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:28"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('city-search-button')).toBeFocused()",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:14"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:29"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('news-fixture-label')).toContainText('not live news')",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:18"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:36"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('news-headline').first()).toHaveAttribute('target', '_blank')",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:19"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:37"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('news-headline').first()).toHaveAttribute('rel', 'noopener noreferrer')",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:20"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:38"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('news-source').first()).toHaveText('India Meteorological Department')",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:21"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:39"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('news-status')).toContainText('No sample news items')",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:25"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:46"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('news-status')).toContainText('more than 12 hours old')",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:25"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:46"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('news-status')).toContainText('unavailable')",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:29"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:53"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('news-status')).toContainText('No sample news')",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:30"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:54"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('news-status')).toContainText('invalid link')",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:32"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:56"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('news-item')).toHaveCount(0)",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:32"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:56"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('news-skeleton')).toBeVisible()",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:37"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:64"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('news-section')).toHaveAttribute('aria-busy', 'true')",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:37"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:64"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('news-skeleton')).toBeHidden()",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:38"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:65"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('location-status')).toContainText('permission denied')",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:42"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:72"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('city-search-input')).toBeEnabled()",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:42"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:72"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('city-name')).toHaveText('Your location')",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:47"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:80"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('country-name')).toHaveText('Country unavailable')",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:47"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:80"
+      ]
+    },
+    {
+      "assertion": "expect(page).toHaveTitle('About AtlasSphere')",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:50"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:86"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('about-title')).toBeVisible()",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:50"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:86"
+      ]
+    },
+    {
+      "assertion": "expect(response?.status()).toBe(404)",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:51"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:87"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('not-found-title')).toBeVisible()",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:51"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:87"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByRole('heading', { name: 'Explore Earth and Beyond.', exact: true })).toBeVisible()",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:53"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:89"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('use-location')).toBeEnabled()",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:61"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:100"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('unit-fahrenheit')).toBeVisible()",
+      "before": [
+        "tests/v2/roadmapPhase1.spec.ts:66"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-layout.spec.ts:108"
+      ]
+    },
+    {
+      "assertion": "expect(page).toHaveTitle(/AtlasSphere/)",
+      "before": [
+        "tests/v2/skyAtlasHome.spec.ts:7"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-home.spec.ts:19"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByRole('heading', { name: /Weather and wonders/ })).toBeVisible()",
+      "before": [
+        "tests/v2/skyAtlasHome.spec.ts:8"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-home.spec.ts:20"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('home-geoguess-play')).toHaveAttribute('href', '/geoguess')",
+      "before": [
+        "tests/v2/skyAtlasHome.spec.ts:10"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-home.spec.ts:22"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('.sky-discovery-card')).toHaveCount(3)",
+      "before": [
+        "tests/v2/skyAtlasHome.spec.ts:11"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-home.spec.ts:23"
+      ]
+    },
+    {
+      "assertion": "expect(await card.getAttribute('href')).toMatch(/^#/)",
+      "before": [
+        "tests/v2/skyAtlasHome.spec.ts:12"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-home.spec.ts:24"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('a[href^=\"/lab\"]')).toHaveCount(0)",
+      "before": [
+        "tests/v2/skyAtlasHome.spec.ts:13"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-home.spec.ts:25"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('featured-photo')).toHaveCount(3)",
+      "before": [
+        "tests/v2/skyAtlasHome.spec.ts:14"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-home.spec.ts:26"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('#atlas-content')).toBeVisible()",
+      "before": [
+        "tests/v2/skyAtlasHome.spec.ts:16"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-home.spec.ts:28"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('#directory-heading')).toBeVisible()",
+      "before": [
+        "tests/v2/skyAtlasHome.spec.ts:17"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-home.spec.ts:29"
+      ]
+    },
+    {
+      "assertion": "expect(page).toHaveURL(/#directory-heading$/)",
+      "before": [
+        "tests/v2/skyAtlasHome.spec.ts:18"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-home.spec.ts:30"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('#home-weather-empty')).toBeVisible()",
+      "before": [
+        "tests/v2/skyAtlasHome.spec.ts:24",
+        "tests/v2/skyAtlasHome.spec.ts:29"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-home.spec.ts:39",
+        "tests/ui/pages/explorer-home.spec.ts:44"
+      ]
+    },
+    {
+      "assertion": "expect(page.locator('#home-weather-empty')).toBeHidden()",
+      "before": [
+        "tests/v2/skyAtlasHome.spec.ts:26"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-home.spec.ts:41"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('current-weather')).toBeVisible()",
+      "before": [
+        "tests/v2/skyAtlasHome.spec.ts:27"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-home.spec.ts:42"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('menu-toggle')).toBeVisible()",
+      "before": [
+        "tests/v2/skyAtlasHome.spec.ts:35"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-home.spec.ts:53"
+      ]
+    },
+    {
+      "assertion": "expect(page.getByTestId('nav-geoguess')).toBeVisible()",
+      "before": [
+        "tests/v2/skyAtlasHome.spec.ts:38"
+      ],
+      "after": [
+        "tests/ui/pages/explorer-home.spec.ts:56"
+      ]
+    }
+  ]
+}

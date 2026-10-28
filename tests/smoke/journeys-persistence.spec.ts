@@ -1,3 +1,12 @@
+/**
+ * Feature: Persisted alerts and reviews
+ * Layer: API integration — Playwright
+ * Real: Express API and configured PostgreSQL persistence
+ * Mocked: None; unique accounts are created and cleaned up
+ * Guards: Regressions in persisted alerts and reviews; negative cases remain explicit below
+ * Run: npm run test:smoke:prod
+ * Needs: SKYATLAS_URL for a deployed target; or the isolated local wrapper with --smoke
+ */
 import { test, expect } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
 
@@ -11,8 +20,8 @@ test.beforeAll(async ({ request }) => {
     try { return (await request.get('/api/v1/health', { timeout: 10000 })).status(); } catch { return 0; }
   }, { timeout: 120000, intervals: [2000, 5000] }).toBe(200);
   for (let i = 0; i < 2; i++) {
-    const email = `smoke-${randomUUID()}@example.test`;
-    const response = await request.post('/api/v1/auth/register', { data: { email, password } });
+    const email = `worker-${test.info().workerIndex}-${randomUUID()}@example.test`;
+    const response = await test.step("Register a temporary account", async () => await request.post('/api/v1/auth/register', { data: { email, password } }));
     expect(response.status()).toBe(201);
     users.push({ token: (await response.json()).accessToken, email });
   }
@@ -21,18 +30,21 @@ test.afterAll(async ({ request }) => {
   const failures: number[] = [];
   for (const user of users) {
     try {
-      const response = await request.delete('/api/v1/account', { headers: { authorization: `Bearer ${user.token}` }, data: { password } });
+      const response = await test.step("Delete temporary account data", async () => await request.delete('/api/v1/account', { headers: { authorization: `Bearer ${user.token}` }, data: { password } }));
       if (response.status() !== 204) failures.push(response.status());
     } catch { failures.push(0); }
   }
   expect(failures, 'Smoke account cleanup').toEqual([]);
 });
 
-test('alert persistence, validation and ownership', async ({ request }) => {
+
+// Risk: Persisted rules could disappear or be editable by another account.
+// Given two temporary accounts, When alerts are created, read and challenged, Then persistence, validation and ownership hold.
+test('alert persistence, validation and ownership', { tag: ['@prod'] }, async ({ request }) => {
   const endpoint = '/api/v1/journeys/alerts';
   expect((await request.get(endpoint)).status()).toBe(401);
   expect((await request.post(endpoint, { headers: headers(0), data: { city: '', condition: 'bad', threshold: 5 } })).status()).toBe(400);
-  const created = await request.post(endpoint, { headers: headers(0), data: { city: 'Delhi', condition: 'temperature-above', threshold: 30 } });
+  const created = await test.step("Save account-owned data", async () => await request.post(endpoint, { headers: headers(0), data: { city: 'Delhi', condition: 'temperature-above', threshold: 30 } }));
   expect(created.status()).toBe(201);
   const id = (await created.json()).alert.id;
   try {
@@ -43,7 +55,10 @@ test('alert persistence, validation and ownership', async ({ request }) => {
   } finally { expect((await request.delete(`${endpoint}/${id}`, { headers: headers(0) })).status()).toBe(204); }
 });
 
-test('review persistence, image, validation and deletion', async ({ request }) => {
+
+// Risk: Reviews or images could survive deletion or accept another user’s writes.
+// Given temporary review records, When persistence and deletion are exercised, Then image, validation and cleanup contracts hold.
+test('review persistence, image, validation and deletion', { tag: ['@prod'] }, async ({ request }) => {
   const endpoint = '/api/v1/journeys/reviews/taj-mahal';
   expect((await request.put(endpoint, { data: { rating: 5, body: 'Smoke' } })).status()).toBe(401);
   expect((await request.put(endpoint, { headers: headers(0), data: { rating: 6, body: 'Smoke' } })).status()).toBe(400);
@@ -52,9 +67,9 @@ test('review persistence, image, validation and deletion', async ({ request }) =
   try {
     expect((await (await request.get(endpoint)).json()).reviews.some((review: any) => review.body === unique)).toBe(true);
     expect((await request.put(endpoint, { headers: headers(0), data: { rating: 5, body: unique, image: png } })).status()).toBe(200);
-    const review = (await (await request.get(endpoint)).json()).reviews.find((item: any) => item.body === unique);
+    const review = (await (await test.step("Read saved state", async () => await request.get(endpoint))).json()).reviews.find((item: any) => item.body === unique);
     expect(review.imageUrl).toBeTruthy();
-    const image = await request.get(review.imageUrl);
+    const image = await test.step("Read saved state", async () => await request.get(review.imageUrl));
     expect(image.status()).toBe(200); expect(image.headers()['content-type']).toContain('image/png');
     expect((await image.body()).subarray(0, 8)).toEqual(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
     expect((await request.delete(endpoint, { headers: headers(1) })).status()).toBe(404);

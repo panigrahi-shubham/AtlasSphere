@@ -1,4 +1,6 @@
 // Deterministic example response, used only by automated tests.
+// Fault-injection tests deliberately remove or corrupt arbitrary provider fields.
+/** @type {Record<string, any>} */
 export const currentWeatherFixture = {
   timezone: 'Asia/Kolkata',
   current_units: {

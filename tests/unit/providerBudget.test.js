@@ -1,7 +1,18 @@
+/**
+ * Feature: provider Budget
+ * Layer: Unit — node:test
+ * Real: Imported application modules
+ * Mocked: Fixture inputs and test-supplied dependencies
+ * Guards: Regressions in provider budget; negative cases remain explicit below
+ * Run: npm test
+ * Needs: Node.js 24
+ */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { clearOpenMeteoBudgetForTest, reserveOpenMeteoCall } from '../../api/providerBudget.ts';
 
+// Risk: Rapid requests could exceed the conservative per-minute allowance.
+// Given 550 reservations in one minute, When another is requested, Then it is denied until that window expires.
 test('Open-Meteo budget stops at 550 calls per minute and frees the window', () => {
   clearOpenMeteoBudgetForTest();
   for (let i = 0; i < 550; i++) assert.equal(reserveOpenMeteoCall(1_000), true);
@@ -10,6 +21,8 @@ test('Open-Meteo budget stops at 550 calls per minute and frees the window', () 
   clearOpenMeteoBudgetForTest();
 });
 
+// Risk: A long-running process could exceed the free provider daily limit.
+// Given requests spread across minute windows, When the daily allowance is used, Then further calls are denied.
 test('Open-Meteo budget caps each process below 10,000 calls per day', () => {
   clearOpenMeteoBudgetForTest();
   for (const offset of [0, 68 * 60_000]) {

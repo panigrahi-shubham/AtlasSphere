@@ -1,4 +1,4 @@
-# SkyAtlas account security contract (Phase 3)
+# AtlasSphere account security contract
 
 PostgreSQL is the sole account store. `DATABASE_URL` is required for account and saved-journey endpoints; the weather, atlas and anonymous experience remain available without it. Run `npm run prisma:migrate` before production startup; it falls back to `DATABASE_URL` when `DIRECT_DATABASE_URL` is unset. Do not reuse a test database or point tests at production.
 

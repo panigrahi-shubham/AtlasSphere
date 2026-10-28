@@ -1,4 +1,4 @@
-/** Weather news from the SkyAtlas API. */
+/** Weather news from the AtlasSphere API. */
 export function initNews() {
   const status = document.querySelector('#news-status');
   const list = document.querySelector('#news-list');

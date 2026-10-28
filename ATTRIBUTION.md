@@ -194,10 +194,10 @@ The existing local files are unchanged. Display frames may crop the view; the fi
 - Country metadata: https://github.com/mledoze/countries — ODbL, original license preserved in `docs/licenses/countries-LICENSE.txt`.
 - Weather and search: https://open-meteo.com/ — linked “Weather data by Open-Meteo.com” attribution retained; geocoding uses GeoNames. No upstream terms or budgets are expanded by this phase.
 
-Scientific content references are recorded in `docs/PHASE1_SCIENCE_SOURCES.md` and displayed on `/sources`. All new downloaded image files have explicit dimensions and locally encoded WebP renditions.
+Scientific content references are recorded in `docs/archive/PHASE1_SCIENCE_SOURCES.md` and displayed on `/sources`. All new downloaded image files have explicit dimensions and locally encoded WebP renditions.
 
 ## Responsive derivatives
 
-The new `public/images/discovery/*-480.webp` and `*-960.webp` files are proportional WebP encodings of the original 17 photographs. Their authors, source URLs and licenses (including ShareAlike obligations) are inherited unchanged. The exact filename mapping and encoding details are recorded in `docs/PHASE1_SCIENCE_SOURCES.md`; the frontend manifest is `src/home/data/photoRenditions.ts`. Original JPG files remain intact.
+The new `public/images/discovery/*-480.webp` and `*-960.webp` files are proportional WebP encodings of the original 17 photographs. Their authors, source URLs and licenses (including ShareAlike obligations) are inherited unchanged. The exact filename mapping and encoding details are recorded in `docs/archive/PHASE1_SCIENCE_SOURCES.md`; the frontend manifest is `src/home/data/photoRenditions.ts`. Original JPG files remain intact.
 
-`public/images/earth-space/earth-hero-medium.webp` is an 800 × 800 proportional derivative of the credited NASA/NOAA Earth hero, without added or composited features. Its source and credit are the same as the original hero in `docs/PHASE1_EARTH_ASSETS.md`.
+`public/images/earth-space/earth-hero-medium.webp` is an 800 × 800 proportional derivative of the credited NASA/NOAA Earth hero, without added or composited features. Its source and credit are the same as the original hero in `docs/archive/PHASE1_EARTH_ASSETS.md`.

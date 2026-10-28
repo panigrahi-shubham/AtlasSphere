@@ -1,7 +1,18 @@
+/**
+ * Feature: pages Proxy
+ * Layer: Unit — node:test
+ * Real: Imported application modules
+ * Mocked: Fixture inputs and test-supplied dependencies
+ * Guards: Regressions in pages proxy; negative cases remain explicit below
+ * Run: npm test
+ * Needs: Node.js 24
+ */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { proxy } from '../../shared/pagesProxy.ts';
 
+// Risk: Proxying could lose cookies or mutate request content.
+// Given a request and response with cookies, When forwarded, Then body, query and cookie headers are retained.
 test('Pages proxy forwards request cookies, body, query and response cookies', async () => {
   const request = new Request('https://sky.pages.dev/api/v1/auth/refresh?x=1', { method: 'POST', headers: { cookie: 'skyatlas_refresh=abc', 'cf-connecting-ip': '203.0.113.1', 'x-skyatlas-proxy-secret': 'attacker-value' }, body: 'payload' });
   const result = await proxy({ request, env: { API_ORIGIN: 'https://api.example.com', PROXY_SHARED_SECRET: 'proxy-test-secret' } }, async forwarded => {
@@ -23,6 +34,8 @@ test('Pages proxy forwards request cookies, body, query and response cookies', a
   assert.match(result.headers.get('set-cookie'), /skyatlas_refresh=next/);
 });
 
+// Risk: A proxy error could reveal internal service details.
+// Given an upstream failure, When the proxy responds, Then a generic safe error is returned.
 test('Pages proxy reports upstream failure without exposing details', async () => {
   const request = new Request('https://sky.pages.dev/api/v1/health');
   const result = await proxy({ request, env: { API_ORIGIN: 'https://api.example.com' } }, async () => { throw new Error('private error'); });
@@ -32,6 +45,8 @@ test('Pages proxy reports upstream failure without exposing details', async () =
   assert.deepEqual(await result.json(), { error: { message: 'Server is waking up. Try again in a moment.' } });
 });
 
+// Risk: A write could be sent while its database is unavailable.
+// Given failed readiness, When a mutation arrives, Then it is not forwarded and a retry is explicitly safe.
 test('unready database prevents forwarding a mutation and permits a safe retry', async () => {
   const requests = [];
   const result = await proxy({ request: new Request('https://sky.pages.dev/api/v1/journeys/alerts', { method: 'POST', body: '{}' }), env: { API_ORIGIN: 'https://api.example.com' } }, async request => {
@@ -44,6 +59,8 @@ test('unready database prevents forwarding a mutation and permits a safe retry',
   assert.equal(requests[0].method, 'GET');
 });
 
+// Risk: A lost response could cause a duplicate mutation on retry.
+// Given a write already forwarded, When its response is lost, Then replay is never marked safe.
 test('a lost response after forwarding a mutation is never marked safe to replay', async () => {
   let writes = 0;
   const result = await proxy({ request: new Request('https://sky.pages.dev/api/v1/journeys/alerts', { method: 'POST', body: '{}' }), env: { API_ORIGIN: 'https://api.example.com' } }, async request => {
@@ -56,6 +73,8 @@ test('a lost response after forwarding a mutation is never marked safe to replay
   assert.equal(result.headers.get('X-SkyAtlas-Retry-Safe'), '0');
 });
 
+// Risk: Readiness checks could outlive their timeout and later forward a write.
+// Given delayed readiness, When its timeout expires, Then it is aborted before the mutation is forwarded.
 test('proxy aborts a timed-out readiness check before forwarding its mutation', async () => {
   let writes = 0;
   const result = await proxy({ request: new Request('https://sky.pages.dev/api/v1/journeys/alerts', { method: 'POST', body: '{}' }), env: { API_ORIGIN: 'https://api.example.com' } }, request => {
@@ -67,6 +86,8 @@ test('proxy aborts a timed-out readiness check before forwarding its mutation', 
   assert.equal(result.headers.get('X-SkyAtlas-Retry-Safe'), '1');
 });
 
+// Risk: An untrusted origin could reach the account backend.
+// Given an invalid origin, When the proxy checks it, Then no upstream request is made.
 test('Pages proxy rejects an invalid origin without making an upstream request', async () => {
   const request = new Request('https://sky.pages.dev/api/v1/health');
   let called = false;

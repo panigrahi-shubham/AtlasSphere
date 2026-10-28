@@ -1,7 +1,18 @@
+/**
+ * Feature: alert Worker
+ * Layer: Unit — node:test
+ * Real: Imported application modules
+ * Mocked: Fixture inputs and test-supplied dependencies
+ * Guards: Regressions in alert worker; negative cases remain explicit below
+ * Run: npm test
+ * Needs: Node.js 24
+ */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { checkAlerts } from '../../api/alertWorker.ts';
 
+// Risk: Polling could duplicate alerts or exhaust the provider budget.
+// Given matching rules and provider failures, When a pass runs, Then notifications deduplicate, cities cache and the budget is respected.
 test('alert checks deduplicate, cache cities, skip failures, and respect provider budget', async () => {
   const previous = process.env.DATABASE_URL;
   process.env.DATABASE_URL = 'test-only';

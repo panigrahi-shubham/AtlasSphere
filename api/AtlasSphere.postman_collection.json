@@ -1,0 +1,406 @@
+{
+  "info": {
+    "name": "AtlasSphere API",
+    "description": "Local fixture mode: APP_ENV=test FIXTURES=1 PORT=3000 npm start. Run the collection against http://127.0.0.1:3000. Pages checks database readiness before forwarding writes. On a proxy 503, retry a write only when X-SkyAtlas-Retry-Safe is 1; a 0 means the write may already have completed. Browser weather/city fallback is limited to HTTP 502/503/504; Postman requests exercise the server directly.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:3000"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "health"
+          ],
+          "query": []
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('200 health', () => { pm.response.to.have.status(200); pm.expect(pm.response.json().status).to.eql('ok'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Weather current",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/weather?lat=19.99&lon=73.78&units=celsius",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "weather?lat=19.99&lon=73.78&units=celsius"
+          ],
+          "query": []
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('200 and aligned hourly arrays', () => { pm.response.to.have.status(200); const d=pm.response.json(); pm.expect(d.hourly.temperature_2m.length).to.eql(d.hourly.time.length); pm.expect(pm.response.headers.get('X-Cache')).to.be.oneOf(['HIT','MISS']); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Weather daily",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/weather?lat=19.99&lon=73.78&view=daily",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "weather?lat=19.99&lon=73.78&view=daily"
+          ],
+          "query": []
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('seven-day arrays', () => { pm.response.to.have.status(200); const d=pm.response.json(); pm.expect(d.daily.temperature_2m_max.length).to.eql(d.daily.time.length); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Geocode",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/geocode?q=Nashik",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "geocode?q=Nashik"
+          ],
+          "query": []
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('results schema', () => { pm.response.to.have.status(200); pm.expect(pm.response.json().results).to.be.an('array'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "News",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/news",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "news"
+          ],
+          "query": []
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('news file', () => { pm.response.to.have.status(200); pm.expect(pm.response.json().items).to.be.an('array'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Invalid coordinates",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/weather?lat=91&lon=0",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "weather?lat=91&lon=0"
+          ],
+          "query": []
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('400 field error', () => { pm.response.to.have.status(400); pm.expect(pm.response.json().error.field).to.eql('lat'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Unknown route",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/unknown",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "unknown"
+          ],
+          "query": []
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('404 error', () => { pm.response.to.have.status(404); pm.expect(pm.response.json().error.code).to.eql('NOT_FOUND'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Historical Time Machine",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/journeys/time-machine?date=1980-01-01&lat=27.175&lon=78.042",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "journeys",
+            "time-machine"
+          ],
+          "query": [
+            {
+              "key": "date",
+              "value": "1980-01-01"
+            },
+            {
+              "key": "lat",
+              "value": "27.175"
+            },
+            {
+              "key": "lon",
+              "value": "78.042"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Database health",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/health/db",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "health",
+            "db"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Internal alert cron",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-cron-secret",
+            "value": "{{cronSecret}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/internal/cron/alerts",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "internal",
+            "cron",
+            "alerts"
+          ]
+        },
+        "description": "One check per city per pass; failed lookups are skipped."
+      }
+    },
+    {
+      "name": "Update display name",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/account/profile",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "account",
+            "profile"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"displayName\": \"AtlasSphere explorer\"}"
+        }
+      }
+    },
+    {
+      "name": "Export my data",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/account/export",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "account",
+            "export"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Delete account",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/account",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "account"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"password\": \"{{password}}\"}"
+        }
+      }
+    },
+    {
+      "name": "Public landmark reviews",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/journeys/reviews/taj-mahal",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "journeys",
+            "reviews",
+            "taj-mahal"
+          ]
+        }
+      }
+    }
+  ]
+}

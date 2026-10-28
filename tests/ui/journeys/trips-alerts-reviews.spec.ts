@@ -1,0 +1,108 @@
+/**
+ * Feature: Journeys, alerts and review workflows
+ * Layer: UI regression — Playwright
+ * Real: Browser rendering, routing and interaction
+ * Mocked: Provider responses and browser failures where supplied by the scenario
+ * Guards: Regressions in journeys, alerts and review workflows; negative cases remain explicit below
+ * Run: npx playwright test tests/ui/journeys/trips-alerts-reviews.spec.ts --project=ui
+ * Needs: Installed Chromium and the suite’s local server or production build
+ */
+import { test, expect } from '../../support/uiTest';
+
+
+// Risk: Signed-in controls could render without completing their workflows.
+// Given isolated API state, When trips, alerts and reviews are created, edited and deleted, Then each visible workflow completes.
+test('trip, alert, and review controls complete their signed-in UI workflows', async ({ page }) => {
+  const trips: any[] = [];
+  const alerts: any[] = [];
+  const reviews: any[] = [];
+  let nextId = 1;
+  let forecastDate = '';
+  await page.route('**/api/v1/auth/refresh', route => route.fulfill({ json: { accessToken: 'browser-test-token', user: { id: 'browser-test-user', email: 'journeys@example.test', theme: 'dark' } } }));
+  await page.route('**/api/v1/journeys/trips**', async route => {
+    const request = route.request(), method = request.method(), url = new URL(request.url());
+    if (method === 'GET') return route.fulfill({ json: { trips } });
+    if (method === 'POST') {
+      const input = request.postDataJSON(), trip = { id: `trip-${nextId++}`, ...input, startDate: `${input.startDate}T00:00:00.000Z`, endDate: `${input.endDate}T00:00:00.000Z` };
+      trips.push(trip); return route.fulfill({ status: 201, json: { trip } });
+    }
+    const id = url.pathname.split('/').pop(), index = trips.findIndex(trip => trip.id === id);
+    if (method === 'PUT') {
+      const input = request.postDataJSON(); trips[index] = { ...trips[index], ...input, startDate: `${input.startDate}T00:00:00.000Z`, endDate: `${input.endDate}T00:00:00.000Z` };
+      return route.fulfill({ json: { trip: trips[index] } });
+    }
+    trips.splice(index, 1); return route.fulfill({ status: 204, body: '' });
+  });
+  await page.route('**/api/v1/journeys/alerts**', async route => {
+    const request = route.request(), method = request.method(), url = new URL(request.url());
+    if (method === 'GET') return route.fulfill({ json: { alerts, notifications: [{ id: 'notification-1', message: 'Tokyo: temperature-above 30' }] } });
+    if (method === 'POST') {
+      const alert = { id: `alert-${nextId++}`, ...request.postDataJSON() }; alerts.push(alert);
+      return route.fulfill({ status: 201, json: { alert } });
+    }
+    const id = url.pathname.split('/').pop(), index = alerts.findIndex(alert => alert.id === id);
+    if (method === 'PUT') { alerts[index] = { ...alerts[index], ...request.postDataJSON() }; return route.fulfill({ json: { alert: alerts[index] } }); }
+    alerts.splice(index, 1); return route.fulfill({ status: 204, body: '' });
+  });
+  await page.route('**/api/v1/journeys/reviews/**', async route => {
+    const request = route.request(), method = request.method();
+    if (method === 'GET') return route.fulfill({ json: { reviews } });
+    if (method === 'PUT') {
+      const input = request.postDataJSON(); reviews.splice(0, reviews.length, { author: 'AtlasSphere explorer', ...input, createdAt: new Date().toISOString(), imageUrl: null });
+      return route.fulfill({ json: { review: reviews[0] } });
+    }
+    reviews.length = 0; return route.fulfill({ status: 204, body: '' });
+  });
+  await page.route('**/api/v1/geocode?**', route => route.fulfill({ json: { results: [{ name: 'Tokyo', country: 'Japan', latitude: 35.68, longitude: 139.69 }] } }));
+  await page.route('**/api/v1/weather?**', route => route.fulfill({ json: { daily: { time: [forecastDate], temperature_2m_max: [23], temperature_2m_min: [15] } } }));
+  await page.goto('/journeys');
+  await expect(page.getByTestId('journey-account')).toContainText('Signed in as journeys@example.test');
+
+  const dates = await page.evaluate(() => {
+    const start = new Date(); start.setUTCDate(start.getUTCDate() + 2);
+    const end = new Date(start); end.setUTCDate(end.getUTCDate() + 2);
+    return { start: start.toISOString().slice(0, 10), end: end.toISOString().slice(0, 10) };
+  });
+  forecastDate = dates.start;
+  await test.step('Create, forecast, edit and delete a trip', async () => {
+    await page.getByLabel('Trip name').fill('Japan weekend');
+    await page.locator('#trip-city').fill('Tokyo');
+    await page.getByLabel('Start date').fill(dates.start);
+    await page.getByLabel('End date').fill(dates.end);
+    await page.getByTestId('trip-save').click();
+    await expect(page.getByTestId('trip-list')).toContainText('Japan weekend: Tokyo');
+    await page.getByRole('button', { name: 'Available forecasts' }).click();
+    await expect(page.locator('#trip-status')).toContainText(`${dates.start}: 23°C high, 15°C low`);
+    await page.getByRole('button', { name: 'Edit' }).click();
+    await page.getByLabel('Trip name').fill('Tokyo visit');
+    await page.getByTestId('trip-save').click();
+    await expect(page.getByTestId('trip-list')).toContainText('Tokyo visit: Tokyo');
+    await page.getByTestId('trip-list').getByRole('button', { name: 'Delete' }).click();
+    await expect(page.getByTestId('trip-list').locator('li')).toHaveCount(0);
+  });
+
+  await test.step('Create, edit and delete an alert rule', async () => {
+    await page.locator('#alert-city').fill('Tokyo');
+    await page.getByLabel('Threshold').fill('30');
+    await page.getByTestId('alert-save').click();
+    await expect(page.getByTestId('alert-list')).toContainText('Tokyo: temperature-above 30');
+    await expect(page.getByTestId('notification-list')).toContainText('Tokyo: temperature-above 30');
+    await page.getByTestId('alert-list').getByRole('button', { name: 'Edit' }).click();
+    await page.getByLabel('Threshold').fill('32');
+    await page.getByTestId('alert-save').click();
+    await expect(page.getByTestId('alert-list')).toContainText('Tokyo: temperature-above 32');
+    await page.getByTestId('alert-list').getByRole('button', { name: 'Delete' }).click();
+    await expect(page.getByTestId('alert-list').locator('li')).toHaveCount(0);
+  });
+
+  await test.step('Save an image review and delete it', async () => {
+    await page.getByLabel('Your review (up to 500 characters)').fill('A wonderful place in the Andes.');
+    await page.locator('#review-image').setInputFiles({ name: 'photo.png', mimeType: 'image/png', buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/aZkAAAAASUVORK5CYII=', 'base64') });
+    await page.getByTestId('review-save').click();
+    await expect(page.locator('#review-status')).toHaveText('Review saved.');
+    expect(reviews[0].image).toMatch(/^data:image\/jpeg;base64,/);
+    await expect(page.getByTestId('review-list')).toContainText('5/5 — AtlasSphere explorer: A wonderful place in the Andes.');
+    await page.getByRole('button', { name: 'Delete my review' }).click();
+    await expect(page.getByTestId('review-list').locator('li')).toHaveCount(0);
+  });
+});
