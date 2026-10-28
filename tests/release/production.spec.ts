@@ -36,13 +36,15 @@ test('built mobile layout supports favorites confirmation', async ({ page }) => 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 test('GeoGuess production route plays without test hooks or practice defects', async ({ page }) => {
+  // Advance the browser clock explicitly to verify the timer stays stopped.
+  await page.clock.install();
   await page.goto('/geoguess?mode=outline&seed=42&start=1&bugMode=1&bugs=GG-BUG-2');
   await expect(page.getByTestId('gg-round')).toHaveText('Round 1 / 5');
   expect(await page.evaluate(() => (window as any).__geoguess)).toBeUndefined();
   await page.getByTestId('gg-option-1').click();
   await expect(page.getByTestId('gg-feedback')).toBeVisible();
   const stopped = await page.getByTestId('gg-timer').textContent();
-  await page.waitForTimeout(1200);
+  await page.clock.fastForward(1200);
   await expect(page.getByTestId('gg-timer')).toHaveText(stopped!);
 });
 
