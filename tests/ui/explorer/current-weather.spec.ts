@@ -1,5 +1,5 @@
-import { test, expect, mockOpenMeteoDown } from '../support/uiTest';
-import { currentWeatherFixture } from '../fixtures/currentWeather.js';
+import { test, expect, mockOpenMeteoDown } from '../../support/uiTest';
+import { currentWeatherFixture } from '../../fixtures/currentWeather.js';
 
 const endpoint = '**/api/v1/weather?**';
 const cities = [

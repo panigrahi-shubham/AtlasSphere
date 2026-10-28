@@ -1,6 +1,6 @@
-import { test, expect, type Page } from '../support/uiTest';
-import { currentWeatherFixture } from '../fixtures/currentWeather.js';
-import { STORAGE_KEYS } from '../../src/utils/storage.js';
+import { test, expect, type Page } from '../../support/uiTest';
+import { currentWeatherFixture } from '../../fixtures/currentWeather.js';
+import { STORAGE_KEYS } from '../../../src/utils/storage.js';
 const weatherEndpoint = '**/api/v1/weather?**';
 const cities = [
   { id: 1, name: 'Tokyo', country: 'Japan', latitude: 35.6, longitude: 139.6 },

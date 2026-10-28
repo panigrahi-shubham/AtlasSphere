@@ -1,5 +1,5 @@
-import { test, expect, mockOpenMeteoDown } from '../support/uiTest';
-import { currentWeatherFixture } from '../fixtures/currentWeather.js';
+import { test, expect, mockOpenMeteoDown } from '../../support/uiTest';
+import { currentWeatherFixture } from '../../fixtures/currentWeather.js';
 
 const endpoint = '**/api/v1/weather?**';
 const city = { id: 1, name: 'Nashik', admin1: 'Maharashtra', country: 'India', latitude: 19.99, longitude: 73.78, elevation: 565, timezone: 'Asia/Kolkata' };

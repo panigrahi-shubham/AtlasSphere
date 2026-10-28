@@ -1,4 +1,4 @@
-import { test, expect } from '../support/uiTest';
+import { test, expect } from '../../support/uiTest';
 import AxeBuilder from '@axe-core/playwright';
 
 test('account deletion asks for a password and supports keyboard cancellation', async ({ page }) => {

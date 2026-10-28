@@ -1,6 +1,6 @@
-import { test, expect, type Page } from '../support/uiTest';
-import { currentWeatherFixture } from '../fixtures/currentWeather.js';
-import { STORAGE_KEYS } from '../../src/utils/storage.js';
+import { test, expect, type Page } from '../../support/uiTest';
+import { currentWeatherFixture } from '../../fixtures/currentWeather.js';
+import { STORAGE_KEYS } from '../../../src/utils/storage.js';
 
 const geo = '**/api/v1/geocode?**';
 const weather = '**/api/v1/weather?**';

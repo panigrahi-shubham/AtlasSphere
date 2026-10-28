@@ -131,7 +131,7 @@ The HTML report links the failure details and trace. Open a trace directly with
 Run one scenario or file:
 
 ```powershell
-npm run test:ui -- tests/ui/preferences.spec.ts
+npm run test:ui -- tests/ui/explorer/units-and-preferences.spec.ts
 npm run test:ui:memory -- --grep "rate limiting"
 ```
 

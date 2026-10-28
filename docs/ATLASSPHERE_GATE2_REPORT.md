@@ -28,28 +28,28 @@ The live NASA capabilities were checked before coding: exact layer `MODIS_Terra_
 
 ## Tests: new and changed
 
-New: four URL/date/coordinate unit checks in `tests/unit/satelliteImagery.test.js`; four mocked browser checks in `tests/ui/satellite.spec.ts`; a tiny generated JPEG fixture; one separate `@live` real-image check in `tests/api/satellite.spec.ts`. The loaded browser test also checks serious/critical accessibility violations in the panel.
+New: four URL/date/coordinate unit checks in `tests/unit/satelliteImagery.test.js`; four mocked browser checks in `tests/ui/journeys/satellite.spec.ts`; a tiny generated JPEG fixture; one separate `@live` real-image check in `tests/api/satellite.spec.ts`. The loaded browser test also checks serious/critical accessibility violations in the panel.
 
 Existing expectations changed only to match visible branding:
 
 - `tests/ui/pages/explorer-home.spec.ts`: homepage title and two product-facing test names now say AtlasSphere; filename remains compatible.
 - `tests/ui/pages/explorer-layout.spec.ts`: About page title is now `About AtlasSphere`.
-- `tests/ui/phases.spec.ts`: practice heading is `AtlasSphere Test deployment`.
-- `tests/ui/accountPrivacy.spec.ts`: wake-up status names AtlasSphere.
-- `tests/ui/geoguess.spec.ts`: additionally asserts AtlasSphere in the share status; the shared URL remains unchanged.
-- `tests/ui/journeys.spec.ts`: review fixture and rendered fallback-author expectation use `AtlasSphere explorer`.
-- `tests/api-local/phase2.spec.ts`: production HTML assertion expects AtlasSphere.
+- `tests/ui/pages/development-routes.spec.ts`: practice heading is `AtlasSphere Test deployment`.
+- `tests/ui/journeys/account-privacy.spec.ts`: wake-up status names AtlasSphere.
+- `tests/ui/geoguess/gameplay.spec.ts`: additionally asserts AtlasSphere in the share status; the shared URL remains unchanged.
+- `tests/ui/journeys/trips-alerts-reviews.spec.ts`: review fixture and rendered fallback-author expectation use `AtlasSphere explorer`.
+- `tests/api-local/api-contracts.spec.ts`: production HTML assertion expects AtlasSphere.
 - `tests/README.md`: guide title updated.
 
 ### Commands actually run in Part 2
 
 | Exact command | Result |
 | --- | --- |
-| `npx playwright test --project=ui tests/ui/geoguess.spec.ts tests/ui/journeys.spec.ts tests/ui/accountPrivacy.spec.ts tests/ui/phases.spec.ts` | 19 passed, 1 existing production-only check skipped. |
+| `npx playwright test --project=ui tests/ui/geoguess/gameplay.spec.ts tests/ui/journeys/trips-alerts-reviews.spec.ts tests/ui/journeys/account-privacy.spec.ts tests/ui/pages/development-routes.spec.ts` | 19 passed, 1 existing production-only check skipped. |
 | `npm run test:v2 -- tests/ui/pages/explorer-home.spec.ts tests/ui/pages/explorer-layout.spec.ts` | 14 passed. |
 | `node --test tests/unit/satelliteImagery.test.js` | 4 passed. |
 | `npx tsc --noEmit --target ES2022 --module NodeNext --moduleResolution NodeNext --allowImportingTsExtensions --skipLibCheck src/services/satelliteImagery.ts src/journeys/satellitePanel.ts` | Passed. |
-| `npx playwright test --project=ui tests/ui/satellite.spec.ts tests/ui/journeys.spec.ts` | 7 passed. |
+| `npx playwright test --project=ui tests/ui/journeys/satellite.spec.ts tests/ui/journeys/trips-alerts-reviews.spec.ts` | 7 passed. |
 | `npx playwright test --config=playwright.api.config.ts tests/api/satellite.spec.ts` | 1 passed: real NASA HTTP 200, `image/jpeg`, JPEG signature, fixed date 2024-01-01. |
 | `npm test` | 66 passed. |
 | `npm run typecheck:api` | Passed. |

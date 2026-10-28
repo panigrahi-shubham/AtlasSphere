@@ -1,6 +1,6 @@
-import { test, expect } from '../support/uiTest';
-import { currentWeatherFixture } from '../fixtures/currentWeather.js';
-import { STORAGE_KEYS } from '../../src/utils/storage.js';
+import { test, expect } from '../../support/uiTest';
+import { currentWeatherFixture } from '../../fixtures/currentWeather.js';
+import { STORAGE_KEYS } from '../../../src/utils/storage.js';
 
 const weatherEndpoint = '**/api/v1/weather?**';
 const geocodingEndpoint = '**/api/v1/geocode?**';

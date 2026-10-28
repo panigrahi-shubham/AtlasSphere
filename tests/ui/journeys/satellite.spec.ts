@@ -1,4 +1,4 @@
-import { test, expect } from '../support/uiTest';
+import { test, expect } from '../../support/uiTest';
 import { readFile } from 'node:fs/promises';
 import AxeBuilder from '@axe-core/playwright';
 
@@ -10,7 +10,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('satellite view loads one fixture image on request and shows date, credit and limitations', async ({ page }) => {
-  const jpeg = await readFile(new URL('../fixtures/satellite.jpg', import.meta.url));
+  const jpeg = await readFile(new URL('../../fixtures/satellite.jpg', import.meta.url));
   let calls = 0, release!: () => void;
   const gate = new Promise<void>(resolve => { release = resolve; });
   await page.route(imagery, async route => {

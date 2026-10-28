@@ -1,5 +1,5 @@
-import { test, expect } from '../support/uiTest';
-import { currentWeatherFixture } from '../fixtures/currentWeather.js';
+import { test, expect } from '../../support/uiTest';
+import { currentWeatherFixture } from '../../fixtures/currentWeather.js';
 import { readFile } from 'node:fs/promises';
 
 const city = { id: 1, name: 'Nashik', country: 'India', country_code: 'IN', latitude: 19.99, longitude: 73.78, timezone: 'Asia/Kolkata' };
@@ -63,7 +63,7 @@ test('capital lookup fallback keeps the country restriction', async ({ page }) =
 });
 
 test('seven-day forecast fallback retains the current weather', async ({ page }) => {
-  const daily = JSON.parse(await readFile(new URL('../fixtures/api-daily.json', import.meta.url), 'utf8'));
+  const daily = JSON.parse(await readFile(new URL('../../fixtures/api-daily.json', import.meta.url), 'utf8'));
   let calls = 0;
   await page.route('**/api/v1/geocode?**', route => route.fulfill({ json: { results: [city] } }));
   await page.route('**/api/v1/weather?**', route => route.fulfill(new URL(route.request().url()).searchParams.get('view') === 'daily' ? { status: 504, json: {} } : { json: currentWeatherFixture }));

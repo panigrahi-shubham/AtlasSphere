@@ -1,4 +1,4 @@
-import { test, expect } from '../support/uiTest';
+import { test, expect } from '../../support/uiTest';
 
 test('Time Machine reports a generic archive provider failure', async ({ page }) => {
   await page.route('**/api/v1/auth/refresh', route => route.fulfill({ status: 401, json: { error: { message: 'Sign in' } } }));

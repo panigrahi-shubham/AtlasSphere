@@ -55,11 +55,11 @@ Changed tests: existing 503 error-path tests now explicitly mock the direct prov
 | `npm run test:ui` | 96 passed, 1 existing production-only test skipped. |
 | `npm run test:smoke` | 2 passed. |
 | `npm run test:api:local` | 19 passed, 6 database-dependent checks skipped. |
-| `npx playwright test --project=ui tests/ui/search.spec.ts tests/ui/weather.spec.ts tests/ui/resilience.spec.ts tests/ui/providerFallback.spec.ts` | 40 passed (before adding the two additional capital/daily cases, which were then covered below and in the full suite). |
-| `npx playwright test --project=ui tests/ui/providerFallback.spec.ts tests/ui/forecastGeography.spec.ts` | 16 passed. |
+| `npx playwright test --project=ui tests/ui/explorer/search.spec.ts tests/ui/explorer/current-weather.spec.ts tests/ui/explorer/resilience.spec.ts tests/ui/explorer/provider-fallback.spec.ts` | 40 passed (before adding the two additional capital/daily cases, which were then covered below and in the full suite). |
+| `npx playwright test --project=ui tests/ui/explorer/provider-fallback.spec.ts tests/ui/explorer/forecast-geography.spec.ts` | 16 passed. |
 | `npm run test:v2 -- tests/ui/pages/atlas-features.spec.ts` | 17 passed, including globe, capital and daily-forecast error recovery. |
-| `npx playwright test --config=playwright.api-local.config.ts tests/api-local/phases.spec.ts --grep 'time-machine\|historical weather'` | 2 passed: validation, free/customer archive selection, key non-disclosure and cache. |
-| `npx playwright test --project=ui tests/ui/journeys.spec.ts` | 3 passed. |
+| `npx playwright test --config=playwright.api-local.config.ts tests/api-local/journeys-api.spec.ts --grep 'time-machine\|historical weather'` | 2 passed: validation, free/customer archive selection, key non-disclosure and cache. |
+| `npx playwright test --project=ui tests/ui/journeys/trips-alerts-reviews.spec.ts` | 3 passed. |
 | `git diff --check eec5ff9..HEAD` | Passed. |
 
 The public-review API fixture supplies a non-empty model result without using a database. Database-dependent account tests were not represented as passed. No database migration was run during this quick-upgrade task. Firefox/WebKit and production write smoke were not run for this gate.

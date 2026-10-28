@@ -1,5 +1,5 @@
-import { test, expect, mockOpenMeteoDown } from '../support/uiTest';
-import { currentWeatherFixture } from '../fixtures/currentWeather.js';
+import { test, expect, mockOpenMeteoDown } from '../../support/uiTest';
+import { currentWeatherFixture } from '../../fixtures/currentWeather.js';
 
 const cities = [
   { id: 2657896, name: 'Zürich', admin1: 'Zurich', country: 'Switzerland', latitude: 47.37, longitude: 8.55 },

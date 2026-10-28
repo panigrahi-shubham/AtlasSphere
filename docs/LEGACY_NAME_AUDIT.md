@@ -26,11 +26,11 @@ Files changed by that branding commit:
 - `src/services/account.ts`
 - `test-lab.html`
 - `tests/README.md`
-- `tests/api-local/phase2.spec.ts`
-- `tests/ui/accountPrivacy.spec.ts`
-- `tests/ui/geoguess.spec.ts`
-- `tests/ui/journeys.spec.ts`
-- `tests/ui/phases.spec.ts`
+- `tests/api-local/api-contracts.spec.ts`
+- `tests/ui/journeys/account-privacy.spec.ts`
+- `tests/ui/geoguess/gameplay.spec.ts`
+- `tests/ui/journeys/trips-alerts-reviews.spec.ts`
+- `tests/ui/pages/development-routes.spec.ts`
 - `tests/ui/pages/explorer-layout.spec.ts`
 - `tests/ui/pages/explorer-home.spec.ts`
 
@@ -173,29 +173,29 @@ Command: `git grep -n -I -i -E "skyatlas|earthscope" -- . ":!docs/LEGACY_NAME_AU
 | `tests/api-local/accounts.spec.ts:87` | `skyatlas` | Kept for compatibility | Existing technical identifier, contract, fixture or related assertion. |
 | `tests/api-local/accounts.spec.ts:93` | `skyatlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
 | `tests/api-local/accounts.spec.ts:107` | `skyatlas`, `skyatlas` | Kept for compatibility | Existing technical identifier, contract, fixture or related assertion. |
-| `tests/api-local/phase2.spec.ts:24` | `skyatlas` | Kept for compatibility | Existing technical identifier, contract, fixture or related assertion. |
-| `tests/api-local/phase2.spec.ts:64` | `skyatlas` | Kept for compatibility | Existing technical identifier, contract, fixture or related assertion. |
-| `tests/api-local/phase2.spec.ts:107` | `skyatlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
-| `tests/api-local/phase2.spec.ts:110` | `skyatlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
-| `tests/api-local/phase2.spec.ts:111` | `skyatlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
-| `tests/api-local/phase2.spec.ts:112` | `skyatlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
-| `tests/api-local/phase2.spec.ts:211` | `skyatlas` | Kept for compatibility | Existing technical identifier, contract, fixture or related assertion. |
-| `tests/api-local/phase2.spec.ts:235` | `skyatlas` | Kept for compatibility | Existing technical identifier, contract, fixture or related assertion. |
-| `tests/api-local/phases.spec.ts:44` | `skyatlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
+| `tests/api-local/api-contracts.spec.ts:24` | `skyatlas` | Kept for compatibility | Existing technical identifier, contract, fixture or related assertion. |
+| `tests/api-local/api-contracts.spec.ts:64` | `skyatlas` | Kept for compatibility | Existing technical identifier, contract, fixture or related assertion. |
+| `tests/api-local/api-contracts.spec.ts:107` | `skyatlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
+| `tests/api-local/api-contracts.spec.ts:110` | `skyatlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
+| `tests/api-local/api-contracts.spec.ts:111` | `skyatlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
+| `tests/api-local/api-contracts.spec.ts:112` | `skyatlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
+| `tests/api-local/api-contracts.spec.ts:211` | `skyatlas` | Kept for compatibility | Existing technical identifier, contract, fixture or related assertion. |
+| `tests/api-local/api-contracts.spec.ts:235` | `skyatlas` | Kept for compatibility | Existing technical identifier, contract, fixture or related assertion. |
+| `tests/api-local/journeys-api.spec.ts:44` | `skyatlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
 | `tests/api/contracts.spec.ts:37` | `earthscope` | Kept for compatibility | Existing technical identifier, contract, fixture or related assertion. |
 | `tests/bugs/geoguess.spec.ts:3` | `EARTHSCOPE` | Kept for compatibility | Existing environment variable contract. |
 | `tests/bugs/geoguess.spec.ts:7` | `earthscope`, `earthscope` | Kept for compatibility | Persistent browser-storage namespace; preserves preferences and scores. |
 | `tests/support/uiTest.ts:22` | `EARTHSCOPE` | Kept for compatibility | Existing environment variable contract. |
-| `tests/ui/accountPrivacy.spec.ts:42` | `SkyAtlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
-| `tests/ui/accountPrivacy.spec.ts:58` | `SkyAtlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
-| `tests/ui/accountPrivacy.spec.ts:76` | `SkyAtlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
-| `tests/ui/geoguess.spec.ts:2` | `EARTHSCOPE` | Kept for compatibility | Existing environment variable contract. |
-| `tests/ui/geoguess.spec.ts:5` | `earthscope` | Kept for compatibility | Persistent browser-storage namespace; preserves preferences and scores. |
-| `tests/ui/geoguess.spec.ts:52` | `earthscope` | Kept for compatibility | Persistent browser-storage namespace; preserves preferences and scores. |
-| `tests/ui/geoguess.spec.ts:92` | `EARTHSCOPE` | Kept for compatibility | Existing environment variable contract. |
-| `tests/ui/lab.spec.ts:2` | `EARTHSCOPE` | Kept for compatibility | Existing environment variable contract. |
-| `tests/ui/lab.spec.ts:17` | `skyatlas` | Kept for compatibility | Existing technical identifier, contract, fixture or related assertion. |
-| `tests/ui/phases.spec.ts:4` | `EARTHSCOPE` | Kept for compatibility | Existing environment variable contract. |
+| `tests/ui/journeys/account-privacy.spec.ts:42` | `SkyAtlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
+| `tests/ui/journeys/account-privacy.spec.ts:58` | `SkyAtlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
+| `tests/ui/journeys/account-privacy.spec.ts:76` | `SkyAtlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
+| `tests/ui/geoguess/gameplay.spec.ts:2` | `EARTHSCOPE` | Kept for compatibility | Existing environment variable contract. |
+| `tests/ui/geoguess/gameplay.spec.ts:5` | `earthscope` | Kept for compatibility | Persistent browser-storage namespace; preserves preferences and scores. |
+| `tests/ui/geoguess/gameplay.spec.ts:52` | `earthscope` | Kept for compatibility | Persistent browser-storage namespace; preserves preferences and scores. |
+| `tests/ui/geoguess/gameplay.spec.ts:92` | `EARTHSCOPE` | Kept for compatibility | Existing environment variable contract. |
+| `tests/ui/pages/test-lab.spec.ts:2` | `EARTHSCOPE` | Kept for compatibility | Existing environment variable contract. |
+| `tests/ui/pages/test-lab.spec.ts:17` | `skyatlas` | Kept for compatibility | Existing technical identifier, contract, fixture or related assertion. |
+| `tests/ui/pages/development-routes.spec.ts:4` | `EARTHSCOPE` | Kept for compatibility | Existing environment variable contract. |
 | `tests/unit/pagesProxy.test.js:6` | `skyatlas`, `skyatlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
 | `tests/unit/pagesProxy.test.js:15` | `skyatlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |
 | `tests/unit/pagesProxy.test.js:18` | `skyatlas` | Kept for compatibility | Header/cookie contract and its documentation or tests. |

@@ -6,7 +6,7 @@
 | --- | --- | --- |
 | v1.1 | Interactive SVG world map, zoom/reset/pan, selectable country shapes, searchable/filterable 250-record country directory, country facts, capital weather lookup | tests/ui/pages/atlas-features.spec.ts |
 | v1.2 | Seven-day model forecast, highs/lows, precipitation probability/total, max wind, UV, sunrise/sunset, three switchable charts, accessible data table | tests/ui/pages/atlas-features.spec.ts; tests/api/advanced.spec.ts |
-| v1.3 | Country geographic position/coastline facts, 16 sourced curated landmarks, country/worldwide filtering, approximate landmark weather and favorites | tests/ui/pages/atlas-features.spec.ts; tests/unit/v2.test.js |
+| v1.3 | Country geographic position/coastline facts, 16 sourced curated landmarks, country/worldwide filtering, approximate landmark weather and favorites | tests/ui/pages/atlas-features.spec.ts; tests/unit/geography-data.test.js |
 | v2.0 | Three.js globe, bundled vector-derived texture, rotation/zoom/reset, selected-location marker/cloud/rain/snow, text equivalent and WebGL fallback | tests/ui/pages/atlas-features.spec.ts |
 
 ## Executed checks
