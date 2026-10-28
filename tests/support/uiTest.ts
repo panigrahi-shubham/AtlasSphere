@@ -1,3 +1,7 @@
+/**
+ * The UI suite blocks and records unmocked external requests so test results do
+ * not depend on live services. Uncaught page errors fail the test at teardown.
+ */
 import { test as base, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -49,6 +53,7 @@ export const test = base.extend<{ appBoundary: void; explorer: ExplorerPage }>({
 });
 
 export { expect };
+/** Intercept direct Open-Meteo requests with a deterministic outage response. */
 export async function mockOpenMeteoDown(page: import('@playwright/test').Page) {
   await page.route(/^https:\/\/(?:api|geocoding-api)\.open-meteo\.com\//, route => route.fulfill({ status: 503, json: { error: true, reason: 'Fixture provider outage' } }));
 }

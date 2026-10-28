@@ -44,7 +44,8 @@
     "format:home": "prettier --write \"src/home/**/*.{ts,tsx,css}\"",
     "format:home:check": "prettier --check \"src/home/**/*.{ts,tsx,css}\"",
     "test:home:unit": "vitest run",
-    "test:home": "playwright test --config=playwright.home.config.ts"
+    "test:home": "playwright test --config=playwright.home.config.ts",
+    "test:flaky": "playwright test --repeat-each=5 --workers=2"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
