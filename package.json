@@ -13,6 +13,7 @@
     "preview": "vite preview --host 127.0.0.1",
     "start": "node --experimental-strip-types api/server.ts",
     "typecheck:api": "tsc --project tsconfig.api.json --noEmit",
+    "test:vercel": "node --experimental-strip-types --test tests/deployment/*.test.ts",
     "test:api:local": "playwright test --config=playwright.api-local.config.ts",
     "news:fetch": "node --experimental-strip-types scripts/fetch-news.ts",
     "test": "node scripts/run-unit-tests.mjs",
