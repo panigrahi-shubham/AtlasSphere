@@ -148,8 +148,8 @@ export const planets: Planet[] = [
     missions:
       "Galileo orbited Jupiter; Juno investigates its atmosphere and interior.",
     image: "/images/planets/jupiter.webp",
-    alt: "Color-enhanced Juno image of Jupiter and its turbulent southern hemisphere",
-    credit: "Kevin M. Gill (CC BY) / NASA / JPL-Caltech / SwRI / MSSS",
+    alt: "Enhanced-color Voyager image of Jupiter with cloud bands and the Great Red Spot",
+    credit: "NASA / JPL / USGS · Voyager, 1979; processed 1990",
     source: "https://science.nasa.gov/jupiter/jupiter-facts/",
   },
   {

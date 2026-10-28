@@ -1,5 +1,11 @@
 # AtlasSphere 2.0 implementation record
 
+## Milestone 4 verification
+
+Owner approved continuation; the implementation branch is `codex/atlassphere-2-planets`, based on milestone 3 commit `b80011d`. Before changes, the seven unit checks and all 12 production Solar System checks passed. After changes: build, home/API/test typechecks, home/test lint, formatting and Markdown links pass. Discovery production: 22 passed; development: 18 passed and four production-only skips. Existing production homepage: 28 passed. Home/model unit: seven passed. Emitted Vercel function: one passed. No existing tests or test IDs were removed; assertion audit against milestone 3 reports zero removed assertions and 23 new discovery assertions.
+
+Desktop directory/profile and mobile comparison screenshots were inspected. Both themes pass automated axe checks on all three new page types. A comparison checkbox timing defect was fixed by updating native input state immediately while URL navigation commits; tests retain checks for selection, four-planet limits, empty state and reload. New encyclopedia CSS uses distinct class names to avoid altering homepage cards. Local homepage Lighthouse mobile runs measured performance 94/94/93, accessibility 100 each and CLS 0.00152. Full physical-device/cross-browser acceptance remains milestone 8. Evidence is retained in ignored `releases/m4-*.log` and `lighthouse-report/`.
+
 Current milestone branch: `codex/atlassphere-2-solar-system`, following audit and shared-design commits on `feature/atlassphere-2-premium-explorer`. Baseline: `1e5ec28` (PR #5). Production remains on main; merging and production publication require owner review.
 
 ## Milestone 1: inventory and stability
@@ -21,13 +27,13 @@ Risks: Windows hidden-directory Test Lab file serving is a known local baseline 
 1. Audit and stability — baseline above.
 2. Shared design and existing-page modernization — shared navy/teal tokens and Manrope, legacy page hierarchy/forms, theme controls, reusable modal navigation with focus return/scroll locking, and footer added. Original desktop explorer shortcuts retained. Built explorer 39/39; legacy UI 100 passed, one existing production-only skip; homepage 20 passed, eight existing production-only skips. Desktop screenshot inspected locally. Initial overflow/contrast regressions were fixed without changing assertions. New homepage sections connect as their destination milestones are implemented.
 3. Interactive Solar System — implemented for owner review: eight selectable planets, NASA reference facts, lazy Three.js scene, deterministic adjustable clock, camera controls, orbit/label toggles, shareable selection, reduced motion and WebGL/context-loss fallback. Initial and reset camera framing adapts to screen width. Circular orbits, illustrative starting angles and compressed scales are explicitly explained. Production HTML is prerendered through an exact route allowlist shared by Vite and Express. Desktop and touch screenshots inspected.
-4. Planet encyclopedia and comparison — pending.
+4. Planet encyclopedia and comparison — implemented on `codex/atlassphere-2-planets` after owner approval to continue. Includes eight prerendered profiles, licensed local photographs, NASA reference measurements and definitions, previous/next navigation, model links, URL-backed directory search/classification filters and comparison of up to four planets. Accessible tables and signed linear charts cover all seven requested measurements. Unknown profile slugs return HTTP 404. Image provenance is documented in `PLANET_ASSETS.md`.
 5. Earth and science lab — pending.
 6. Feature-based automation — pending.
 7. Crawlable SEO and Search Console guide — pending.
 8. Cross-browser, accessibility, performance and release verification — pending.
 
-The updated AGENTS.md requires explicit owner approval before advancing to the next milestone. Work stops after verification of milestone 3; milestones 4–8 remain pending. Critical regressions block advancement. No merge, production deployment, database migration, Android work or paid service is part of this branch's execution.
+The updated AGENTS.md requires explicit owner approval before advancing to the next milestone. Owner approval to continue milestone 4 was received; work stops after its verification. Milestones 5–8 remain pending. Critical regressions block advancement. No merge, production deployment, database migration, Android work or paid service is part of this branch's execution.
 
 Milestone 3 validation: build, home/API/test typechecks and home/test lint pass; Node 70/70, home/model unit 7/7, emitted Vercel function 1/1 and existing production homepage 28/28 pass. Focused Solar System coverage passes in development (10 passed, two production-only skips) and production (12/12), including both themes under axe, real WebGL, loss of context, URL hydration and mobile framing. Existing assertions are preserved; new assertions cover the new behavior. Full cross-browser/device acceptance and release-wide performance work remain milestone 8; these local Chromium checks do not claim that acceptance.
 

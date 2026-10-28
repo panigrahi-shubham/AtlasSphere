@@ -19,4 +19,6 @@ Vercel hosts the Vite build and a single Express function. The build generates t
 
 ## Verification boundaries
 
+The planet directory, comparison page and eight profile routes share the typed NASA snapshot with the Solar System. Only known profile slugs are registered on the server, so unknown planets return HTTP 404. Static rendering supplies complete profile content and metadata before hydration. Directory filters and comparison selections are encoded in query parameters; hydration starts from the static default and applies query state afterward. Comparison tables retain signed values and units, while linear charts place negative rotation/temperature values left of zero. Local NASA photographs remain credited next to the image.
+
 The deterministic browser suites intercept provider responses and fail on unexpected external requests or uncaught page errors. PostgreSQL tests require an isolated test database; live provider checks run separately. Production does not expose test routes or practice defects. See [the test guide](../tests/README.md) for commands and the [known defects catalogue](KNOWN_DEFECTS.md) for deliberate practice cases.

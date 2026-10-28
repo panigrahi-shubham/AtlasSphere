@@ -288,6 +288,13 @@ export default function SolarSystem() {
           <p>{planet.features}</p>
           <a
             className="text-link"
+            data-testid="solar-planet-profile"
+            href={`/universe/planets/${planet.slug}`}
+          >
+            Explore the full planet profile ↗
+          </a>
+          <a
+            className="text-link"
             href={planet.source}
             data-testid="solar-planet-source"
           >
