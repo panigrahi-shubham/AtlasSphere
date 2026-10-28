@@ -7,7 +7,7 @@ export const browserDiagnostics = {
 
 /** Suite-specific report folders with zero retries and an additional JUnit artifact on CI. */
 export function suiteBase(name: string): PlaywrightTestConfig {
-  const junitName = name === 'home' && process.env.HOME_PRODUCTION === '1' ? 'home-production' : name;
+  const junitName = process.env.TEST_REPORT_NAME ?? (name === 'home' && process.env.HOME_PRODUCTION === '1' ? 'home-production' : name);
   return {
     forbidOnly: Boolean(process.env.CI), retries: 0,
     outputDir: `test-results/${name}`,

@@ -15,7 +15,7 @@
     "typecheck:api": "tsc --project tsconfig.api.json --noEmit",
     "test:api:local": "playwright test --config=playwright.api-local.config.ts",
     "news:fetch": "node --experimental-strip-types scripts/fetch-news.ts",
-    "test": "node --experimental-strip-types --test tests/*.test.cjs tests/unit/*.test.js",
+    "test": "node scripts/run-unit-tests.mjs",
     "test:ui": "playwright test --project=ui",
     "test:api": "playwright test --config=playwright.api.config.ts",
     "test:ui:memory": "node scripts/test-ui-memory.mjs --project=ui",

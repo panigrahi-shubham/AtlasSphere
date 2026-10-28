@@ -62,8 +62,14 @@ jobs:
           PORT: '31423'
       - name: Account retry, privacy and journeys browser checks
         run: npx playwright test --project=ui tests/ui/journeys/account-privacy.spec.ts tests/ui/journeys/time-machine.spec.ts tests/ui/journeys/trips-alerts-reviews.spec.ts
+        env:
+          TEST_REPORT_NAME: account-journeys
       - run: npm run test:smoke
+        env:
+          TEST_REPORT_NAME: smoke
       - run: npm run test:a11y
+        env:
+          TEST_REPORT_NAME: accessibility
       - run: npm run test:bugs
       - run: npm run test:release
       - run: npm run test:v2
@@ -90,6 +96,8 @@ jobs:
           cache: npm
       - run: npm ci && npx playwright install --with-deps chromium firefox webkit
       - run: npm run test:cross-browser
+        env:
+          TEST_REPORT_NAME: cross-browser
       - run: npm run test:ui -- --workers=2
       - run: npm run build && npm run audit:web
       - name: Summarize test suites

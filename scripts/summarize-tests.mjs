@@ -8,9 +8,19 @@ const rows = [];
 for (const name of names.filter(name => name.endsWith('.xml')).sort()) {
   const document = parser.parse(await readFile(`${directory}/${name}`, 'utf8'));
   const root = document.testsuites ?? document.testsuite;
-  const total = Number(root?.['@_tests'] ?? 0);
-  const failed = Number(root?.['@_failures'] ?? 0) + Number(root?.['@_errors'] ?? 0);
-  const skipped = Number(root?.['@_skipped'] ?? 0);
+  const cases = [];
+  const visit = suite => {
+    if (!suite) return;
+    cases.push(...[suite.testcase ?? []].flat());
+    for (const child of [suite.testsuite ?? []].flat()) visit(child);
+  };
+  visit(root);
+  const total = root?.['@_tests'] !== undefined ? Number(root['@_tests']) : cases.length;
+  const failed = root?.['@_tests'] !== undefined
+    ? Number(root['@_failures'] ?? 0) + Number(root['@_errors'] ?? 0)
+    : cases.filter(test => Object.hasOwn(test, 'failure') || Object.hasOwn(test, 'error')).length;
+  const skipped = root?.['@_tests'] !== undefined ? Number(root['@_skipped'] ?? 0)
+    : cases.filter(test => Object.hasOwn(test, 'skipped')).length;
   rows.push(`| ${name.slice(0, -4)} | ${total - failed - skipped} | ${failed} | ${skipped} |`);
 }
 const summary = ['## Test results', '', '| Suite | Passed | Failed | Skipped |', '| --- | ---: | ---: | ---: |', ...rows, ''].join('\n');
